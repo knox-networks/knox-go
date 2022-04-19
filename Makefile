@@ -8,11 +8,10 @@ help: ## Show this help.
 # Main
 
 build:   ## build the project
-	go build -o idw  ./app/action_registry.go
+	go build
 
 docker-build:
-	chmod +x ./etc/docker/build_release.sh
-	./etc/docker/build_release.sh
+	docker build -t knox-go:latest -f ./etc/docker/Dockerfile.test .
 
 test:   ## run tests
 	go test -cover ./...
