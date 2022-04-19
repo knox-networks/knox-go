@@ -1,12 +1,20 @@
 package knox
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/knox-networks/knox-go/credential_adapter"
 	"github.com/knox-networks/knox-go/model"
+	mb "github.com/multiformats/go-multibase"
+	"github.com/piprate/json-gold/ld"
 )
+
+const NORMALIZATION_ALGO = "URDNA2015"
+const NORMALIZATION_FORMAT = "application/n-quads"
+const PROOF_TYPE = "Ed25519Signature2020"
 
 type Wallet interface {
 	Sign(message []byte) ([]byte, error)
@@ -59,9 +67,59 @@ func (c *knoxClient) PresentCredential(creds ...model.SerializedDocument) error 
 	if err != nil {
 		return err
 	}
+	fmt.Printf("Challenge: %s, %s\n", challenge.Nonce, challenge.Url)
+	converted_creds := make([]map[string]interface{}, len(creds))
 
-	fmt.Printf("Challenge: %s, %s, %s", challenge.Nonce, challenge.Url)
-	err = c.ca.PresentVerifiableCredential(creds)
+	for i, cred := range creds {
+		var converted_cred map[string]interface{}
+		err = json.Unmarshal(cred, &converted_cred)
+
+		if err != nil {
+			return err
+		}
+
+		converted_creds[i] = converted_cred
+	}
+
+	vp := map[string]interface{}{
+		"@context":             []string{"https://www.w3.org/2018/credentials/v1"},
+		"type":                 []string{"VerifiablePresentation"},
+		"verifiableCredential": converted_creds,
+	}
+
+	bs, _ := json.Marshal(vp)
+	println(string(bs))
+
+	proc := ld.NewJsonLdProcessor()
+	options := ld.NewJsonLdOptions("")
+	options.Format = NORMALIZATION_FORMAT
+	options.Algorithm = NORMALIZATION_ALGO
+	normalized, err := proc.Normalize(vp, options)
+
+	if err != nil {
+		fmt.Printf("Error normalizing: %s\n", err.Error())
+		return err
+	}
+
+	fmt.Printf("Normalized: %v\n", (normalized.(string)))
+
+	proofValue, err := c.wallet.Sign([]byte(normalized.(string)))
+	if err != nil {
+		return err
+	}
+
+	encoded, err := mb.Encode(mb.Base58BTC, proofValue)
+	if err != nil {
+		return err
+	}
+
+	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
+		Type:               PROOF_TYPE,
+		Created:            time.Now().UTC().Format(time.RFC3339),
+		VerificationMethod: "",
+		ProofPurpose:       "assertionMethod",
+		ProofValue:         encoded,
+	})
 	if err != nil {
 		return err
 	}

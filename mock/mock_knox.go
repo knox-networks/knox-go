@@ -9,6 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	credential_adapter "github.com/knox-networks/knox-go/credential_adapter"
+	model "github.com/knox-networks/knox-go/model"
 )
 
 // MockWallet is a mock of Wallet interface.
@@ -87,7 +88,7 @@ func (m *MockKnoxClient) EXPECT() *MockKnoxClientMockRecorder {
 }
 
 // PresentCredential mocks base method.
-func (m *MockKnoxClient) PresentCredential(cred ...credential_adapter.VerifiableCredential) error {
+func (m *MockKnoxClient) PresentCredential(cred ...model.SerializedDocument) error {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{}
 	for _, a := range cred {

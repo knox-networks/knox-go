@@ -95,15 +95,15 @@ func (mr *MockCredentialAdapterClientMockRecorder) IssueVerifiableCredential(cre
 }
 
 // PresentVerifiableCredential mocks base method.
-func (m *MockCredentialAdapterClient) PresentVerifiableCredential(creds []model.SerializedDocument) error {
+func (m *MockCredentialAdapterClient) PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PresentVerifiableCredential", creds)
+	ret := m.ctrl.Call(m, "PresentVerifiableCredential", creds, proof)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PresentVerifiableCredential indicates an expected call of PresentVerifiableCredential.
-func (mr *MockCredentialAdapterClientMockRecorder) PresentVerifiableCredential(creds interface{}) *gomock.Call {
+func (mr *MockCredentialAdapterClientMockRecorder) PresentVerifiableCredential(creds, proof interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PresentVerifiableCredential", reflect.TypeOf((*MockCredentialAdapterClient)(nil).PresentVerifiableCredential), creds)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PresentVerifiableCredential", reflect.TypeOf((*MockCredentialAdapterClient)(nil).PresentVerifiableCredential), creds, proof)
 }

@@ -144,3 +144,19 @@ func TestRequestCredential(t *testing.T) {
 		})
 	}
 }
+
+func TestPresentCredential(t *testing.T) {
+	cred := []byte(`{"@context":["https://www.w3.org/2018/credentials/v1","https://www.w3.org/2018/credentials/examples/v1"],"id":"http://credential_mock:8000/api/credential/z6MkmE7owsRZ5RdvAB83LyDYqgKTNsQk2F8832H1rAAdVNWt","type":["VerifiableCredential","BankCard"],"issuer":"did:knox:12345","issuanceDate":"2022-04-15T18:54:50Z","subject":{"account":"000-000-204","address":"19 Knox St, Toronto, ON","birthDate":"1981-04-01","branch":"C09","country":"Canada","familyName":"Kim","gender":"Male","givenName":"Francis","id":"did:knox:z6MkmE7owsRZ5RdvAB83LyDYqgKTNsQk2F8832H1rAAdVNWt","phone":"416-984-1234","type":["BankCard"]},"proof":{"type":"Ed25519Signature2020","created":"2022-04-15T18:54:50Z","verificationMethod":"did:knox:12345#z6MkiukuAuQAE8ozxvmahnQGzApvtW7KT5XXKfojjwbdEomY","proofPurpose":"assertionMethod","proofValue":"z93NYjED6qSfNoA43h8KXVbNn4e7UcYuFGLLdLxVYJWCS5jgnEXfthYp1LHmAohDAgAngdQcTZCX1aBWbnX81bkC"}}`)
+
+	mock_controller := gomock.NewController(t)
+	mock_wallet := knox_mock.NewMockWallet(mock_controller)
+	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
+	kc := &knoxClient{wallet: mock_wallet, ca: mock_ca}
+	mock_ca.EXPECT().CreatePresentationChallenge().Return(&credential_adapter.PresentationChallenge{}, nil)
+	err := kc.PresentCredential(cred)
+
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+}
