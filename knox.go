@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/knox-networks/knox-go/credential_adapter"
+	"github.com/knox-networks/knox-go/model"
 )
 
 type Wallet interface {
@@ -19,7 +20,7 @@ type knoxClient struct {
 
 type KnoxClient interface {
 	RequestCredential(cred_type string) (credential_adapter.VerifiableCredential, error)
-	PresentCredential(cred credential_adapter.VerifiableCredential) error
+	PresentCredential(cred ...model.SerializedDocument) error
 }
 
 func NewKnoxClient(wallet Wallet) (KnoxClient, error) {
@@ -52,15 +53,15 @@ func (c *knoxClient) RequestCredential(cred_type string) (credential_adapter.Ver
 	return cred, nil
 }
 
-func (c *knoxClient) PresentCredential(cred credential_adapter.VerifiableCredential) error {
+func (c *knoxClient) PresentCredential(creds ...model.SerializedDocument) error {
 
-	challenge, err := c.ca.CreatePresentationChallenge(cred.Type)
+	challenge, err := c.ca.CreatePresentationChallenge()
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Challenge: %s, %s, %s", challenge.Nonce, challenge.Url, challenge.CredType)
-	err = c.ca.PresentVerifiableCredential(cred)
+	fmt.Printf("Challenge: %s, %s, %s", challenge.Nonce, challenge.Url)
+	err = c.ca.PresentVerifiableCredential(creds)
 	if err != nil {
 		return err
 	}

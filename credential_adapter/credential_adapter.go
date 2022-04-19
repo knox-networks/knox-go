@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/knox-networks/knox-go/model"
 	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -30,6 +31,11 @@ type IssuanceChallenge struct {
 	Url      string
 }
 
+type PresentationChallenge struct {
+	Nonce string
+	Url   string
+}
+
 type VerifiableCredential struct {
 	Alias string
 	Type  string
@@ -39,9 +45,9 @@ type VerifiableCredential struct {
 type CredentialAdapterClient interface {
 	Close() error
 	CreateIssuanceChallenge(cred_type string, did string) (IssuanceChallenge, error)
-	CreatePresentationChallenge(cred_type string) (IssuanceChallenge, error)
+	CreatePresentationChallenge() (*PresentationChallenge, error)
 	IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte) (VerifiableCredential, error)
-	PresentVerifiableCredential(cred VerifiableCredential) error
+	PresentVerifiableCredential(creds []model.SerializedDocument) error
 }
 
 func NewCredentialAdapterClient() (CredentialAdapterClient, error) {
@@ -81,18 +87,18 @@ func (c *credentialAdapterClient) CreateIssuanceChallenge(cred_type string, did 
 	return IssuanceChallenge{Url: resp.Endpoint, CredType: cred_type, Nonce: resp.Nonce}, nil
 }
 
-func (c *credentialAdapterClient) CreatePresentationChallenge(cred_type string) (IssuanceChallenge, error) {
+func (c *credentialAdapterClient) CreatePresentationChallenge() (*PresentationChallenge, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	resp, err := c.client.CreatePresentationChallenge(ctx, &AdapterApi.CreatePresentationChallengeRequest{
-		CredentialType: getCredentialEnumFromName(cred_type),
+		CredentialType: AdapterApi.CredentialType_CREDENTIAL_TYPE_UNSPECIFIED,
 	})
 
 	if err != nil {
-		return IssuanceChallenge{}, err
+		return &PresentationChallenge{}, err
 	}
 
-	return IssuanceChallenge{Url: resp.Endpoint, CredType: cred_type, Nonce: resp.Nonce}, nil
+	return &PresentationChallenge{Url: resp.Endpoint, Nonce: resp.Nonce}, nil
 }
 
 func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte) (VerifiableCredential, error) {
@@ -116,23 +122,27 @@ func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, di
 	return VerifiableCredential{Doc: doc, Alias: CreateDefaultAlias(), Type: cred_type}, nil
 }
 
-func (c *credentialAdapterClient) PresentVerifiableCredential(cred VerifiableCredential) error {
+func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.SerializedDocument) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var structured_cred AdapterApi.VerifiableCredential
-	err := protojson.Unmarshal(cred.Doc, &structured_cred)
+	var converted_creds = make([]*AdapterApi.VerifiableCredential, len(creds))
 
-	if err != nil {
-		return err
+	for i, cred := range creds {
+
+		var structured_cred AdapterApi.VerifiableCredential
+		err := protojson.Unmarshal(cred, &structured_cred)
+		if err != nil {
+			return err
+		}
+
+		converted_creds[i] = &structured_cred
 	}
 
-	_, err = c.client.PresentVerifiableCredential(ctx, &AdapterApi.PresentVerifiableCredentialRequest{
+	_, err := c.client.PresentVerifiableCredential(ctx, &AdapterApi.PresentVerifiableCredentialRequest{
 		Presentation: &AdapterApi.VerifiablePresentation{
-			VerifiableCredential: []*AdapterApi.VerifiableCredential{
-				&structured_cred,
-			},
+			VerifiableCredential: converted_creds,
 		},
 	})
 
