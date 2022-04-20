@@ -82,13 +82,10 @@ func (c *knoxClient) PresentCredential(creds ...model.SerializedDocument) error 
 	}
 
 	vp := map[string]interface{}{
-		"@context":             []string{"https://www.w3.org/2018/credentials/v1"},
+		"@context":             []string{"https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"},
 		"type":                 []string{"VerifiablePresentation"},
 		"verifiableCredential": converted_creds,
 	}
-
-	bs, _ := json.Marshal(vp)
-	println(string(bs))
 
 	proc := ld.NewJsonLdProcessor()
 	options := ld.NewJsonLdOptions("")
