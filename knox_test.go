@@ -8,6 +8,7 @@ import (
 	"github.com/knox-networks/knox-go/credential_adapter"
 	ca_mock "github.com/knox-networks/knox-go/credential_adapter/mock"
 	knox_mock "github.com/knox-networks/knox-go/mock"
+	"github.com/knox-networks/knox-go/model"
 )
 
 type requestCredentialFields struct {
@@ -146,7 +147,35 @@ func TestRequestCredential(t *testing.T) {
 }
 
 func TestPresentCredential(t *testing.T) {
-	cred := []byte(`{"@context":["https://www.w3.org/2018/credentials/v1","https://www.w3.org/2018/credentials/examples/v1"],"id":"http://credential_mock:8000/api/credential/z6MkmE7owsRZ5RdvAB83LyDYqgKTNsQk2F8832H1rAAdVNWt","type":["VerifiableCredential","BankCard"],"issuer":"did:knox:12345","issuanceDate":"2022-04-15T18:54:50Z","subject":{"account":"000-000-204","address":"19 Knox St, Toronto, ON","birthDate":"1981-04-01","branch":"C09","country":"Canada","familyName":"Kim","gender":"Male","givenName":"Francis","id":"did:knox:z6MkmE7owsRZ5RdvAB83LyDYqgKTNsQk2F8832H1rAAdVNWt","phone":"416-984-1234","type":["BankCard"]},"proof":{"type":"Ed25519Signature2020","created":"2022-04-15T18:54:50Z","verificationMethod":"did:knox:12345#z6MkiukuAuQAE8ozxvmahnQGzApvtW7KT5XXKfojjwbdEomY","proofPurpose":"assertionMethod","proofValue":"z93NYjED6qSfNoA43h8KXVbNn4e7UcYuFGLLdLxVYJWCS5jgnEXfthYp1LHmAohDAgAngdQcTZCX1aBWbnX81bkC"}}`)
+	cred := model.VerifiableCredential{
+		Context: []string{"https://www.w3.org/2018/credentials/v1",
+			"https://w3id.org/citizenship/v1"},
+		Id:           "https://issuer.oidp.uscis.gov/credentials/83627465",
+		Type:         []string{"VerifiableCredential", "PermanentResidentCard"},
+		Issuer:       "did:example:123456789",
+		IssuanceDate: "2020-01-01T00:00:00Z",
+		Subject: map[string]interface{}{
+			"id":                     "did:example:b34ca6cd37bbf23",
+			"type":                   []string{"PermanentResident", "Person"},
+			"givenName":              "JOHN",
+			"familyName":             "SMITH",
+			"gender":                 "Male",
+			"image":                  "data:image/png;base64,iVBORw0KGgo...kJggg==",
+			"residentSince":          "2015-01-01",
+			"lprCategory":            "C09",
+			"lprNumber":              "999-999-999",
+			"commuterClassification": "C1",
+			"birthCountry":           "Bahamas",
+			"birthDate":              "1958-07-17",
+		},
+		Proof: &model.Proof{
+			Type:               "Ed25519Signature2020",
+			Created:            "2020-01-01T00:00:00Z",
+			VerificationMethod: "did:example:123456789#key1",
+			ProofPurpose:       "assertionMethod",
+			ProofValue:         "signature",
+		},
+	}
 
 	mock_controller := gomock.NewController(t)
 	mock_wallet := knox_mock.NewMockWallet(mock_controller)
@@ -158,5 +187,7 @@ func TestPresentCredential(t *testing.T) {
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
+
+	// t.Error("fake error")
 
 }

@@ -95,7 +95,7 @@ func (mr *MockCredentialAdapterClientMockRecorder) IssueVerifiableCredential(cre
 }
 
 // PresentVerifiableCredential mocks base method.
-func (m *MockCredentialAdapterClient) PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof) error {
+func (m *MockCredentialAdapterClient) PresentVerifiableCredential(creds []model.VerifiableCredential, proof model.Proof) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PresentVerifiableCredential", creds, proof)
 	ret0, _ := ret[0].(error)
