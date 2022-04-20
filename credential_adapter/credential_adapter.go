@@ -47,7 +47,7 @@ type CredentialAdapterClient interface {
 	CreateIssuanceChallenge(cred_type string, did string) (IssuanceChallenge, error)
 	CreatePresentationChallenge() (*PresentationChallenge, error)
 	IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte) (VerifiableCredential, error)
-	PresentVerifiableCredential(creds []model.VerifiableCredential, proof model.Proof) error
+	PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof) error
 }
 
 func NewCredentialAdapterClient() (CredentialAdapterClient, error) {
@@ -122,7 +122,7 @@ func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, di
 	return VerifiableCredential{Doc: doc, Alias: CreateDefaultAlias(), Type: cred_type}, nil
 }
 
-func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.VerifiableCredential, proof model.Proof) error {
+func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -131,10 +131,13 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.Veri
 
 	for i, cred := range creds {
 
-		converted_creds[i] = &AdapterApi.VerifiableCredential{
-			Context: cred.Context,
+		var structured_cred AdapterApi.VerifiableCredential
+		err := protojson.Unmarshal(cred, &structured_cred)
+		if err != nil {
+			return err
 		}
 
+		converted_creds[i] = &structured_cred
 	}
 
 	_, err := c.client.PresentVerifiableCredential(ctx, &AdapterApi.PresentVerifiableCredentialRequest{

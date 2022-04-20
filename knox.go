@@ -28,7 +28,7 @@ type knoxClient struct {
 
 type KnoxClient interface {
 	RequestCredential(cred_type string) (credential_adapter.VerifiableCredential, error)
-	PresentCredential(cred ...model.VerifiableCredential) error
+	PresentCredential(cred ...model.SerializedDocument) error
 }
 
 func NewKnoxClient(wallet Wallet) (KnoxClient, error) {
@@ -61,18 +61,30 @@ func (c *knoxClient) RequestCredential(cred_type string) (credential_adapter.Ver
 	return cred, nil
 }
 
-func (c *knoxClient) PresentCredential(creds ...model.VerifiableCredential) error {
+func (c *knoxClient) PresentCredential(creds ...model.SerializedDocument) error {
 
 	challenge, err := c.ca.CreatePresentationChallenge()
 	if err != nil {
 		return err
 	}
 	fmt.Printf("Challenge: %s, %s\n", challenge.Nonce, challenge.Url)
+	converted_creds := make([]map[string]interface{}, len(creds))
 
-	vp := model.VerifiablePresentation{
-		Context:              []string{"https://www.w3.org/2018/credentials/v1"},
-		Type:                 []string{"VerifiablePresentation"},
-		VerifiableCredential: creds,
+	for i, cred := range creds {
+		var converted_cred map[string]interface{}
+		err = json.Unmarshal(cred, &converted_cred)
+
+		if err != nil {
+			return err
+		}
+
+		converted_creds[i] = converted_cred
+	}
+
+	vp := map[string]interface{}{
+		"@context":             []string{"https://www.w3.org/2018/credentials/v1"},
+		"type":                 []string{"VerifiablePresentation"},
+		"verifiableCredential": converted_creds,
 	}
 
 	bs, _ := json.Marshal(vp)
