@@ -72,9 +72,7 @@ func (c *knoxClient) PresentCredential(creds ...model.SerializedDocument) error 
 
 	for i, cred := range creds {
 		var converted_cred map[string]interface{}
-		err = json.Unmarshal(cred, &converted_cred)
-
-		if err != nil {
+		if err := json.Unmarshal(cred, &converted_cred); err != nil {
 			return err
 		}
 
