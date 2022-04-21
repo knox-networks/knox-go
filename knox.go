@@ -12,9 +12,9 @@ import (
 	"github.com/piprate/json-gold/ld"
 )
 
-const NORMALIZATION_ALGO = "URDNA2015"
-const NORMALIZATION_FORMAT = "application/n-quads"
-const PROOF_TYPE = "Ed25519Signature2020"
+const NormalizationAlgo = "URDNA2015"
+const NormalizationFormat = "application/n-quads"
+const ProofType = "Ed25519Signature2020"
 
 type Wallet interface {
 	Sign(message []byte) ([]byte, error)
@@ -87,8 +87,8 @@ func (c *knoxClient) PresentCredential(creds ...model.SerializedDocument) error 
 
 	proc := ld.NewJsonLdProcessor()
 	options := ld.NewJsonLdOptions("")
-	options.Format = NORMALIZATION_FORMAT
-	options.Algorithm = NORMALIZATION_ALGO
+	options.Format = NormalizationFormat
+	options.Algorithm = NormalizationAlgo
 	normalized, err := proc.Normalize(vp, options)
 
 	if err != nil {
@@ -109,7 +109,7 @@ func (c *knoxClient) PresentCredential(creds ...model.SerializedDocument) error 
 	}
 
 	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
-		Type:               PROOF_TYPE,
+		Type:               ProofType,
 		Created:            time.Now().UTC().Format(time.RFC3339),
 		VerificationMethod: "",
 		ProofPurpose:       "assertionMethod",
