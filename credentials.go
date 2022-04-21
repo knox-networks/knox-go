@@ -53,21 +53,21 @@ func (c *knoxClient) SharePresentation(params SharePresentationParams) error {
 		return err
 	}
 	fmt.Printf("Challenge: %s, %s\n", challenge.Nonce, challenge.Url)
-	converted_creds := make([]map[string]interface{}, len(creds))
+	convertedCreds := make([]map[string]interface{}, len(creds))
 
 	for i, cred := range creds {
-		var converted_cred map[string]interface{}
-		if err := json.Unmarshal(cred, &converted_cred); err != nil {
+		var converted map[string]interface{}
+		if err := json.Unmarshal(cred, &converted); err != nil {
 			return err
 		}
 
-		converted_creds[i] = converted_cred
+		convertedCreds[i] = converted
 	}
 
 	vp := map[string]interface{}{
 		"@context":             []string{"https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"},
 		"type":                 []string{"VerifiablePresentation"},
-		"verifiableCredential": converted_creds,
+		"verifiableCredential": convertedCreds,
 	}
 
 	proc := ld.NewJsonLdProcessor()
@@ -77,7 +77,6 @@ func (c *knoxClient) SharePresentation(params SharePresentationParams) error {
 	normalized, err := proc.Normalize(vp, options)
 
 	if err != nil {
-		fmt.Printf("Error normalizing: %s\n", err.Error())
 		return err
 	}
 
