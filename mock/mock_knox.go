@@ -8,61 +8,9 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	knox "github.com/knox-networks/knox-go"
 	credential_adapter "github.com/knox-networks/knox-go/credential_adapter"
-	model "github.com/knox-networks/knox-go/model"
 )
-
-// MockWallet is a mock of Wallet interface.
-type MockWallet struct {
-	ctrl     *gomock.Controller
-	recorder *MockWalletMockRecorder
-}
-
-// MockWalletMockRecorder is the mock recorder for MockWallet.
-type MockWalletMockRecorder struct {
-	mock *MockWallet
-}
-
-// NewMockWallet creates a new mock instance.
-func NewMockWallet(ctrl *gomock.Controller) *MockWallet {
-	mock := &MockWallet{ctrl: ctrl}
-	mock.recorder = &MockWalletMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockWallet) EXPECT() *MockWalletMockRecorder {
-	return m.recorder
-}
-
-// GetDid mocks base method.
-func (m *MockWallet) GetDid() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetDid")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// GetDid indicates an expected call of GetDid.
-func (mr *MockWalletMockRecorder) GetDid() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDid", reflect.TypeOf((*MockWallet)(nil).GetDid))
-}
-
-// Sign mocks base method.
-func (m *MockWallet) Sign(message []byte) ([]byte, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Sign", message)
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Sign indicates an expected call of Sign.
-func (mr *MockWalletMockRecorder) Sign(message interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Sign", reflect.TypeOf((*MockWallet)(nil).Sign), message)
-}
 
 // MockKnoxClient is a mock of KnoxClient interface.
 type MockKnoxClient struct {
@@ -87,35 +35,73 @@ func (m *MockKnoxClient) EXPECT() *MockKnoxClientMockRecorder {
 	return m.recorder
 }
 
-// PresentCredential mocks base method.
-func (m *MockKnoxClient) PresentCredential(cred ...model.SerializedDocument) error {
+// GenerateIdentity mocks base method.
+func (m *MockKnoxClient) GenerateIdentity(arg0 knox.GenerateIdentityParams) error {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{}
-	for _, a := range cred {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "PresentCredential", varargs...)
+	ret := m.ctrl.Call(m, "GenerateIdentity", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// PresentCredential indicates an expected call of PresentCredential.
-func (mr *MockKnoxClientMockRecorder) PresentCredential(cred ...interface{}) *gomock.Call {
+// GenerateIdentity indicates an expected call of GenerateIdentity.
+func (mr *MockKnoxClientMockRecorder) GenerateIdentity(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PresentCredential", reflect.TypeOf((*MockKnoxClient)(nil).PresentCredential), cred...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateIdentity", reflect.TypeOf((*MockKnoxClient)(nil).GenerateIdentity), arg0)
+}
+
+// RegisterIdentity mocks base method.
+func (m *MockKnoxClient) RegisterIdentity(arg0 knox.RegisterIdentityParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RegisterIdentity", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RegisterIdentity indicates an expected call of RegisterIdentity.
+func (mr *MockKnoxClientMockRecorder) RegisterIdentity(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterIdentity", reflect.TypeOf((*MockKnoxClient)(nil).RegisterIdentity), arg0)
 }
 
 // RequestCredential mocks base method.
-func (m *MockKnoxClient) RequestCredential(cred_type string) (credential_adapter.VerifiableCredential, error) {
+func (m *MockKnoxClient) RequestCredential(arg0 knox.RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RequestCredential", cred_type)
+	ret := m.ctrl.Call(m, "RequestCredential", arg0)
 	ret0, _ := ret[0].(credential_adapter.VerifiableCredential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // RequestCredential indicates an expected call of RequestCredential.
-func (mr *MockKnoxClientMockRecorder) RequestCredential(cred_type interface{}) *gomock.Call {
+func (mr *MockKnoxClientMockRecorder) RequestCredential(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestCredential", reflect.TypeOf((*MockKnoxClient)(nil).RequestCredential), cred_type)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestCredential", reflect.TypeOf((*MockKnoxClient)(nil).RequestCredential), arg0)
+}
+
+// RequestPresentation mocks base method.
+func (m *MockKnoxClient) RequestPresentation(arg0 knox.RequestPresentationParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RequestPresentation", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RequestPresentation indicates an expected call of RequestPresentation.
+func (mr *MockKnoxClientMockRecorder) RequestPresentation(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestPresentation", reflect.TypeOf((*MockKnoxClient)(nil).RequestPresentation), arg0)
+}
+
+// SharePresentation mocks base method.
+func (m *MockKnoxClient) SharePresentation(arg0 knox.SharePresentationParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SharePresentation", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SharePresentation indicates an expected call of SharePresentation.
+func (mr *MockKnoxClientMockRecorder) SharePresentation(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SharePresentation", reflect.TypeOf((*MockKnoxClient)(nil).SharePresentation), arg0)
 }

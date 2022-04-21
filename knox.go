@@ -2,20 +2,16 @@ package knox
 
 import (
 	"github.com/knox-networks/knox-go/credential_adapter"
+	"github.com/knox-networks/knox-go/signer"
 )
 
 const NormalizationAlgo = "URDNA2015"
 const NormalizationFormat = "application/n-quads"
 const ProofType = "Ed25519Signature2020"
 
-type DynamicSigner interface {
-	Sign(message []byte) ([]byte, error)
-	GetDid() string
-}
-
 type knoxClient struct {
-	signer DynamicSigner
-	ca     credential_adapter.CredentialAdapterClient
+	s  signer.DynamicSigner
+	ca credential_adapter.CredentialAdapterClient
 }
 
 type KnoxClient interface {
@@ -26,10 +22,10 @@ type KnoxClient interface {
 	GenerateIdentity(GenerateIdentityParams) error
 }
 
-func NewKnoxClient(wallet DynamicSigner) (KnoxClient, error) {
+func NewKnoxClient(s signer.DynamicSigner) (KnoxClient, error) {
 	ca, err := credential_adapter.NewCredentialAdapterClient()
 	if err != nil {
 		return &knoxClient{}, err
 	}
-	return &knoxClient{signer: wallet, ca: ca}, nil
+	return &knoxClient{s: s, ca: ca}, nil
 }

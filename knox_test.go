@@ -7,12 +7,13 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/knox-networks/knox-go/credential_adapter"
 	ca_mock "github.com/knox-networks/knox-go/credential_adapter/mock"
-	knox_mock "github.com/knox-networks/knox-go/mock"
 	"github.com/knox-networks/knox-go/model"
+	"github.com/knox-networks/knox-go/signer"
+	s_mock "github.com/knox-networks/knox-go/signer/mock"
 )
 
 type requestCredentialFields struct {
-	w  DynamicSigner
+	w  signer.DynamicSigner
 	ca credential_adapter.CredentialAdapterClient
 }
 type requestCredentialArgs struct {
@@ -29,9 +30,9 @@ type requestCredentialTest struct {
 func TestRequestCredential(t *testing.T) {
 	cred_type := "BankCard"
 	mock_controller := gomock.NewController(t)
-	mock_wallet := knox_mock.NewMockWallet(mock_controller)
+	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
 	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
-	kc := &knoxClient{signer: mock_wallet, ca: mock_ca}
+	kc := &knoxClient{s: mock_wallet, ca: mock_ca}
 
 	tests := []requestCredentialTest{
 		{
@@ -43,12 +44,12 @@ func TestRequestCredential(t *testing.T) {
 				did := "did:example:123456789"
 				nonce := "nonce"
 				signature := []byte("signature")
-				gomock.InOrder(f.w.(*knox_mock.MockWallet).EXPECT().
+				gomock.InOrder(f.w.(*s_mock.MockDynamicSigner).EXPECT().
 					GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
 						CreateIssuanceChallenge(cred_type, did).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, nil),
-					f.w.(*knox_mock.MockWallet).EXPECT().
+					f.w.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign([]byte(nonce)).
 						Return(signature, nil),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
@@ -67,7 +68,7 @@ func TestRequestCredential(t *testing.T) {
 			prepare: func(f *requestCredentialFields) {
 				did := "did:example:123456789"
 				nonce := "nonce"
-				gomock.InOrder(f.w.(*knox_mock.MockWallet).EXPECT().
+				gomock.InOrder(f.w.(*s_mock.MockDynamicSigner).EXPECT().
 					GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
 						CreateIssuanceChallenge(cred_type, did).
@@ -86,12 +87,12 @@ func TestRequestCredential(t *testing.T) {
 				did := "did:example:123456789"
 				nonce := "nonce"
 				signature := []byte("signature")
-				gomock.InOrder(f.w.(*knox_mock.MockWallet).EXPECT().
+				gomock.InOrder(f.w.(*s_mock.MockDynamicSigner).EXPECT().
 					GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
 						CreateIssuanceChallenge(cred_type, did).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, nil),
-					f.w.(*knox_mock.MockWallet).EXPECT().
+					f.w.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign([]byte(nonce)).
 						Return(signature, errors.New("error signing")),
 				)
@@ -108,12 +109,12 @@ func TestRequestCredential(t *testing.T) {
 				did := "did:example:123456789"
 				nonce := "nonce"
 				signature := []byte("signature")
-				gomock.InOrder(f.w.(*knox_mock.MockWallet).EXPECT().
+				gomock.InOrder(f.w.(*s_mock.MockDynamicSigner).EXPECT().
 					GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
 						CreateIssuanceChallenge(cred_type, did).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, nil),
-					f.w.(*knox_mock.MockWallet).EXPECT().
+					f.w.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign([]byte(nonce)).
 						Return(signature, nil),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
@@ -200,9 +201,9 @@ func TestPresentCredential(t *testing.T) {
 	 }`)
 
 	mock_controller := gomock.NewController(t)
-	mock_wallet := knox_mock.NewMockWallet(mock_controller)
+	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
 	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
-	kc := &knoxClient{signer: mock_wallet, ca: mock_ca}
+	kc := &knoxClient{s: mock_wallet, ca: mock_ca}
 	mock_ca.EXPECT().CreatePresentationChallenge().Return(&credential_adapter.PresentationChallenge{}, nil)
 	err := kc.SharePresentation(SharePresentationParams{Credentials: []model.SerializedDocument{cred}})
 

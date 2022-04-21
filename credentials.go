@@ -24,14 +24,14 @@ type RequestPresentationParams struct {
 }
 
 func (c *knoxClient) RequestCredential(params RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
-	did := c.signer.GetDid()
+	did := c.s.GetDid()
 	cred_type := params.CredentialType
 	qrCode, err := c.ca.CreateIssuanceChallenge(cred_type, did)
 	fmt.Println("Created issuance challenge")
 	if err != nil {
 		return credential_adapter.VerifiableCredential{}, err
 	}
-	signature, err := c.signer.Sign([]byte(qrCode.Nonce))
+	signature, err := c.s.Sign([]byte(qrCode.Nonce))
 	fmt.Printf("Created Signature For Nonce %s\n", qrCode.Nonce)
 	if err != nil {
 		return credential_adapter.VerifiableCredential{}, err
@@ -83,7 +83,7 @@ func (c *knoxClient) SharePresentation(params SharePresentationParams) error {
 
 	fmt.Printf("Normalized: %v\n", (normalized.(string)))
 
-	proofValue, err := c.signer.Sign([]byte(normalized.(string)))
+	proofValue, err := c.s.Sign([]byte(normalized.(string)))
 	if err != nil {
 		return err
 	}
