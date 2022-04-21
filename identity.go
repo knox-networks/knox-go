@@ -5,7 +5,8 @@ import "errors"
 type RegisterIdentityParams struct {
 }
 
-type GenerateIdentityParams struct{}
+type GenerateIdentityParams struct {
+}
 
 func (c *knoxClient) RegisterIdentity(params RegisterIdentityParams) error {
 	return errors.New("not implemented")
