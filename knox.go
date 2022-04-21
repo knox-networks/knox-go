@@ -1,11 +1,20 @@
 package knox
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/knox-networks/knox-go/credential_adapter"
+	"github.com/knox-networks/knox-go/model"
+	mb "github.com/multiformats/go-multibase"
+	"github.com/piprate/json-gold/ld"
 )
+
+const NormalizationAlgo = "URDNA2015"
+const NormalizationFormat = "application/n-quads"
+const ProofType = "Ed25519Signature2020"
 
 type Wallet interface {
 	Sign(message []byte) ([]byte, error)
@@ -19,7 +28,7 @@ type knoxClient struct {
 
 type KnoxClient interface {
 	RequestCredential(cred_type string) (credential_adapter.VerifiableCredential, error)
-	PresentCredential(cred credential_adapter.VerifiableCredential) error
+	PresentCredential(cred ...model.SerializedDocument) error
 }
 
 func NewKnoxClient(wallet Wallet) (KnoxClient, error) {
@@ -52,15 +61,60 @@ func (c *knoxClient) RequestCredential(cred_type string) (credential_adapter.Ver
 	return cred, nil
 }
 
-func (c *knoxClient) PresentCredential(cred credential_adapter.VerifiableCredential) error {
+func (c *knoxClient) PresentCredential(creds ...model.SerializedDocument) error {
 
-	challenge, err := c.ca.CreatePresentationChallenge(cred.Type)
+	challenge, err := c.ca.CreatePresentationChallenge()
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Challenge: %s, %s\n", challenge.Nonce, challenge.Url)
+	converted_creds := make([]map[string]interface{}, len(creds))
+
+	for i, cred := range creds {
+		var converted_cred map[string]interface{}
+		if err := json.Unmarshal(cred, &converted_cred); err != nil {
+			return err
+		}
+
+		converted_creds[i] = converted_cred
+	}
+
+	vp := map[string]interface{}{
+		"@context":             []string{"https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"},
+		"type":                 []string{"VerifiablePresentation"},
+		"verifiableCredential": converted_creds,
+	}
+
+	proc := ld.NewJsonLdProcessor()
+	options := ld.NewJsonLdOptions("")
+	options.Format = NormalizationFormat
+	options.Algorithm = NormalizationAlgo
+	normalized, err := proc.Normalize(vp, options)
+
+	if err != nil {
+		fmt.Printf("Error normalizing: %s\n", err.Error())
+		return err
+	}
+
+	fmt.Printf("Normalized: %v\n", (normalized.(string)))
+
+	proofValue, err := c.wallet.Sign([]byte(normalized.(string)))
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Challenge: %s, %s, %s", challenge.Nonce, challenge.Url, challenge.CredType)
-	err = c.ca.PresentVerifiableCredential(cred)
+	encoded, err := mb.Encode(mb.Base58BTC, proofValue)
+	if err != nil {
+		return err
+	}
+
+	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
+		Type:               ProofType,
+		Created:            time.Now().UTC().Format(time.RFC3339),
+		VerificationMethod: "",
+		ProofPurpose:       "assertionMethod",
+		ProofValue:         encoded,
+	})
 	if err != nil {
 		return err
 	}

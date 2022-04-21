@@ -9,6 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	credential_adapter "github.com/knox-networks/knox-go/credential_adapter"
+	model "github.com/knox-networks/knox-go/model"
 )
 
 // MockWallet is a mock of Wallet interface.
@@ -87,17 +88,21 @@ func (m *MockKnoxClient) EXPECT() *MockKnoxClientMockRecorder {
 }
 
 // PresentCredential mocks base method.
-func (m *MockKnoxClient) PresentCredential(cred credential_adapter.VerifiableCredential) error {
+func (m *MockKnoxClient) PresentCredential(cred ...model.SerializedDocument) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PresentCredential", cred)
+	varargs := []interface{}{}
+	for _, a := range cred {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "PresentCredential", varargs...)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PresentCredential indicates an expected call of PresentCredential.
-func (mr *MockKnoxClientMockRecorder) PresentCredential(cred interface{}) *gomock.Call {
+func (mr *MockKnoxClientMockRecorder) PresentCredential(cred ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PresentCredential", reflect.TypeOf((*MockKnoxClient)(nil).PresentCredential), cred)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PresentCredential", reflect.TypeOf((*MockKnoxClient)(nil).PresentCredential), cred...)
 }
 
 // RequestCredential mocks base method.
