@@ -33,17 +33,11 @@ func (c *knoxClient) RequestCredential(params RequestCredentialParams) (credenti
 	did := c.s.GetDid()
 	cred_type := params.CredentialType
 
-	nonce := ""
-	if (params.Challenge != RequestCredentialChallenge{}) {
-		nonce = params.Challenge.Nonce
-	} else {
-		challenge, err := c.ca.CreateIssuanceChallenge(cred_type, did)
-		if err != nil {
-			return credential_adapter.VerifiableCredential{}, err
-		}
-		fmt.Println("Created issuance challenge")
-		nonce = challenge.Nonce
+	nonce, err := c.parseChallenge(params.Challenge, cred_type, did)
+	if err != nil {
+		return credential_adapter.VerifiableCredential{}, err
 	}
+	fmt.Println("Created issuance challenge")
 
 	signature, err := c.s.Sign(signer.AssertionMethod, []byte(nonce))
 	if err != nil {
@@ -58,6 +52,18 @@ func (c *knoxClient) RequestCredential(params RequestCredentialParams) (credenti
 	}
 
 	return cred, nil
+}
+
+func (c *knoxClient) parseChallenge(challenge RequestCredentialChallenge, credType string, did string) (string, error) {
+	if (challenge != RequestCredentialChallenge{}) {
+		return challenge.Nonce, nil
+	} else {
+		challenge, err := c.ca.CreateIssuanceChallenge(credType, did)
+		if err != nil {
+			return "", err
+		}
+		return challenge.Nonce, nil
+	}
 }
 
 func (c *knoxClient) SharePresentation(params SharePresentationParams) error {
