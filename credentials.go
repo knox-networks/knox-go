@@ -13,8 +13,13 @@ import (
 	"github.com/piprate/json-gold/ld"
 )
 
+type RequestCredentialChallenge struct {
+	Nonce string
+}
+
 type RequestCredentialParams struct {
 	CredentialType string
+	Challenge      RequestCredentialChallenge
 }
 
 type SharePresentationParams struct {
@@ -27,19 +32,27 @@ type RequestPresentationParams struct {
 func (c *knoxClient) RequestCredential(params RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
 	did := c.s.GetDid()
 	cred_type := params.CredentialType
-	qrCode, err := c.ca.CreateIssuanceChallenge(cred_type, did)
-	fmt.Println("Created issuance challenge")
-	if err != nil {
-		return credential_adapter.VerifiableCredential{}, err
-	}
-	signature, err := c.s.Sign(signer.AssertionMethod, []byte(qrCode.Nonce))
-	fmt.Printf("Created Signature For Nonce %s\n", qrCode.Nonce)
-	if err != nil {
-		return credential_adapter.VerifiableCredential{}, err
+
+	nonce := ""
+	if (params.Challenge != RequestCredentialChallenge{}) {
+		nonce = params.Challenge.Nonce
+	} else {
+		challenge, err := c.ca.CreateIssuanceChallenge(cred_type, did)
+		if err != nil {
+			return credential_adapter.VerifiableCredential{}, err
+		}
+		fmt.Println("Created issuance challenge")
+		nonce = challenge.Nonce
 	}
 
+	signature, err := c.s.Sign(signer.AssertionMethod, []byte(nonce))
+	if err != nil {
+		return credential_adapter.VerifiableCredential{}, err
+	}
+	fmt.Printf("Created Signature For Nonce %s\n", nonce)
+
 	fmt.Printf("About to request issuance of credential of type %s\n", cred_type)
-	cred, err := c.ca.IssueVerifiableCredential(cred_type, did, qrCode.Nonce, signature)
+	cred, err := c.ca.IssueVerifiableCredential(cred_type, did, nonce, signature)
 	if err != nil {
 		return credential_adapter.VerifiableCredential{}, err
 	}

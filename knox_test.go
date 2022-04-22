@@ -17,7 +17,7 @@ type requestCredentialFields struct {
 	ca credential_adapter.CredentialAdapterClient
 }
 type requestCredentialArgs struct {
-	cred_type string
+	params RequestCredentialParams
 }
 
 type requestCredentialTest struct {
@@ -38,7 +38,9 @@ func TestRequestCredential(t *testing.T) {
 		{
 			name: "RequestCredential Succeeds",
 			args: requestCredentialArgs{
-				cred_type: cred_type,
+				params: RequestCredentialParams{
+					CredentialType: cred_type,
+				},
 			},
 			prepare: func(f *requestCredentialFields) {
 				did := "did:example:123456789"
@@ -61,10 +63,37 @@ func TestRequestCredential(t *testing.T) {
 			expectedError: nil,
 		},
 		{
+			name: "RequestCredential Succeeds With Pre-Existing Challenge",
+			args: requestCredentialArgs{
+				params: RequestCredentialParams{
+					CredentialType: cred_type,
+					Challenge: RequestCredentialChallenge{
+						Nonce: "nonce1234",
+					},
+				}},
+			prepare: func(f *requestCredentialFields) {
+				did := "did:example:123456789"
+				signature := []byte("signature")
+				nonce := "nonce1234"
+				gomock.InOrder(f.w.(*s_mock.MockDynamicSigner).EXPECT().
+					GetDid().Return(did),
+					f.w.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.AssertionMethod, []byte(nonce)).
+						Return(signature, nil),
+					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
+						IssueVerifiableCredential(cred_type, did, nonce, signature).
+						Return(credential_adapter.VerifiableCredential{}, nil),
+				)
+
+			},
+			expectedError: nil,
+		},
+		{
 			name: "RequestCredential Create Challenge Fails",
 			args: requestCredentialArgs{
-				cred_type: cred_type,
-			},
+				params: RequestCredentialParams{
+					CredentialType: cred_type,
+				}},
 			prepare: func(f *requestCredentialFields) {
 				did := "did:example:123456789"
 				nonce := "nonce"
@@ -81,8 +110,9 @@ func TestRequestCredential(t *testing.T) {
 		{
 			name: "RequestCredential Sign Nonce Fails",
 			args: requestCredentialArgs{
-				cred_type: cred_type,
-			},
+				params: RequestCredentialParams{
+					CredentialType: cred_type,
+				}},
 			prepare: func(f *requestCredentialFields) {
 				did := "did:example:123456789"
 				nonce := "nonce"
@@ -103,8 +133,9 @@ func TestRequestCredential(t *testing.T) {
 		{
 			name: "RequestCredential Sign Nonce Fails",
 			args: requestCredentialArgs{
-				cred_type: cred_type,
-			},
+				params: RequestCredentialParams{
+					CredentialType: cred_type,
+				}},
 			prepare: func(f *requestCredentialFields) {
 				did := "did:example:123456789"
 				nonce := "nonce"
@@ -134,7 +165,7 @@ func TestRequestCredential(t *testing.T) {
 				ca: mock_ca,
 			}
 			test.prepare(f)
-			_, err := kc.RequestCredential(RequestCredentialParams{CredentialType: test.args.cred_type})
+			_, err := kc.RequestCredential(test.args.params)
 
 			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
 				t.Errorf("Expected error %v, got %v", test.expectedError, err)
