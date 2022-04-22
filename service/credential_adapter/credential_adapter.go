@@ -61,7 +61,7 @@ func NewCredentialAdapterClient(address string) (CredentialAdapterClient, error)
 	}
 	client := AdapterApi.NewAdapterServiceClient(conn)
 
-	return credentialAdapterClient{
+	return &credentialAdapterClient{
 		client: client,
 		conn:   conn,
 	}, nil
