@@ -9,7 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	knox "github.com/knox-networks/knox-go"
-	credential_adapter "github.com/knox-networks/knox-go/credential_adapter"
+	credential_adapter "github.com/knox-networks/knox-go/service/credential_adapter"
 )
 
 // MockKnoxClient is a mock of KnoxClient interface.

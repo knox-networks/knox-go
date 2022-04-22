@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	mock_client "github.com/knox-networks/knox-go/credential_adapter/grpc_mock"
+	mock_client "github.com/knox-networks/knox-go/service/credential_adapter/grpc_mock"
 	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1"
 )
 
@@ -56,7 +56,7 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 			Return(&AdapterApi.CreateIssuanceChallengeResponse{
 				Nonce:          test.mockNonce,
 				CredentialType: getCredentialEnumFromName(cred_type),
-				Endpoint:       CREDENTIAL_ADAPTER_ADDRESS,
+				Endpoint:       "vc.knoxnetworks.io:5051",
 			}, test.mockClientRequestError)
 
 		challenge, err := adapter_client.CreateIssuanceChallenge(cred_type, did)

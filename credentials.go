@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/knox-networks/knox-go/credential_adapter"
 	"github.com/knox-networks/knox-go/model"
+	"github.com/knox-networks/knox-go/service/credential_adapter"
 	"github.com/knox-networks/knox-go/signer"
 	mb "github.com/multiformats/go-multibase"
 	"github.com/piprate/json-gold/ld"

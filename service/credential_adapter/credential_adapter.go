@@ -16,8 +16,7 @@ import (
 )
 
 var (
-	CREDENTIAL_ADAPTER_ADDRESS = "vc.knoxnetworks.io:5051"
-	DEFAULT_ALIAS_LENGTH       = 5
+	DEFAULT_ALIAS_LENGTH = 5
 )
 
 type credentialAdapterClient struct {
@@ -50,19 +49,19 @@ type CredentialAdapterClient interface {
 	PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof) error
 }
 
-func NewCredentialAdapterClient() (CredentialAdapterClient, error) {
+func NewCredentialAdapterClient(address string) (CredentialAdapterClient, error) {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	conn, err := grpc.Dial(CREDENTIAL_ADAPTER_ADDRESS, opts...)
+	conn, err := grpc.Dial(address, opts...)
 
 	if err != nil {
 		return nil, err
 	}
 	client := AdapterApi.NewAdapterServiceClient(conn)
 
-	return &credentialAdapterClient{
+	return credentialAdapterClient{
 		client: client,
 		conn:   conn,
 	}, nil
