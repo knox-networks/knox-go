@@ -85,8 +85,6 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 
 }
 
-type createPresentationChallengeTest struct{}
-
 func TestCreatePresentationChallenge(t *testing.T) {
 	t.Skip("Not implemented")
 }
@@ -145,9 +143,6 @@ func TestIssueVerifiableCredential(t *testing.T) {
 			t.Errorf("Expected cred_type %v, but got %v", cred_type, cred.Type)
 		}
 	}
-}
-
-type presentVerifiableCredentialTest struct {
 }
 
 func TestPresentVerifiableCredential(t *testing.T) {
