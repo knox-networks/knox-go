@@ -97,7 +97,7 @@ func (c *knoxClient) SharePresentation(params SharePresentationParams) error {
 		Type:               ProofType,
 		Created:            time.Now().UTC().Format(time.RFC3339),
 		VerificationMethod: "",
-		ProofPurpose:       "assertionMethod",
+		ProofPurpose:       signer.AssertionMethod.String(),
 		ProofValue:         encoded,
 	})
 	if err != nil {
