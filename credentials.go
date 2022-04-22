@@ -8,6 +8,7 @@ import (
 
 	"github.com/knox-networks/knox-go/credential_adapter"
 	"github.com/knox-networks/knox-go/model"
+	"github.com/knox-networks/knox-go/signer"
 	mb "github.com/multiformats/go-multibase"
 	"github.com/piprate/json-gold/ld"
 )
@@ -31,7 +32,7 @@ func (c *knoxClient) RequestCredential(params RequestCredentialParams) (credenti
 	if err != nil {
 		return credential_adapter.VerifiableCredential{}, err
 	}
-	signature, err := c.s.Sign([]byte(qrCode.Nonce))
+	signature, err := c.s.Sign(signer.AssertionMethod, []byte(qrCode.Nonce))
 	fmt.Printf("Created Signature For Nonce %s\n", qrCode.Nonce)
 	if err != nil {
 		return credential_adapter.VerifiableCredential{}, err
@@ -82,7 +83,7 @@ func (c *knoxClient) SharePresentation(params SharePresentationParams) error {
 
 	fmt.Printf("Normalized: %v\n", (normalized.(string)))
 
-	proofValue, err := c.s.Sign([]byte(normalized.(string)))
+	proofValue, err := c.s.Sign(signer.AssertionMethod, []byte(normalized.(string)))
 	if err != nil {
 		return err
 	}

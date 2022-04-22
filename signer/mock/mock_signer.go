@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	signer "github.com/knox-networks/knox-go/signer"
 )
 
 // MockDynamicSigner is a mock of DynamicSigner interface.
@@ -48,16 +49,16 @@ func (mr *MockDynamicSignerMockRecorder) GetDid() *gomock.Call {
 }
 
 // Sign mocks base method.
-func (m *MockDynamicSigner) Sign(message []byte) ([]byte, error) {
+func (m *MockDynamicSigner) Sign(rel signer.VerificationRelation, message []byte) ([]byte, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Sign", message)
+	ret := m.ctrl.Call(m, "Sign", rel, message)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Sign indicates an expected call of Sign.
-func (mr *MockDynamicSignerMockRecorder) Sign(message interface{}) *gomock.Call {
+func (mr *MockDynamicSignerMockRecorder) Sign(rel, message interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Sign", reflect.TypeOf((*MockDynamicSigner)(nil).Sign), message)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Sign", reflect.TypeOf((*MockDynamicSigner)(nil).Sign), rel, message)
 }

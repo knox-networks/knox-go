@@ -50,7 +50,7 @@ func TestRequestCredential(t *testing.T) {
 						CreateIssuanceChallenge(cred_type, did).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, nil),
 					f.w.(*s_mock.MockDynamicSigner).EXPECT().
-						Sign([]byte(nonce)).
+						Sign(signer.AssertionMethod, []byte(nonce)).
 						Return(signature, nil),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
 						IssueVerifiableCredential(cred_type, did, nonce, signature).
@@ -93,7 +93,7 @@ func TestRequestCredential(t *testing.T) {
 						CreateIssuanceChallenge(cred_type, did).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, nil),
 					f.w.(*s_mock.MockDynamicSigner).EXPECT().
-						Sign([]byte(nonce)).
+						Sign(signer.AssertionMethod, []byte(nonce)).
 						Return(signature, errors.New("error signing")),
 				)
 
@@ -115,7 +115,7 @@ func TestRequestCredential(t *testing.T) {
 						CreateIssuanceChallenge(cred_type, did).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, nil),
 					f.w.(*s_mock.MockDynamicSigner).EXPECT().
-						Sign([]byte(nonce)).
+						Sign(signer.AssertionMethod, []byte(nonce)).
 						Return(signature, nil),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
 						IssueVerifiableCredential(cred_type, did, nonce, signature).
