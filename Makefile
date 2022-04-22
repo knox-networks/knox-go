@@ -28,7 +28,7 @@ lint:  ## run linter
 	golangci-lint run ./...
 
 mockgen: ## generate mock go files
-	mockgen -destination=./credential_adapter/mock/mock_credential_adapter.go -package=mock -source=./credential_adapter/credential_adapter.go
+	mockgen -destination=./service/credential_adapter/mock/mock_credential_adapter.go -package=mock -source=./service/credential_adapter/credential_adapter.go
 	mockgen -destination=./mock/mock_knox.go -package=mock -source=knox.go
 	mockgen -destination=./signer/mock/mock_signer.go -package=mock -source=signer/signer.go
-	mockgen -build_flags=--mod=mod -destination=./credential_adapter/grpc_mock/mock_grpc_credential_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1" AdapterServiceClient
+	mockgen -build_flags=--mod=mod -destination=./service/credential_adapter/grpc_mock/mock_grpc_credential_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1" AdapterServiceClient

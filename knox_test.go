@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/knox-networks/knox-go/credential_adapter"
-	ca_mock "github.com/knox-networks/knox-go/credential_adapter/mock"
 	"github.com/knox-networks/knox-go/model"
+	"github.com/knox-networks/knox-go/service/credential_adapter"
+	ca_mock "github.com/knox-networks/knox-go/service/credential_adapter/mock"
 	"github.com/knox-networks/knox-go/signer"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
 )
