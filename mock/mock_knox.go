@@ -9,6 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	knox "github.com/knox-networks/knox-go"
+	params "github.com/knox-networks/knox-go/params"
 	credential_adapter "github.com/knox-networks/knox-go/service/credential_adapter"
 )
 
@@ -64,7 +65,7 @@ func (mr *MockKnoxClientMockRecorder) RegisterIdentity(arg0 interface{}) *gomock
 }
 
 // RequestCredential mocks base method.
-func (m *MockKnoxClient) RequestCredential(arg0 knox.RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
+func (m *MockKnoxClient) RequestCredential(arg0 params.RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RequestCredential", arg0)
 	ret0, _ := ret[0].(credential_adapter.VerifiableCredential)

@@ -8,10 +8,10 @@ type RegisterIdentityParams struct {
 type GenerateIdentityParams struct {
 }
 
-func (c *knoxClient) RegisterIdentity(params RegisterIdentityParams) error {
+func (c *KnoxClient) RegisterIdentity(params RegisterIdentityParams) error {
 	return errors.New("not implemented")
 }
 
-func (c *knoxClient) GenerateIdentity(params GenerateIdentityParams) error {
+func (c *KnoxClient) GenerateIdentity(params GenerateIdentityParams) error {
 	return errors.New("not implemented")
 }

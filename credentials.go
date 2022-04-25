@@ -7,20 +7,10 @@ import (
 	"time"
 
 	"github.com/knox-networks/knox-go/model"
-	"github.com/knox-networks/knox-go/service/credential_adapter"
 	"github.com/knox-networks/knox-go/signer"
 	mb "github.com/multiformats/go-multibase"
 	"github.com/piprate/json-gold/ld"
 )
-
-type RequestCredentialChallenge struct {
-	Nonce string
-}
-
-type RequestCredentialParams struct {
-	CredentialType string
-	Challenge      RequestCredentialChallenge
-}
 
 type SharePresentationParams struct {
 	Credentials []model.SerializedDocument
@@ -29,44 +19,7 @@ type SharePresentationParams struct {
 type RequestPresentationParams struct {
 }
 
-func (c *knoxClient) RequestCredential(params RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
-	did := c.s.GetDid()
-	cred_type := params.CredentialType
-
-	nonce, err := c.parseChallenge(params.Challenge, cred_type, did)
-	if err != nil {
-		return credential_adapter.VerifiableCredential{}, err
-	}
-	fmt.Println("Created issuance challenge")
-
-	signature, err := c.s.Sign(signer.AssertionMethod, []byte(nonce))
-	if err != nil {
-		return credential_adapter.VerifiableCredential{}, err
-	}
-	fmt.Printf("Created Signature For Nonce %s\n", nonce)
-
-	fmt.Printf("About to request issuance of credential of type %s\n", cred_type)
-	cred, err := c.ca.IssueVerifiableCredential(cred_type, did, nonce, signature)
-	if err != nil {
-		return credential_adapter.VerifiableCredential{}, err
-	}
-
-	return cred, nil
-}
-
-func (c *knoxClient) parseChallenge(challenge RequestCredentialChallenge, credType string, did string) (string, error) {
-	if (challenge != RequestCredentialChallenge{}) {
-		return challenge.Nonce, nil
-	} else {
-		challenge, err := c.ca.CreateIssuanceChallenge(credType, did)
-		if err != nil {
-			return "", err
-		}
-		return challenge.Nonce, nil
-	}
-}
-
-func (c *knoxClient) SharePresentation(params SharePresentationParams) error {
+func (c *KnoxClient) SharePresentation(params SharePresentationParams) error {
 	creds := params.Credentials
 	challenge, err := c.ca.CreatePresentationChallenge()
 	if err != nil {
@@ -126,6 +79,6 @@ func (c *knoxClient) SharePresentation(params SharePresentationParams) error {
 	return errors.New("not implemented")
 }
 
-func (c *knoxClient) RequestPresentation(params RequestPresentationParams) error {
+func (c *KnoxClient) RequestPresentation(params RequestPresentationParams) error {
 	return errors.New("not implemented")
 }
