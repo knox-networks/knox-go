@@ -165,7 +165,7 @@ func TestRequestCredential(t *testing.T) {
 				ca: mock_ca,
 			}
 			test.prepare(f)
-			_, err := credClient.RequestCredential(test.args.p)
+			_, err := credClient.Request(test.args.p)
 
 			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
 				t.Errorf("Expected error %v, got %v", test.expectedError, err)

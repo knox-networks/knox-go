@@ -14,8 +14,8 @@ type identityClient struct {
 }
 
 type IdentityClient interface {
-	RegisterIdentity(p params.RegisterIdentityParams) error
-	GenerateIdentity(params params.GenerateIdentityParams) error
+	Register(p params.RegisterIdentityParams) error
+	Generate(params params.GenerateIdentityParams) error
 }
 
 func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, error) {
@@ -26,10 +26,10 @@ func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, 
 	return &identityClient{auth: auth, s: s}, nil
 }
 
-func (c *identityClient) RegisterIdentity(params params.RegisterIdentityParams) error {
+func (c *identityClient) Register(params params.RegisterIdentityParams) error {
 	return errors.New("not implemented")
 }
 
-func (c *identityClient) GenerateIdentity(params params.GenerateIdentityParams) error {
+func (c *identityClient) Generate(params params.GenerateIdentityParams) error {
 	return errors.New("not implemented")
 }

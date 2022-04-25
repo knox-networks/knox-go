@@ -20,7 +20,8 @@ type presentationClient struct {
 }
 
 type PresentationClient interface {
-	SharePresentation(p params.SharePresentationParams) error
+	Share(p params.SharePresentationParams) error
+	Request(p params.RequestPresentationParams) error
 }
 
 func NewPresentationClient(address string, s signer.DynamicSigner) (PresentationClient, error) {
@@ -31,7 +32,7 @@ func NewPresentationClient(address string, s signer.DynamicSigner) (Presentation
 	return &presentationClient{ca: ca, s: s}, nil
 }
 
-func (c *presentationClient) SharePresentation(p params.SharePresentationParams) error {
+func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	creds := p.Credentials
 	challenge, err := c.ca.CreatePresentationChallenge()
 	if err != nil {
@@ -91,6 +92,6 @@ func (c *presentationClient) SharePresentation(p params.SharePresentationParams)
 	return errors.New("not implemented")
 }
 
-func (c *presentationClient) RequestPresentation(p params.RequestPresentationParams) error {
+func (c *presentationClient) Request(p params.RequestPresentationParams) error {
 	return errors.New("not implemented")
 }

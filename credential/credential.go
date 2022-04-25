@@ -9,7 +9,7 @@ import (
 )
 
 type CredentialClient interface {
-	RequestCredential(params.RequestCredentialParams) (credential_adapter.VerifiableCredential, error)
+	Request(params.RequestCredentialParams) (credential_adapter.VerifiableCredential, error)
 }
 
 type credentialClient struct {
@@ -25,7 +25,7 @@ func NewCredentialClient(address string, s signer.DynamicSigner) (CredentialClie
 	return &credentialClient{ca: ca, s: s}, nil
 }
 
-func (c *credentialClient) RequestCredential(params params.RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
+func (c *credentialClient) Request(params params.RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
 	did := c.s.GetDid()
 	cred_type := params.CredentialType
 

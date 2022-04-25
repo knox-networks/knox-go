@@ -69,7 +69,7 @@ func TestPresentCredential(t *testing.T) {
 	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
 	pc := &presentationClient{s: mock_wallet, ca: mock_ca}
 	mock_ca.EXPECT().CreatePresentationChallenge().Return(&credential_adapter.PresentationChallenge{}, nil)
-	err := pc.SharePresentation(params.SharePresentationParams{Credentials: []model.SerializedDocument{cred}})
+	err := pc.Share(params.SharePresentationParams{Credentials: []model.SerializedDocument{cred}})
 
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
