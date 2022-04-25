@@ -43,3 +43,36 @@ func NewKnoxClient(c KnoxConfig) (*KnoxClient, error) {
 		Identity:     identityClient,
 	}, nil
 }
+
+func (k *KnoxClient) UpdateConfig(c *KnoxConfig) error {
+
+	if c.Signer != nil {
+		k.s = c.Signer
+	}
+
+	if c.Issuer.CredentialAdapterURL != "" {
+
+		credClient, err := credential.NewCredentialClient(c.Issuer.CredentialAdapterURL, c.Signer)
+		if err != nil {
+			return err
+		}
+		presClient, err := presentation.NewPresentationClient(c.Issuer.CredentialAdapterURL, c.Signer)
+		if err != nil {
+			return err
+		}
+
+		k.Credential = credClient
+		k.Presentation = presClient
+	}
+
+	if c.Issuer.AuthServiceURL != "" {
+		identityClient, err := identity.NewIdentityClient(c.Issuer.AuthServiceURL, c.Signer)
+		if err != nil {
+			return err
+		}
+
+		k.Identity = identityClient
+
+	}
+	return nil
+}
