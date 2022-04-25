@@ -1,4 +1,4 @@
-package knox
+package presentation
 
 import (
 	"encoding/json"
@@ -7,20 +7,32 @@ import (
 	"time"
 
 	"github.com/knox-networks/knox-go/model"
+	"github.com/knox-networks/knox-go/params"
+	"github.com/knox-networks/knox-go/service/credential_adapter"
 	"github.com/knox-networks/knox-go/signer"
 	mb "github.com/multiformats/go-multibase"
 	"github.com/piprate/json-gold/ld"
 )
 
-type SharePresentationParams struct {
-	Credentials []model.SerializedDocument
+type presentationClient struct {
+	ca credential_adapter.CredentialAdapterClient
+	s  signer.DynamicSigner
 }
 
-type RequestPresentationParams struct {
+type PresentationClient interface {
+	SharePresentation(p params.SharePresentationParams) error
 }
 
-func (c *KnoxClient) SharePresentation(params SharePresentationParams) error {
-	creds := params.Credentials
+func NewPresentationClient(address string, s signer.DynamicSigner) (PresentationClient, error) {
+	ca, err := credential_adapter.NewCredentialAdapterClient(address)
+	if err != nil {
+		return nil, err
+	}
+	return &presentationClient{ca: ca, s: s}, nil
+}
+
+func (c *presentationClient) SharePresentation(p params.SharePresentationParams) error {
+	creds := p.Credentials
 	challenge, err := c.ca.CreatePresentationChallenge()
 	if err != nil {
 		return err
@@ -45,8 +57,8 @@ func (c *KnoxClient) SharePresentation(params SharePresentationParams) error {
 
 	proc := ld.NewJsonLdProcessor()
 	options := ld.NewJsonLdOptions("")
-	options.Format = NormalizationFormat
-	options.Algorithm = NormalizationAlgo
+	options.Format = model.NormalizationFormat
+	options.Algorithm = model.NormalizationAlgo
 	normalized, err := proc.Normalize(vp, options)
 
 	if err != nil {
@@ -66,7 +78,7 @@ func (c *KnoxClient) SharePresentation(params SharePresentationParams) error {
 	}
 
 	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
-		Type:               ProofType,
+		Type:               model.ProofType,
 		Created:            time.Now().UTC().Format(time.RFC3339),
 		VerificationMethod: "",
 		ProofPurpose:       signer.AssertionMethod.String(),
@@ -79,6 +91,6 @@ func (c *KnoxClient) SharePresentation(params SharePresentationParams) error {
 	return errors.New("not implemented")
 }
 
-func (c *KnoxClient) RequestPresentation(params RequestPresentationParams) error {
+func (c *presentationClient) RequestPresentation(p params.RequestPresentationParams) error {
 	return errors.New("not implemented")
 }

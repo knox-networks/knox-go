@@ -1,5 +1,7 @@
 package params
 
+import "github.com/knox-networks/knox-go/model"
+
 type RequestCredentialChallenge struct {
 	Nonce string
 }
@@ -7,4 +9,11 @@ type RequestCredentialChallenge struct {
 type RequestCredentialParams struct {
 	CredentialType string
 	Challenge      RequestCredentialChallenge
+}
+
+type SharePresentationParams struct {
+	Credentials []model.SerializedDocument
+}
+
+type RequestPresentationParams struct {
 }

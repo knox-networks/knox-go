@@ -32,7 +32,7 @@ func TestRequestCredential(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
 	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
-	kc := &credentialClient{s: mock_wallet, ca: mock_ca}
+	credClient := &credentialClient{s: mock_wallet, ca: mock_ca}
 
 	tests := []requestCredentialTest{
 		{
@@ -165,7 +165,7 @@ func TestRequestCredential(t *testing.T) {
 				ca: mock_ca,
 			}
 			test.prepare(f)
-			_, err := kc.RequestCredential(test.args.p)
+			_, err := credClient.RequestCredential(test.args.p)
 
 			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
 				t.Errorf("Expected error %v, got %v", test.expectedError, err)

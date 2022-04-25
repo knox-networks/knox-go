@@ -9,3 +9,7 @@ type Proof struct {
 	ProofPurpose       string
 	ProofValue         string
 }
+
+const NormalizationAlgo = "URDNA2015"
+const NormalizationFormat = "application/n-quads"
+const ProofType = "Ed25519Signature2020"

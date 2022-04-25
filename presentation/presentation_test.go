@@ -1,10 +1,11 @@
-package knox
+package presentation
 
 import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/knox-networks/knox-go/model"
+	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/credential_adapter"
 	ca_mock "github.com/knox-networks/knox-go/service/credential_adapter/mock"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
@@ -66,9 +67,9 @@ func TestPresentCredential(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
 	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
-	kc := &KnoxClient{s: mock_wallet, ca: mock_ca}
+	pc := &presentationClient{s: mock_wallet, ca: mock_ca}
 	mock_ca.EXPECT().CreatePresentationChallenge().Return(&credential_adapter.PresentationChallenge{}, nil)
-	err := kc.SharePresentation(SharePresentationParams{Credentials: []model.SerializedDocument{cred}})
+	err := pc.SharePresentation(params.SharePresentationParams{Credentials: []model.SerializedDocument{cred}})
 
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
