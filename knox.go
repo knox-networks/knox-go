@@ -2,14 +2,14 @@ package knox
 
 import (
 	"github.com/knox-networks/knox-go/credential"
+	"github.com/knox-networks/knox-go/identity"
 	"github.com/knox-networks/knox-go/presentation"
-	"github.com/knox-networks/knox-go/service/auth_client"
 	"github.com/knox-networks/knox-go/signer"
 )
 
 type KnoxClient struct {
 	s            signer.DynamicSigner
-	auth         auth_client.AuthClient
+	Identity     identity.IdentityClient
 	Credential   credential.CredentialClient
 	Presentation presentation.PresentationClient
 }
@@ -31,9 +31,15 @@ func NewKnoxClient(c KnoxConfig) (*KnoxClient, error) {
 	if err != nil {
 		return &KnoxClient{}, err
 	}
-	auth, err := auth_client.NewAuthClient(c.Issuer.AuthServiceURL)
+
+	identityClient, err := identity.NewIdentityClient(c.Issuer.AuthServiceURL, c.Signer)
 	if err != nil {
 		return &KnoxClient{}, err
 	}
-	return &KnoxClient{s: c.Signer, auth: auth, Credential: credClient, Presentation: presClient}, nil
+
+	return &KnoxClient{s: c.Signer,
+		Credential:   credClient,
+		Presentation: presClient,
+		Identity:     identityClient,
+	}, nil
 }

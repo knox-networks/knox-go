@@ -17,3 +17,9 @@ type SharePresentationParams struct {
 
 type RequestPresentationParams struct {
 }
+
+type RegisterIdentityParams struct {
+}
+
+type GenerateIdentityParams struct {
+}
