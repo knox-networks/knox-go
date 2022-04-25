@@ -11,7 +11,7 @@ func TestNewKnoxClient(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 	mock_signer := s_mock.NewMockDynamicSigner(mock_controller)
 
-	_, err := NewKnoxClient(&KnoxConfig{
+	c, err := NewKnoxClient(&KnoxConfig{
 		Signer: mock_signer,
 		Network: &NetworkConfig{
 			CredentialAdapterURL: "",
@@ -21,6 +21,10 @@ func TestNewKnoxClient(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("Error creating knox client: %s", err)
+	}
+
+	if (c.Credential == nil) || (c.Presentation == nil) || (c.Identity == nil) {
+		t.Errorf("Knox client is missing one or more of the required clients")
 	}
 
 }
