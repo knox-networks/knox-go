@@ -1,27 +1,17 @@
 package knox
 
 import (
-	"github.com/knox-networks/knox-go/service/auth_client"
-	"github.com/knox-networks/knox-go/service/credential_adapter"
+	"github.com/knox-networks/knox-go/credential"
+	"github.com/knox-networks/knox-go/identity"
+	"github.com/knox-networks/knox-go/presentation"
 	"github.com/knox-networks/knox-go/signer"
 )
 
-const NormalizationAlgo = "URDNA2015"
-const NormalizationFormat = "application/n-quads"
-const ProofType = "Ed25519Signature2020"
-
-type knoxClient struct {
-	s    signer.DynamicSigner
-	ca   credential_adapter.CredentialAdapterClient
-	auth auth_client.AuthClient
-}
-
-type KnoxClient interface {
-	RequestCredential(RequestCredentialParams) (credential_adapter.VerifiableCredential, error)
-	SharePresentation(SharePresentationParams) error
-	RequestPresentation(RequestPresentationParams) error
-	RegisterIdentity(RegisterIdentityParams) error
-	GenerateIdentity(GenerateIdentityParams) error
+type KnoxClient struct {
+	s            signer.DynamicSigner
+	Identity     identity.IdentityClient
+	Credential   credential.CredentialClient
+	Presentation presentation.PresentationClient
 }
 
 type KnoxConfig struct {
@@ -32,14 +22,24 @@ type KnoxConfig struct {
 	}
 }
 
-func NewKnoxClient(c KnoxConfig) (KnoxClient, error) {
-	ca, err := credential_adapter.NewCredentialAdapterClient(c.Issuer.CredentialAdapterURL)
+func NewKnoxClient(c KnoxConfig) (*KnoxClient, error) {
+	credClient, err := credential.NewCredentialClient(c.Issuer.CredentialAdapterURL, c.Signer)
 	if err != nil {
-		return &knoxClient{}, err
+		return &KnoxClient{}, err
 	}
-	auth, err := auth_client.NewAuthClient(c.Issuer.AuthServiceURL)
+	presClient, err := presentation.NewPresentationClient(c.Issuer.CredentialAdapterURL, c.Signer)
 	if err != nil {
-		return &knoxClient{}, err
+		return &KnoxClient{}, err
 	}
-	return &knoxClient{s: c.Signer, ca: ca, auth: auth}, nil
+
+	identityClient, err := identity.NewIdentityClient(c.Issuer.AuthServiceURL, c.Signer)
+	if err != nil {
+		return &KnoxClient{}, err
+	}
+
+	return &KnoxClient{s: c.Signer,
+		Credential:   credClient,
+		Presentation: presClient,
+		Identity:     identityClient,
+	}, nil
 }
