@@ -16,6 +16,7 @@ type SharePresentationParams struct {
 }
 
 type RequestPresentationParams struct {
+	CredentialTypes []string
 }
 
 type RegisterIdentityParams struct {

@@ -35,17 +35,17 @@ func (m *MockCredentialClient) EXPECT() *MockCredentialClientMockRecorder {
 	return m.recorder
 }
 
-// RequestCredential mocks base method.
-func (m *MockCredentialClient) RequestCredential(arg0 params.RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
+// Request mocks base method.
+func (m *MockCredentialClient) Request(arg0 params.RequestCredentialParams) (credential_adapter.VerifiableCredential, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RequestCredential", arg0)
+	ret := m.ctrl.Call(m, "Request", arg0)
 	ret0, _ := ret[0].(credential_adapter.VerifiableCredential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// RequestCredential indicates an expected call of RequestCredential.
-func (mr *MockCredentialClientMockRecorder) RequestCredential(arg0 interface{}) *gomock.Call {
+// Request indicates an expected call of Request.
+func (mr *MockCredentialClientMockRecorder) Request(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestCredential", reflect.TypeOf((*MockCredentialClient)(nil).RequestCredential), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Request", reflect.TypeOf((*MockCredentialClient)(nil).Request), arg0)
 }

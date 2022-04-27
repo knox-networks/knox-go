@@ -21,7 +21,7 @@ type presentationClient struct {
 
 type PresentationClient interface {
 	Share(p params.SharePresentationParams) error
-	Request(p params.RequestPresentationParams) error
+	Request(p params.RequestPresentationParams) (*credential_adapter.PresentationChallenge, error)
 }
 
 func NewPresentationClient(address string, s signer.DynamicSigner) (PresentationClient, error) {
@@ -34,7 +34,7 @@ func NewPresentationClient(address string, s signer.DynamicSigner) (Presentation
 
 func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	creds := p.Credentials
-	challenge, err := c.ca.CreatePresentationChallenge()
+	challenge, err := c.ca.CreatePresentationChallenge([]string{"PermanentResidentCard"})
 	if err != nil {
 		return err
 	}
@@ -92,6 +92,11 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	return errors.New("not implemented")
 }
 
-func (c *presentationClient) Request(p params.RequestPresentationParams) error {
-	return errors.New("not implemented")
+func (c *presentationClient) Request(p params.RequestPresentationParams) (*credential_adapter.PresentationChallenge, error) {
+	challenge, err := c.ca.CreatePresentationChallenge(p.CredentialTypes)
+	if err != nil {
+		return &credential_adapter.PresentationChallenge{}, err
+	}
+
+	return challenge, nil
 }

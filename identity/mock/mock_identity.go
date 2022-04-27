@@ -34,30 +34,30 @@ func (m *MockIdentityClient) EXPECT() *MockIdentityClientMockRecorder {
 	return m.recorder
 }
 
-// GenerateIdentity mocks base method.
-func (m *MockIdentityClient) GenerateIdentity(params params.GenerateIdentityParams) error {
+// Generate mocks base method.
+func (m *MockIdentityClient) Generate(params params.GenerateIdentityParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateIdentity", params)
+	ret := m.ctrl.Call(m, "Generate", params)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// GenerateIdentity indicates an expected call of GenerateIdentity.
-func (mr *MockIdentityClientMockRecorder) GenerateIdentity(params interface{}) *gomock.Call {
+// Generate indicates an expected call of Generate.
+func (mr *MockIdentityClientMockRecorder) Generate(params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateIdentity", reflect.TypeOf((*MockIdentityClient)(nil).GenerateIdentity), params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Generate", reflect.TypeOf((*MockIdentityClient)(nil).Generate), params)
 }
 
-// RegisterIdentity mocks base method.
-func (m *MockIdentityClient) RegisterIdentity(p params.RegisterIdentityParams) error {
+// Register mocks base method.
+func (m *MockIdentityClient) Register(p params.RegisterIdentityParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RegisterIdentity", p)
+	ret := m.ctrl.Call(m, "Register", p)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// RegisterIdentity indicates an expected call of RegisterIdentity.
-func (mr *MockIdentityClientMockRecorder) RegisterIdentity(p interface{}) *gomock.Call {
+// Register indicates an expected call of Register.
+func (mr *MockIdentityClientMockRecorder) Register(p interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterIdentity", reflect.TypeOf((*MockIdentityClient)(nil).RegisterIdentity), p)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockIdentityClient)(nil).Register), p)
 }

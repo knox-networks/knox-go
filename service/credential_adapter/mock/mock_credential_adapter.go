@@ -65,18 +65,18 @@ func (mr *MockCredentialAdapterClientMockRecorder) CreateIssuanceChallenge(cred_
 }
 
 // CreatePresentationChallenge mocks base method.
-func (m *MockCredentialAdapterClient) CreatePresentationChallenge() (*credential_adapter.PresentationChallenge, error) {
+func (m *MockCredentialAdapterClient) CreatePresentationChallenge(credTypes []string) (*credential_adapter.PresentationChallenge, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreatePresentationChallenge")
+	ret := m.ctrl.Call(m, "CreatePresentationChallenge", credTypes)
 	ret0, _ := ret[0].(*credential_adapter.PresentationChallenge)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreatePresentationChallenge indicates an expected call of CreatePresentationChallenge.
-func (mr *MockCredentialAdapterClientMockRecorder) CreatePresentationChallenge() *gomock.Call {
+func (mr *MockCredentialAdapterClientMockRecorder) CreatePresentationChallenge(credTypes interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePresentationChallenge", reflect.TypeOf((*MockCredentialAdapterClient)(nil).CreatePresentationChallenge))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePresentationChallenge", reflect.TypeOf((*MockCredentialAdapterClient)(nil).CreatePresentationChallenge), credTypes)
 }
 
 // IssueVerifiableCredential mocks base method.

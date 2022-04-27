@@ -7,7 +7,7 @@ require (
 	github.com/multiformats/go-multibase v0.0.3
 	github.com/piprate/json-gold v0.4.1
 	go.buf.build/grpc/go/knox-networks/auth-mgmt v1.3.3
-	go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.21
+	go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.25
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.28.0
 )
