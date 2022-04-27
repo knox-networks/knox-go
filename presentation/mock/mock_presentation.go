@@ -34,16 +34,30 @@ func (m *MockPresentationClient) EXPECT() *MockPresentationClientMockRecorder {
 	return m.recorder
 }
 
-// SharePresentation mocks base method.
-func (m *MockPresentationClient) SharePresentation(p params.SharePresentationParams) error {
+// Request mocks base method.
+func (m *MockPresentationClient) Request(p params.RequestPresentationParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SharePresentation", p)
+	ret := m.ctrl.Call(m, "Request", p)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// SharePresentation indicates an expected call of SharePresentation.
-func (mr *MockPresentationClientMockRecorder) SharePresentation(p interface{}) *gomock.Call {
+// Request indicates an expected call of Request.
+func (mr *MockPresentationClientMockRecorder) Request(p interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SharePresentation", reflect.TypeOf((*MockPresentationClient)(nil).SharePresentation), p)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Request", reflect.TypeOf((*MockPresentationClient)(nil).Request), p)
+}
+
+// Share mocks base method.
+func (m *MockPresentationClient) Share(p params.SharePresentationParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Share", p)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Share indicates an expected call of Share.
+func (mr *MockPresentationClientMockRecorder) Share(p interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Share", reflect.TypeOf((*MockPresentationClient)(nil).Share), p)
 }

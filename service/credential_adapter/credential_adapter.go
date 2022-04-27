@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/knox-networks/knox-go/helpers/slices"
 	"github.com/knox-networks/knox-go/model"
 	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1"
 	"google.golang.org/grpc"
@@ -31,8 +32,9 @@ type IssuanceChallenge struct {
 }
 
 type PresentationChallenge struct {
-	Nonce string
-	Url   string
+	Nonce           string
+	Url             string
+	CredentialTypes []string
 }
 
 type VerifiableCredential struct {
@@ -44,7 +46,7 @@ type VerifiableCredential struct {
 type CredentialAdapterClient interface {
 	Close() error
 	CreateIssuanceChallenge(cred_type string, did string) (IssuanceChallenge, error)
-	CreatePresentationChallenge() (*PresentationChallenge, error)
+	CreatePresentationChallenge(credTypes []string) (*PresentationChallenge, error)
 	IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte) (VerifiableCredential, error)
 	PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof) error
 }
@@ -86,18 +88,21 @@ func (c *credentialAdapterClient) CreateIssuanceChallenge(cred_type string, did 
 	return IssuanceChallenge{Url: resp.Endpoint, CredType: cred_type, Nonce: resp.Nonce}, nil
 }
 
-func (c *credentialAdapterClient) CreatePresentationChallenge() (*PresentationChallenge, error) {
+func (c *credentialAdapterClient) CreatePresentationChallenge(credTypes []string) (*PresentationChallenge, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
 	defer cancel()
 	resp, err := c.client.CreatePresentationChallenge(ctx, &AdapterApi.CreatePresentationChallengeRequest{
-		CredentialType: AdapterApi.CredentialType_CREDENTIAL_TYPE_UNSPECIFIED,
+		CredentialTypes: slices.Map(credTypes, func(credType string) AdapterApi.CredentialType {
+			return getCredentialEnumFromName(credType)
+		}),
 	})
 
 	if err != nil {
 		return &PresentationChallenge{}, err
 	}
 
-	return &PresentationChallenge{Url: resp.Endpoint, Nonce: resp.Nonce}, nil
+	return &PresentationChallenge{Url: resp.Endpoint, Nonce: resp.Nonce, CredentialTypes: credTypes}, nil
 }
 
 func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte) (VerifiableCredential, error) {
@@ -152,14 +157,11 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.Seri
 	return nil
 }
 
-const PermanentResidentCard = "PermanentResidentCard"
-const BankCard = "BankCard"
-
 func getCredentialEnumFromName(credType string) AdapterApi.CredentialType {
 	switch credType {
-	case PermanentResidentCard:
+	case model.PermanentResidentCard:
 		return AdapterApi.CredentialType_CREDENTIAL_TYPE_PERMANENT_RESIDENT_CARD
-	case BankCard:
+	case model.BankCard:
 		return AdapterApi.CredentialType_CREDENTIAL_TYPE_BANK_CARD
 	default:
 		return AdapterApi.CredentialType_CREDENTIAL_TYPE_UNSPECIFIED
