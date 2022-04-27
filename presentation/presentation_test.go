@@ -14,7 +14,7 @@ import (
 )
 
 func TestSharePresentation(t *testing.T) {
-	cred_types := []string{"PermanentResidentCard"}
+	credTypes := []string{"PermanentResidentCard"}
 	cred := []byte(`{
 		"@context":[
 		   "https://www.w3.org/2018/credentials/v1"
@@ -71,7 +71,7 @@ func TestSharePresentation(t *testing.T) {
 	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
 	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
 	pc := &presentationClient{s: mock_wallet, ca: mock_ca}
-	mock_ca.EXPECT().CreatePresentationChallenge(cred_types).Return(&credential_adapter.PresentationChallenge{}, nil)
+	mock_ca.EXPECT().CreatePresentationChallenge(credTypes).Return(&credential_adapter.PresentationChallenge{}, nil)
 	err := pc.Share(params.SharePresentationParams{Credentials: []model.SerializedDocument{cred}})
 
 	if err != nil {
