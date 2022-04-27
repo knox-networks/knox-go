@@ -14,5 +14,7 @@ const NormalizationAlgo = "URDNA2015"
 const NormalizationFormat = "application/n-quads"
 const ProofType = "Ed25519Signature2020"
 
-const PermanentResidentCard = "PermanentResidentCard"
-const BankCard = "BankCard"
+const (
+	PermanentResidentCard = "PermanentResidentCard"
+	BankCard              = "BankCard"
+)
