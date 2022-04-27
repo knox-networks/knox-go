@@ -9,6 +9,8 @@ import (
 	"github.com/knox-networks/knox-go/helpers/slices"
 	mock_client "github.com/knox-networks/knox-go/service/credential_adapter/grpc_mock"
 	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type createIssuanceChallengeTest struct {
@@ -140,12 +142,12 @@ func TestCreatePresentationChallenge(t *testing.T) {
 						}),
 					},
 					).
-					Return(&AdapterApi.CreatePresentationChallengeResponse{}, errors.New("server error"))
+					Return(&AdapterApi.CreatePresentationChallengeResponse{}, status.Error(codes.Internal, "Internal Server Error"))
 			},
 			args: &createPresentationChallengeArgs{
 				credTypes: []string{"PermanentResidentCard"},
 			},
-			expectedError: errors.New("server error"),
+			expectedError: status.Error(codes.Internal, "Internal Server Error"),
 		},
 	}
 
