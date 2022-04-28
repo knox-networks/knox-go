@@ -119,6 +119,10 @@ func (k *KeyPairs) GetPublicKey(relation signer.VerificationRelation) ([]byte, e
 	}
 }
 
+func (k *KeyPairs) GetDid() string {
+	return DID_PREFIX + k.MasterPublicKey
+}
+
 func DecodePrefixed(encoded_key string) (mb.Encoding, []byte, error) {
 	encoding, decoded, err := mb.Decode(encoded_key)
 
@@ -129,8 +133,4 @@ func DecodePrefixed(encoded_key string) (mb.Encoding, []byte, error) {
 	prefix_less := bytes.TrimPrefix(decoded, MULTI_CODEC_PREFIX)
 
 	return encoding, prefix_less, nil
-}
-
-func (k *KeyPairs) GetDid() string {
-	return DID_PREFIX + k.MasterPublicKey
 }
