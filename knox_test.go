@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/knox-networks/knox-go/params"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
 )
 
@@ -49,7 +50,10 @@ func TestUpdateConfig(t *testing.T) {
 	identity := c.Identity
 	pres := c.Presentation
 
+	_, kps, _ := c.Identity.Generate(params.GenerateIdentityParams{})
+
 	c.UpdateConfig(&KnoxConfig{
+		Signer: kps,
 		Network: &NetworkConfig{
 			CredentialAdapterURL: "vc.knoxnetworks.io:5051",
 			AuthServiceURL:       "auth.knoxnetworks.io:5051",
