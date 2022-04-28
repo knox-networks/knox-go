@@ -1,6 +1,7 @@
 package identity
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -35,19 +36,36 @@ func TestGenerateIdentity(t *testing.T) {
 			args: generateIdentityArgs{
 				p: params.GenerateIdentityParams{},
 			},
-			prepare:       func(f *generateIdentityFields, args *generateIdentityArgs) {},
+			prepare: func(f *generateIdentityFields, args *generateIdentityArgs) {
+
+				f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair().Return(&crypto.KeyPairs{}, nil)
+			},
 			expectedError: nil,
+		},
+		{
+			name: "GenerateIdentity Fails Due To Key Generation Error",
+			args: generateIdentityArgs{
+				p: params.GenerateIdentityParams{},
+			},
+			prepare: func(f *generateIdentityFields, args *generateIdentityArgs) {
+
+				f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair().Return(&crypto.KeyPairs{}, errors.New("error"))
+			},
+			expectedError: errors.New("error"),
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.prepare(f, &test.args)
-
-			c := &identityClient{}
+			c := &identityClient{cm: f.cm}
 			_, _, err := c.Generate(params.GenerateIdentityParams{})
 
-			if err != test.expectedError {
+			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
+				t.Errorf("Expected error: %v, got: %v", test.expectedError, err)
+			}
+
+			if err != nil && test.expectedError != nil && err.Error() != test.expectedError.Error() {
 				t.Errorf("Expected error %v, got %v", test.expectedError, err)
 			}
 		})
