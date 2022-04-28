@@ -3,6 +3,7 @@ package identity
 import (
 	"errors"
 
+	"github.com/knox-networks/knox-go/helpers/crypto"
 	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/auth_client"
 	"github.com/knox-networks/knox-go/signer"
@@ -15,7 +16,7 @@ type identityClient struct {
 
 type IdentityClient interface {
 	Register(p params.RegisterIdentityParams) error
-	Generate(params params.GenerateIdentityParams) error
+	Generate(params params.GenerateIdentityParams) (*crypto.KeyPairs, error)
 }
 
 func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, error) {
@@ -30,6 +31,12 @@ func (c *identityClient) Register(params params.RegisterIdentityParams) error {
 	return errors.New("not implemented")
 }
 
-func (c *identityClient) Generate(params params.GenerateIdentityParams) error {
-	return errors.New("not implemented")
+func (c *identityClient) Generate(params params.GenerateIdentityParams) (*crypto.KeyPairs, error) {
+
+	kps, err := crypto.GenerateKeyPair()
+	if err != nil {
+		return &crypto.KeyPairs{}, err
+	}
+
+	return kps, errors.New("not implemented")
 }

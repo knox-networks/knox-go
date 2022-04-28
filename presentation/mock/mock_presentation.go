@@ -9,6 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	params "github.com/knox-networks/knox-go/params"
+	credential_adapter "github.com/knox-networks/knox-go/service/credential_adapter"
 )
 
 // MockPresentationClient is a mock of PresentationClient interface.
@@ -35,11 +36,12 @@ func (m *MockPresentationClient) EXPECT() *MockPresentationClientMockRecorder {
 }
 
 // Request mocks base method.
-func (m *MockPresentationClient) Request(p params.RequestPresentationParams) error {
+func (m *MockPresentationClient) Request(p params.RequestPresentationParams) (*credential_adapter.PresentationChallenge, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Request", p)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(*credential_adapter.PresentationChallenge)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Request indicates an expected call of Request.
