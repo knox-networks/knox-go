@@ -11,6 +11,7 @@ import (
 )
 
 type KeyPairs struct {
+	Mnemonic         string
 	MasterPublicKey  string
 	MasterPrivateKey []byte
 
@@ -64,6 +65,7 @@ func (c *cryptoManager) GenerateKeyPair() (*KeyPairs, error) {
 	}
 
 	return &KeyPairs{
+		Mnemonic:                       mnemonic,
 		MasterPublicKey:                encodedPublic,
 		MasterPrivateKey:               private,
 		AuthenticationPublicKey:        encodedPublic,
