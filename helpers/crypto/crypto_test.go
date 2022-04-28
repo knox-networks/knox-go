@@ -1,6 +1,7 @@
 package crypto
 
 import (
+	"crypto/ed25519"
 	"testing"
 
 	"github.com/knox-networks/knox-go/signer"
@@ -27,5 +28,10 @@ func TestKeyPairShouldImplementDynamicSigner(t *testing.T) {
 	if signature == nil {
 		t.Errorf("Expected signature, got nil")
 	}
+	public, _ := kps.GetPublicKey(signer.AssertionMethod)
+	isVerified := ed25519.Verify(ed25519.PublicKey(public), []byte("test"), signature)
 
+	if !isVerified {
+		t.Errorf("Expected signature to be valid")
+	}
 }
