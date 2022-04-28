@@ -13,6 +13,7 @@ import (
 type identityClient struct {
 	auth auth_client.AuthClient
 	s    signer.DynamicSigner
+	cm   crypto.CryptoManager
 }
 
 type IdentityClient interface {
@@ -25,7 +26,7 @@ func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, 
 	if err != nil {
 		return &identityClient{}, err
 	}
-	return &identityClient{auth: auth, s: s}, nil
+	return &identityClient{auth: auth, s: s, cm: crypto.NewCryptoManager()}, nil
 }
 
 func (c *identityClient) Register(params params.RegisterIdentityParams) error {
@@ -33,8 +34,7 @@ func (c *identityClient) Register(params params.RegisterIdentityParams) error {
 }
 
 func (c *identityClient) Generate(params params.GenerateIdentityParams) (*did.DidDocument, *crypto.KeyPairs, error) {
-
-	kps, err := crypto.GenerateKeyPair()
+	kps, err := c.cm.GenerateKeyPair()
 	if err != nil {
 		return &did.DidDocument{}, &crypto.KeyPairs{}, err
 	}

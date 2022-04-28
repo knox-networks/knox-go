@@ -32,7 +32,18 @@ var MULTI_CODEC_PREFIX = []byte{0xed, 0x01}
 const DID_PREFIX = "did:knox:"
 const PROOF_TYPE = "Ed25519VerificationKey2020"
 
-func GenerateKeyPair() (*KeyPairs, error) {
+type cryptoManager struct {
+}
+
+type CryptoManager interface {
+	GenerateKeyPair() (*KeyPairs, error)
+}
+
+func NewCryptoManager() CryptoManager {
+	return &cryptoManager{}
+}
+
+func (c *cryptoManager) GenerateKeyPair() (*KeyPairs, error) {
 	entropy, err := bip39.NewEntropy(256)
 	if err != nil {
 		return &KeyPairs{}, err

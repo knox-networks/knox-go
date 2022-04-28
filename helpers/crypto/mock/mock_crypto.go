@@ -3,3 +3,48 @@
 
 // Package mock is a generated GoMock package.
 package mock
+
+import (
+	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
+	crypto "github.com/knox-networks/knox-go/helpers/crypto"
+)
+
+// MockCryptoManager is a mock of CryptoManager interface.
+type MockCryptoManager struct {
+	ctrl     *gomock.Controller
+	recorder *MockCryptoManagerMockRecorder
+}
+
+// MockCryptoManagerMockRecorder is the mock recorder for MockCryptoManager.
+type MockCryptoManagerMockRecorder struct {
+	mock *MockCryptoManager
+}
+
+// NewMockCryptoManager creates a new mock instance.
+func NewMockCryptoManager(ctrl *gomock.Controller) *MockCryptoManager {
+	mock := &MockCryptoManager{ctrl: ctrl}
+	mock.recorder = &MockCryptoManagerMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockCryptoManager) EXPECT() *MockCryptoManagerMockRecorder {
+	return m.recorder
+}
+
+// GenerateKeyPair mocks base method.
+func (m *MockCryptoManager) GenerateKeyPair() (*crypto.KeyPairs, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GenerateKeyPair")
+	ret0, _ := ret[0].(*crypto.KeyPairs)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GenerateKeyPair indicates an expected call of GenerateKeyPair.
+func (mr *MockCryptoManagerMockRecorder) GenerateKeyPair() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateKeyPair", reflect.TypeOf((*MockCryptoManager)(nil).GenerateKeyPair))
+}
