@@ -10,6 +10,8 @@ import (
 	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/auth_client"
 	auth_mock "github.com/knox-networks/knox-go/service/auth_client/mock"
+	"github.com/knox-networks/knox-go/signer"
+	s_mock "github.com/knox-networks/knox-go/signer/mock"
 )
 
 type generateIdentityFields struct {
@@ -75,8 +77,9 @@ func TestGenerateIdentity(t *testing.T) {
 }
 
 type registerIdentityields struct {
-	cm   crypto.CryptoManager
-	auth auth_client.AuthClient
+	cm     crypto.CryptoManager
+	auth   auth_client.AuthClient
+	signer signer.DynamicSigner
 }
 type registerIdentityArgs struct {
 	p params.RegisterIdentityParams
@@ -92,18 +95,122 @@ type registerIdentityTest struct {
 func TestRegisterIdentity(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 	f := &registerIdentityields{
-		cm:   cm_mock.NewMockCryptoManager(mock_controller),
-		auth: auth_mock.NewMockAuthClient(mock_controller),
+		cm:     cm_mock.NewMockCryptoManager(mock_controller),
+		auth:   auth_mock.NewMockAuthClient(mock_controller),
+		signer: s_mock.NewMockDynamicSigner(mock_controller),
 	}
 	tests := []registerIdentityTest{
 		{
-			name: "RegisterIdentity Succeeds",
+			name: "RegisterIdentity Succeeds With",
 			args: registerIdentityArgs{
-				p: params.RegisterIdentityParams{},
+				p: params.RegisterIdentityParams{
+					Token: "token",
+				},
 			},
 			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+				did := "did:knox:test"
+				nonce := "nonce"
+				signature := []byte("signature")
+				gomock.InOrder(
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						CreateDidRegistrationChallenge(args.p.Token).
+						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, nil),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.Authentication, []byte(did+"."+nonce)).Return(signature, nil),
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						AuthnWithDidRegister(did, nonce, signature).
+						Return(nil),
+				)
 			},
 			expectedError: nil,
+		},
+		{
+			name: "RegisterIdentity Succeeds With Pre-Existing Challenge",
+			args: registerIdentityArgs{
+				p: params.RegisterIdentityParams{
+					Challenge: params.RegisterIdentityChallenge{
+						Nonce: "nonce",
+					},
+				},
+			},
+			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+				did := "did:knox:test"
+				nonce := args.p.Challenge.Nonce
+				signature := []byte("signature")
+				gomock.InOrder(
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.Authentication, []byte(did+"."+nonce)).Return(signature, nil),
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						AuthnWithDidRegister(did, nonce, signature).
+						Return(nil),
+				)
+			},
+			expectedError: nil,
+		},
+		{
+			name: "RegisterIdentity Succeeds Fails Due To Error Creating Challenge",
+			args: registerIdentityArgs{
+				p: params.RegisterIdentityParams{
+					Token: "token",
+				},
+			},
+			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+				gomock.InOrder(
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						CreateDidRegistrationChallenge(args.p.Token).
+						Return(&auth_client.DidRegistrationChallenge{}, errors.New("challenge error")),
+				)
+			},
+			expectedError: errors.New("challenge error"),
+		},
+		{
+			name: "RegisterIdentity Fails Due To Signing Error",
+			args: registerIdentityArgs{
+				p: params.RegisterIdentityParams{
+					Token: "token",
+				},
+			},
+			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+				did := "did:knox:test"
+				nonce := "nonce"
+				signature := []byte("")
+				gomock.InOrder(
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						CreateDidRegistrationChallenge(args.p.Token).
+						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, nil),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.Authentication, []byte(did+"."+nonce)).Return(signature, errors.New("signing error")),
+				)
+			},
+			expectedError: errors.New("signing error"),
+		},
+		{
+			name: "RegisterIdentity Fails Due To AuthnWithDidRegister Error",
+			args: registerIdentityArgs{
+				p: params.RegisterIdentityParams{
+					Token: "token",
+				},
+			},
+			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+				did := "did:knox:test"
+				nonce := "nonce"
+				signature := []byte("signature")
+				gomock.InOrder(
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						CreateDidRegistrationChallenge(args.p.Token).
+						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, nil),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.Authentication, []byte(did+"."+nonce)).Return(signature, nil),
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						AuthnWithDidRegister(did, nonce, signature).
+						Return(errors.New("registration error")),
+				)
+			},
+			expectedError: errors.New("registration error"),
 		},
 	}
 
@@ -113,9 +220,12 @@ func TestRegisterIdentity(t *testing.T) {
 			c := &identityClient{
 				cm:   f.cm,
 				auth: f.auth,
+				s:    f.signer,
 			}
 
-			err := c.Register(params.RegisterIdentityParams{})
+			test.prepare(f, &test.args)
+
+			err := c.Register(test.args.p)
 
 			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
 				t.Errorf("Expected error: %v, got: %v", test.expectedError, err)
