@@ -1,8 +1,6 @@
 package identity
 
 import (
-	"errors"
-
 	"github.com/knox-networks/knox-go/helpers/crypto"
 	"github.com/knox-networks/knox-go/helpers/did"
 	"github.com/knox-networks/knox-go/model"
@@ -30,8 +28,35 @@ func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, 
 	return &identityClient{auth: auth, s: s, cm: crypto.NewCryptoManager()}, nil
 }
 
-func (c *identityClient) Register(params params.RegisterIdentityParams) error {
-	return errors.New("not implemented")
+func (c *identityClient) Register(p params.RegisterIdentityParams) error {
+
+	nonce, err := c.parseChallenge(p.Challenge, p.Token)
+	if err != nil {
+		return err
+	}
+	did := c.s.GetDid()
+	signed, err := c.s.Sign(signer.Authentication, []byte(did+"."+nonce))
+	if err != nil {
+		return err
+	}
+
+	err = c.auth.AuthnWithDidRegister(did, nonce, signed)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *identityClient) parseChallenge(challenge params.RegisterIdentityChallenge, token string) (string, error) {
+	if (challenge != params.RegisterIdentityChallenge{}) {
+		return challenge.Nonce, nil
+	} else {
+		challenge, err := c.auth.CreateDidRegistrationChallenge(token)
+		if err != nil {
+			return "", err
+		}
+		return challenge.Nonce, nil
+	}
 }
 
 func (c *identityClient) Generate(params params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
