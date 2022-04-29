@@ -55,8 +55,8 @@ func TestUpdateConfig(t *testing.T) {
 	c.UpdateConfig(&KnoxConfig{
 		Signer: kps,
 		Network: &NetworkConfig{
-			CredentialAdapterURL: "vc.knoxnetworks.io:5051",
-			AuthServiceURL:       "auth.knoxnetworks.io:5051",
+			CredentialAdapterURL: "localhost:5051",
+			AuthServiceURL:       "localhost:5052",
 		},
 	})
 
