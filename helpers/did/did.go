@@ -12,33 +12,33 @@ func CreateDidDocument(kps *crypto.KeyPairs) *model.DidDocument {
 		Id: kps.MasterPublicKey,
 		Authentication: []model.KeyMaterial{
 			{
-				Id:                 crypto.DID_PREFIX + kps.MasterPublicKey + "#" + kps.AuthenticationPublicKey,
-				Type:               crypto.PROOF_TYPE,
-				Controller:         crypto.DID_PREFIX + kps.MasterPublicKey,
+				Id:                 crypto.DidPrefix + kps.MasterPublicKey + "#" + kps.AuthenticationPublicKey,
+				Type:               crypto.ProofType,
+				Controller:         crypto.DidPrefix + kps.MasterPublicKey,
 				PublicKeyMultibase: kps.AuthenticationPublicKey,
 			},
 		},
 		CapabilityInvocation: []model.KeyMaterial{
 			{
-				Id:                 crypto.DID_PREFIX + kps.MasterPublicKey + "#" + kps.CapabilityInvocationPublicKey,
-				Type:               crypto.PROOF_TYPE,
-				Controller:         crypto.DID_PREFIX + kps.MasterPublicKey,
+				Id:                 crypto.DidPrefix + kps.MasterPublicKey + "#" + kps.CapabilityInvocationPublicKey,
+				Type:               crypto.ProofType,
+				Controller:         crypto.DidPrefix + kps.MasterPublicKey,
 				PublicKeyMultibase: kps.CapabilityInvocationPublicKey,
 			},
 		},
 		CapabilityDelegation: []model.KeyMaterial{
 			{
-				Id:                 crypto.DID_PREFIX + kps.MasterPublicKey + "#" + kps.CapabilityDelegationPublicKey,
-				Type:               crypto.PROOF_TYPE,
-				Controller:         crypto.DID_PREFIX + kps.MasterPublicKey,
+				Id:                 crypto.DidPrefix + kps.MasterPublicKey + "#" + kps.CapabilityDelegationPublicKey,
+				Type:               crypto.ProofType,
+				Controller:         crypto.DidPrefix + kps.MasterPublicKey,
 				PublicKeyMultibase: kps.CapabilityDelegationPublicKey,
 			},
 		},
 		AssertionMethod: []model.KeyMaterial{
 			{
-				Id:                 crypto.DID_PREFIX + kps.MasterPublicKey + "#" + kps.AssertionMethodPublicKey,
-				Type:               crypto.PROOF_TYPE,
-				Controller:         crypto.DID_PREFIX + kps.MasterPublicKey,
+				Id:                 crypto.DidPrefix + kps.MasterPublicKey + "#" + kps.AssertionMethodPublicKey,
+				Type:               crypto.ProofType,
+				Controller:         crypto.DidPrefix + kps.MasterPublicKey,
 				PublicKeyMultibase: kps.AssertionMethodPublicKey,
 			},
 		},

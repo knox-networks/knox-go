@@ -10,6 +10,13 @@ import (
 	"github.com/tyler-smith/go-bip39"
 )
 
+const (
+	DidPrefix = "did:knox:"
+	ProofType = "Ed25519VerificationKey2020"
+)
+
+var MultiCodecPrefix = []byte{0xed, 0x01}
+
 type KeyPairs struct {
 	Mnemonic         string
 	MasterPublicKey  string
@@ -27,11 +34,6 @@ type KeyPairs struct {
 	AssertionMethodPublicKey  string
 	AssertionMethodPrivateKey []byte
 }
-
-var MULTI_CODEC_PREFIX = []byte{0xed, 0x01}
-
-const DID_PREFIX = "did:knox:"
-const PROOF_TYPE = "Ed25519VerificationKey2020"
 
 type cryptoManager struct {
 }
@@ -59,7 +61,7 @@ func (c *cryptoManager) GenerateKeyPair() (*KeyPairs, error) {
 		return &KeyPairs{}, err
 	}
 
-	encodedPublic, err := mb.Encode(mb.Base58BTC, append(MULTI_CODEC_PREFIX, public...))
+	encodedPublic, err := mb.Encode(mb.Base58BTC, append(MultiCodecPrefix, public...))
 	if err != nil {
 		return &KeyPairs{}, err
 	}
@@ -122,7 +124,7 @@ func (k *KeyPairs) GetPublicKey(relation signer.VerificationRelation) ([]byte, e
 }
 
 func (k *KeyPairs) GetDid() string {
-	return DID_PREFIX + k.MasterPublicKey
+	return DidPrefix + k.MasterPublicKey
 }
 
 func DecodePrefixed(encoded_key string) (mb.Encoding, []byte, error) {
@@ -132,7 +134,7 @@ func DecodePrefixed(encoded_key string) (mb.Encoding, []byte, error) {
 		return mb.Encoding(0), nil, err
 	}
 
-	prefix_less := bytes.TrimPrefix(decoded, MULTI_CODEC_PREFIX)
+	prefix_less := bytes.TrimPrefix(decoded, MultiCodecPrefix)
 
 	return encoding, prefix_less, nil
 }

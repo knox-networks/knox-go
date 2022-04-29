@@ -86,7 +86,7 @@ func TestKeyPairShouldImplementDynamicSigner(t *testing.T) {
 
 	did := s.GetDid()
 
-	if did != DID_PREFIX+kps.MasterPublicKey {
+	if did != DidPrefix+kps.MasterPublicKey {
 		t.Errorf("Expected did:knox:z1x2y3z4, got %s", did)
 	}
 
