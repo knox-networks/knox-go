@@ -8,6 +8,8 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	crypto "github.com/knox-networks/knox-go/helpers/crypto"
+	model "github.com/knox-networks/knox-go/model"
 	params "github.com/knox-networks/knox-go/params"
 )
 
@@ -35,11 +37,13 @@ func (m *MockIdentityClient) EXPECT() *MockIdentityClientMockRecorder {
 }
 
 // Generate mocks base method.
-func (m *MockIdentityClient) Generate(params params.GenerateIdentityParams) error {
+func (m *MockIdentityClient) Generate(params params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Generate", params)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(*model.DidDocument)
+	ret1, _ := ret[1].(*crypto.KeyPairs)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // Generate indicates an expected call of Generate.

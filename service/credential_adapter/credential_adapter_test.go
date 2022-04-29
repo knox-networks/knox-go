@@ -24,7 +24,7 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 	did := "did:knox:test"
 	cred_type := "test"
 	nonce := "rbmtI32kWmVpdv22i4QDEYtFwjIP22W7"
-	url := "vc.knoxnetworks.io:5051"
+	url := "localhost:5051"
 	mock_controller := gomock.NewController(t)
 
 	tests := []createIssuanceChallengeTest{
@@ -60,7 +60,7 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 			Return(&AdapterApi.CreateIssuanceChallengeResponse{
 				Nonce:          test.mockNonce,
 				CredentialType: getCredentialEnumFromName(cred_type),
-				Endpoint:       "vc.knoxnetworks.io:5051",
+				Endpoint:       "localhost:5051",
 			}, test.mockClientRequestError)
 
 		challenge, err := adapter_client.CreateIssuanceChallenge(cred_type, did)

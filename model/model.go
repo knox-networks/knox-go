@@ -18,3 +18,19 @@ const (
 	PermanentResidentCard = "PermanentResidentCard"
 	BankCard              = "BankCard"
 )
+
+type KeyMaterial struct {
+	Id                 string
+	Type               string
+	Controller         string
+	PublicKeyMultibase string
+}
+
+type DidDocument struct {
+	Context              []string      `json:"@context"`
+	Id                   string        `json:"id"`
+	Authentication       []KeyMaterial `json:"authentication"`
+	CapabilityInvocation []KeyMaterial `json:"capabilityInvocation"`
+	CapabilityDelegation []KeyMaterial `json:"capabilityDelegation"`
+	AssertionMethod      []KeyMaterial `json:"assertionMethod"`
+}
