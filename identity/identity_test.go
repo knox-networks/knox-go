@@ -8,6 +8,8 @@ import (
 	"github.com/knox-networks/knox-go/helpers/crypto"
 	cm_mock "github.com/knox-networks/knox-go/helpers/crypto/mock"
 	"github.com/knox-networks/knox-go/params"
+	"github.com/knox-networks/knox-go/service/auth_client"
+	auth_mock "github.com/knox-networks/knox-go/service/auth_client/mock"
 )
 
 type generateIdentityFields struct {
@@ -72,6 +74,57 @@ func TestGenerateIdentity(t *testing.T) {
 	}
 }
 
+type registerIdentityields struct {
+	cm   crypto.CryptoManager
+	auth auth_client.AuthClient
+}
+type registerIdentityArgs struct {
+	p params.RegisterIdentityParams
+}
+
+type registerIdentityTest struct {
+	name          string
+	prepare       func(f *registerIdentityields, args *registerIdentityArgs)
+	args          registerIdentityArgs
+	expectedError error
+}
+
 func TestRegisterIdentity(t *testing.T) {
+	mock_controller := gomock.NewController(t)
+	f := &registerIdentityields{
+		cm:   cm_mock.NewMockCryptoManager(mock_controller),
+		auth: auth_mock.NewMockAuthClient(mock_controller),
+	}
+	tests := []registerIdentityTest{
+		{
+			name: "RegisterIdentity Succeeds",
+			args: registerIdentityArgs{
+				p: params.RegisterIdentityParams{},
+			},
+			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+			},
+			expectedError: nil,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			c := &identityClient{
+				cm:   f.cm,
+				auth: f.auth,
+			}
+
+			err := c.Register(params.RegisterIdentityParams{})
+
+			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
+				t.Errorf("Expected error: %v, got: %v", test.expectedError, err)
+			}
+
+			if err != nil && test.expectedError != nil && err.Error() != test.expectedError.Error() {
+				t.Errorf("Expected error %v, got %v", test.expectedError, err)
+			}
+		})
+	}
 	t.Skip("not implemented")
 }
