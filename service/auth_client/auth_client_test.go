@@ -1,6 +1,7 @@
 package auth_client
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -47,6 +48,38 @@ func TestCreateDidRegistrationChallenge(t *testing.T) {
 				)
 			},
 			expectedError: nil,
+			args: &createDidRegistrationChallengeArgs{
+				nonce: "nonce",
+				token: "auth_token",
+			},
+		},
+		{
+			name: "CreateDidRegistrationChallenge Fails Due To Error Starting Stream",
+			prepare: func(f *createDidRegistrationChallengeFields, args *createDidRegistrationChallengeArgs) {
+				gomock.InOrder(
+					f.client.(*grpc_mock.MockAuthApiServiceClient).EXPECT().
+						AuthnWithDidRegisterStart(gomock.Any(), &AuthApi.AuthnWithDidRegisterStartRequest{}).
+						Return(f.stream_client, errors.New("stream errror")),
+				)
+			},
+			expectedError: errors.New("stream errror"),
+			args: &createDidRegistrationChallengeArgs{
+				nonce: "nonce",
+				token: "auth_token",
+			},
+		},
+		{
+			name: "CreateDidRegistrationChallenge Fails Due To Error Getting Challenge",
+			prepare: func(f *createDidRegistrationChallengeFields, args *createDidRegistrationChallengeArgs) {
+				gomock.InOrder(
+					f.client.(*grpc_mock.MockAuthApiServiceClient).EXPECT().
+						AuthnWithDidRegisterStart(gomock.Any(), &AuthApi.AuthnWithDidRegisterStartRequest{}).
+						Return(f.stream_client, nil),
+					f.stream_client.(*grpc_mock.MockAuthApiService_AuthnWithDidRegisterStartClient).EXPECT().
+						Recv().Return(&AuthApi.AuthnWithDidRegisterStartResponse{}, errors.New("challenge error")),
+				)
+			},
+			expectedError: errors.New("challenge error"),
 			args: &createDidRegistrationChallengeArgs{
 				nonce: "nonce",
 				token: "auth_token",
