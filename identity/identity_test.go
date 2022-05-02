@@ -194,6 +194,27 @@ func TestRegisterIdentity(t *testing.T) {
 			expectedError: errors.New("signing error"),
 		},
 		{
+			name: "RegisterIdentity Pre-Existing Challenge Fails Due To Signing Error",
+			args: registerIdentityArgs{
+				p: &params.RegisterIdentityParams{
+					Challenge: &params.RegisterIdentityChallenge{
+						Nonce: "nonce",
+					},
+				},
+			},
+			prepare: func(f *registerIdentityFields, args *registerIdentityArgs) {
+				did := "did:knox:test"
+				nonce := "nonce"
+				signature := []byte("")
+				gomock.InOrder(
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.Authentication, []byte(did+"."+nonce)).Return(signature, errors.New("signing error")),
+				)
+			},
+			expectedError: errors.New("signing error"),
+		},
+		{
 			name: "RegisterIdentity Fails Due To AuthnWithDidRegister Error",
 			args: registerIdentityArgs{
 				p: &params.RegisterIdentityParams{
@@ -217,6 +238,83 @@ func TestRegisterIdentity(t *testing.T) {
 				)
 			},
 			expectedError: errors.New("registration error"),
+		},
+		{
+			name: "RegisterIdentity Pre-Existing Challenge Fails Due To AuthnWithDidRegister Error",
+			args: registerIdentityArgs{
+				p: &params.RegisterIdentityParams{
+					Challenge: &params.RegisterIdentityChallenge{
+						Nonce: "nonce",
+					},
+				},
+			},
+			prepare: func(f *registerIdentityFields, args *registerIdentityArgs) {
+				did := "did:knox:test"
+				nonce := "nonce"
+				signature := []byte("signature")
+				gomock.InOrder(
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.Authentication, []byte(did+"."+nonce)).Return(signature, nil),
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						AuthnWithDidRegister(did, nonce, signature).
+						Return(errors.New("registration error")),
+				)
+			},
+			expectedError: errors.New("registration error"),
+		},
+		{
+			name: "RegisterIdentity Fails Due To WaitForComplete Error",
+			args: registerIdentityArgs{
+				p: &params.RegisterIdentityParams{
+					Token: "token",
+				},
+			},
+			prepare: func(f *registerIdentityFields, args *registerIdentityArgs) {
+				did := "did:knox:test"
+				nonce := "nonce"
+				signature := []byte("signature")
+				gomock.InOrder(
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						CreateDidRegistrationChallenge(args.p.Token).
+						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.Authentication, []byte(did+"."+nonce)).Return(signature, nil),
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						AuthnWithDidRegister(did, nonce, signature).
+						Return(nil),
+					f.authStream.(*auth_mock.MockStreamClient).EXPECT().WaitForCompletion().Return(errors.New("wait error")),
+				)
+			},
+			expectedError: errors.New("wait error"),
+		},
+		{
+			name: "RegisterIdentity Fails While Closing Stream",
+			args: registerIdentityArgs{
+				p: &params.RegisterIdentityParams{
+					Token: "token",
+				},
+			},
+			prepare: func(f *registerIdentityFields, args *registerIdentityArgs) {
+				did := "did:knox:test"
+				nonce := "nonce"
+				signature := []byte("signature")
+				gomock.InOrder(
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						CreateDidRegistrationChallenge(args.p.Token).
+						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.Authentication, []byte(did+"."+nonce)).Return(signature, nil),
+					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+						AuthnWithDidRegister(did, nonce, signature).
+						Return(nil),
+					f.authStream.(*auth_mock.MockStreamClient).EXPECT().WaitForCompletion().Return(nil),
+					f.authStream.(*auth_mock.MockStreamClient).EXPECT().Close().Return(errors.New("close error")),
+				)
+			},
+			expectedError: errors.New("close error"),
 		},
 	}
 
