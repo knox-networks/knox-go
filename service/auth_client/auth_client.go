@@ -2,6 +2,7 @@ package auth_client
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"google.golang.org/grpc/credentials/insecure"
@@ -16,6 +17,10 @@ type authClient struct {
 	conn   *grpc.ClientConn
 }
 
+type StreamClient struct {
+	stream AuthApi.AuthApiService_AuthnWithDidRegisterStartClient
+}
+
 type DidRegistrationChallenge struct {
 	Nonce string
 }
@@ -25,7 +30,7 @@ type AuthClient interface {
 	AuthnWithDid(did string, nonce string, enc []byte) error
 	AuthnWithDidRegister(did string, nonce string, enc []byte) error
 	AuthnWithDidStart() (AuthApi.AuthApiService_AuthnWithDidStartClient, error)
-	CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, error)
+	CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, *StreamClient, error)
 }
 
 func NewAuthClient(address string) (AuthClient, error) {
@@ -66,7 +71,7 @@ func (r *authClient) AuthnWithDid(did string, nonce string, enc []byte) error {
 	return nil
 }
 
-func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, error) {
+func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, *StreamClient, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -74,15 +79,15 @@ func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegi
 	respClient, err := r.client.AuthnWithDidRegisterStart(ctx, req)
 
 	if err != nil {
-		return &DidRegistrationChallenge{}, err
+		return &DidRegistrationChallenge{}, &StreamClient{}, err
 	}
 
 	resp, err := respClient.Recv()
 	if err != nil {
-		return &DidRegistrationChallenge{}, err
+		return &DidRegistrationChallenge{}, &StreamClient{}, err
 	}
 
-	return &DidRegistrationChallenge{Nonce: resp.GetNonce()}, nil
+	return &DidRegistrationChallenge{Nonce: resp.GetNonce()}, &StreamClient{stream: respClient}, nil
 }
 
 func (r *authClient) AuthnWithDidRegister(did string, nonce string, enc []byte) error {
@@ -109,4 +114,17 @@ func (r *authClient) AuthnWithDidStart() (AuthApi.AuthApiService_AuthnWithDidSta
 
 	req := &AuthApi.AuthnWithDidStartRequest{}
 	return r.client.AuthnWithDidStart(ctx, req)
+}
+
+func (s *StreamClient) WaitForCompletion() error {
+	res, err := s.stream.Recv()
+	if err != nil {
+		return err
+	}
+
+	if res.GetOk() != "" {
+		return nil
+	}
+
+	return errors.New("unexpected error")
 }

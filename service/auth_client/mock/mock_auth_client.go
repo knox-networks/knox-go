@@ -91,12 +91,13 @@ func (mr *MockAuthClientMockRecorder) Close() *gomock.Call {
 }
 
 // CreateDidRegistrationChallenge mocks base method.
-func (m *MockAuthClient) CreateDidRegistrationChallenge(auth_token string) (*auth_client.DidRegistrationChallenge, error) {
+func (m *MockAuthClient) CreateDidRegistrationChallenge(auth_token string) (*auth_client.DidRegistrationChallenge, *auth_client.StreamClient, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateDidRegistrationChallenge", auth_token)
 	ret0, _ := ret[0].(*auth_client.DidRegistrationChallenge)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(*auth_client.StreamClient)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // CreateDidRegistrationChallenge indicates an expected call of CreateDidRegistrationChallenge.

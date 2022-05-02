@@ -51,7 +51,7 @@ func (c *identityClient) parseChallenge(challenge *params.RegisterIdentityChalle
 	if challenge != nil {
 		return challenge.Nonce, nil
 	} else {
-		challenge, err := c.auth.CreateDidRegistrationChallenge(token)
+		challenge, _, err := c.auth.CreateDidRegistrationChallenge(token)
 		if err != nil {
 			return "", err
 		}

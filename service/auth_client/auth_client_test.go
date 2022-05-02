@@ -94,7 +94,7 @@ func TestCreateDidRegistrationChallenge(t *testing.T) {
 			c := &authClient{
 				client: f.client,
 			}
-			challenge, err := c.CreateDidRegistrationChallenge(test.args.token)
+			challenge, _, err := c.CreateDidRegistrationChallenge(test.args.token)
 
 			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
 				t.Errorf("Expected error: %v, got: %v", test.expectedError, err)
