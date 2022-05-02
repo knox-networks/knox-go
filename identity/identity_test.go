@@ -129,7 +129,7 @@ func TestRegisterIdentity(t *testing.T) {
 			name: "RegisterIdentity Succeeds With Pre-Existing Challenge",
 			args: registerIdentityArgs{
 				p: params.RegisterIdentityParams{
-					Challenge: params.RegisterIdentityChallenge{
+					Challenge: &params.RegisterIdentityChallenge{
 						Nonce: "nonce",
 					},
 				},

@@ -47,8 +47,8 @@ func (c *identityClient) Register(p params.RegisterIdentityParams) error {
 	return nil
 }
 
-func (c *identityClient) parseChallenge(challenge params.RegisterIdentityChallenge, token string) (string, error) {
-	if challenge != (params.RegisterIdentityChallenge{}) {
+func (c *identityClient) parseChallenge(challenge *params.RegisterIdentityChallenge, token string) (string, error) {
+	if challenge != nil {
 		return challenge.Nonce, nil
 	} else {
 		challenge, err := c.auth.CreateDidRegistrationChallenge(token)

@@ -24,7 +24,7 @@ type RegisterIdentityChallenge struct {
 }
 
 type RegisterIdentityParams struct {
-	Challenge RegisterIdentityChallenge
+	Challenge *RegisterIdentityChallenge
 	Token     string
 }
 
