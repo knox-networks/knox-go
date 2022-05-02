@@ -12,6 +12,57 @@ import (
 	auth_apiv1 "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
 )
 
+// MockStreamClient is a mock of StreamClient interface.
+type MockStreamClient struct {
+	ctrl     *gomock.Controller
+	recorder *MockStreamClientMockRecorder
+}
+
+// MockStreamClientMockRecorder is the mock recorder for MockStreamClient.
+type MockStreamClientMockRecorder struct {
+	mock *MockStreamClient
+}
+
+// NewMockStreamClient creates a new mock instance.
+func NewMockStreamClient(ctrl *gomock.Controller) *MockStreamClient {
+	mock := &MockStreamClient{ctrl: ctrl}
+	mock.recorder = &MockStreamClientMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockStreamClient) EXPECT() *MockStreamClientMockRecorder {
+	return m.recorder
+}
+
+// Close mocks base method.
+func (m *MockStreamClient) Close() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Close indicates an expected call of Close.
+func (mr *MockStreamClientMockRecorder) Close() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockStreamClient)(nil).Close))
+}
+
+// WaitForCompletion mocks base method.
+func (m *MockStreamClient) WaitForCompletion() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WaitForCompletion")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// WaitForCompletion indicates an expected call of WaitForCompletion.
+func (mr *MockStreamClientMockRecorder) WaitForCompletion() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitForCompletion", reflect.TypeOf((*MockStreamClient)(nil).WaitForCompletion))
+}
+
 // MockAuthClient is a mock of AuthClient interface.
 type MockAuthClient struct {
 	ctrl     *gomock.Controller
@@ -91,11 +142,11 @@ func (mr *MockAuthClientMockRecorder) Close() *gomock.Call {
 }
 
 // CreateDidRegistrationChallenge mocks base method.
-func (m *MockAuthClient) CreateDidRegistrationChallenge(auth_token string) (*auth_client.DidRegistrationChallenge, *auth_client.StreamClient, error) {
+func (m *MockAuthClient) CreateDidRegistrationChallenge(auth_token string) (*auth_client.DidRegistrationChallenge, auth_client.StreamClient, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateDidRegistrationChallenge", auth_token)
 	ret0, _ := ret[0].(*auth_client.DidRegistrationChallenge)
-	ret1, _ := ret[1].(*auth_client.StreamClient)
+	ret1, _ := ret[1].(auth_client.StreamClient)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }

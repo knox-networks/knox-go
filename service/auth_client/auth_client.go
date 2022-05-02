@@ -17,8 +17,13 @@ type authClient struct {
 	conn   *grpc.ClientConn
 }
 
-type StreamClient struct {
+type streamClient struct {
 	stream AuthApi.AuthApiService_AuthnWithDidRegisterStartClient
+}
+
+type StreamClient interface {
+	WaitForCompletion() error
+	Close() error
 }
 
 type DidRegistrationChallenge struct {
@@ -30,7 +35,7 @@ type AuthClient interface {
 	AuthnWithDid(did string, nonce string, enc []byte) error
 	AuthnWithDidRegister(did string, nonce string, enc []byte) error
 	AuthnWithDidStart() (AuthApi.AuthApiService_AuthnWithDidStartClient, error)
-	CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, *StreamClient, error)
+	CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error)
 }
 
 func NewAuthClient(address string) (AuthClient, error) {
@@ -47,6 +52,10 @@ func NewAuthClient(address string) (AuthClient, error) {
 		conn:   conn,
 		client: client,
 	}, nil
+}
+
+func NewAuthStream(s AuthApi.AuthApiService_AuthnWithDidRegisterStartClient) StreamClient {
+	return &streamClient{stream: s}
 }
 
 func (r *authClient) Close() {
@@ -71,7 +80,7 @@ func (r *authClient) AuthnWithDid(did string, nonce string, enc []byte) error {
 	return nil
 }
 
-func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, *StreamClient, error) {
+func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -79,15 +88,15 @@ func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegi
 	respClient, err := r.client.AuthnWithDidRegisterStart(ctx, req)
 
 	if err != nil {
-		return &DidRegistrationChallenge{}, &StreamClient{}, err
+		return &DidRegistrationChallenge{}, NewAuthStream(respClient), err
 	}
 
 	resp, err := respClient.Recv()
 	if err != nil {
-		return &DidRegistrationChallenge{}, &StreamClient{}, err
+		return &DidRegistrationChallenge{}, NewAuthStream(respClient), err
 	}
 
-	return &DidRegistrationChallenge{Nonce: resp.GetNonce()}, &StreamClient{stream: respClient}, nil
+	return &DidRegistrationChallenge{Nonce: resp.GetNonce()}, NewAuthStream(respClient), nil
 }
 
 func (r *authClient) AuthnWithDidRegister(did string, nonce string, enc []byte) error {
@@ -116,7 +125,7 @@ func (r *authClient) AuthnWithDidStart() (AuthApi.AuthApiService_AuthnWithDidSta
 	return r.client.AuthnWithDidStart(ctx, req)
 }
 
-func (s *StreamClient) WaitForCompletion() error {
+func (s *streamClient) WaitForCompletion() error {
 	res, err := s.stream.Recv()
 	if err != nil {
 		return err
@@ -129,6 +138,6 @@ func (s *StreamClient) WaitForCompletion() error {
 	return errors.New("unexpected error")
 }
 
-func (s *StreamClient) Close() {
-	s.stream.CloseSend()
+func (s *streamClient) Close() error {
+	return s.stream.CloseSend()
 }
