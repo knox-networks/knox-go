@@ -76,7 +76,7 @@ func TestGenerateIdentity(t *testing.T) {
 	}
 }
 
-type registerIdentityields struct {
+type registerIdentityFields struct {
 	cm     crypto.CryptoManager
 	auth   auth_client.AuthClient
 	signer signer.DynamicSigner
@@ -87,14 +87,14 @@ type registerIdentityArgs struct {
 
 type registerIdentityTest struct {
 	name          string
-	prepare       func(f *registerIdentityields, args *registerIdentityArgs)
+	prepare       func(f *registerIdentityFields, args *registerIdentityArgs)
 	args          registerIdentityArgs
 	expectedError error
 }
 
 func TestRegisterIdentity(t *testing.T) {
 	mock_controller := gomock.NewController(t)
-	f := &registerIdentityields{
+	f := &registerIdentityFields{
 		cm:     cm_mock.NewMockCryptoManager(mock_controller),
 		auth:   auth_mock.NewMockAuthClient(mock_controller),
 		signer: s_mock.NewMockDynamicSigner(mock_controller),
@@ -107,7 +107,7 @@ func TestRegisterIdentity(t *testing.T) {
 					Token: "token",
 				},
 			},
-			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+			prepare: func(f *registerIdentityFields, args *registerIdentityArgs) {
 				did := "did:knox:test"
 				nonce := "nonce"
 				signature := []byte("signature")
@@ -134,7 +134,7 @@ func TestRegisterIdentity(t *testing.T) {
 					},
 				},
 			},
-			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+			prepare: func(f *registerIdentityFields, args *registerIdentityArgs) {
 				did := "did:knox:test"
 				nonce := args.p.Challenge.Nonce
 				signature := []byte("signature")
@@ -156,7 +156,7 @@ func TestRegisterIdentity(t *testing.T) {
 					Token: "token",
 				},
 			},
-			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+			prepare: func(f *registerIdentityFields, args *registerIdentityArgs) {
 				gomock.InOrder(
 					f.auth.(*auth_mock.MockAuthClient).EXPECT().
 						CreateDidRegistrationChallenge(args.p.Token).
@@ -172,7 +172,7 @@ func TestRegisterIdentity(t *testing.T) {
 					Token: "token",
 				},
 			},
-			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+			prepare: func(f *registerIdentityFields, args *registerIdentityArgs) {
 				did := "did:knox:test"
 				nonce := "nonce"
 				signature := []byte("")
@@ -194,7 +194,7 @@ func TestRegisterIdentity(t *testing.T) {
 					Token: "token",
 				},
 			},
-			prepare: func(f *registerIdentityields, args *registerIdentityArgs) {
+			prepare: func(f *registerIdentityFields, args *registerIdentityArgs) {
 				did := "did:knox:test"
 				nonce := "nonce"
 				signature := []byte("signature")
