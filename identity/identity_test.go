@@ -123,6 +123,8 @@ func TestRegisterIdentity(t *testing.T) {
 					f.auth.(*auth_mock.MockAuthClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(nil),
+					f.authStream.(*auth_mock.MockStreamClient).EXPECT().WaitForCompletion().Return(nil),
+					f.authStream.(*auth_mock.MockStreamClient).EXPECT().Close().Return(nil),
 				)
 			},
 			expectedError: nil,
