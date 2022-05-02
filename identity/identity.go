@@ -37,10 +37,10 @@ func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
 			return err
 		}
 
-		err = c.auth.AuthnWithDidRegister(did, nonce, signed)
-		if err != nil {
+		if err := c.auth.AuthnWithDidRegister(did, nonce, signed); err != nil {
 			return err
 		}
+
 	} else {
 		challenge, stream, err := c.auth.CreateDidRegistrationChallenge(p.Token)
 		if err != nil {
@@ -52,18 +52,15 @@ func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
 			return err
 		}
 
-		err = c.auth.AuthnWithDidRegister(did, nonce, signed)
-		if err != nil {
+		if err := c.auth.AuthnWithDidRegister(did, nonce, signed); err != nil {
 			return err
 		}
 
-		err = stream.WaitForCompletion()
-		if err != nil {
+		if err := stream.WaitForCompletion(); err != nil {
 			return err
 		}
 
-		err = stream.Close()
-		if err != nil {
+		if err := stream.Close(); err != nil {
 			return err
 		}
 	}
