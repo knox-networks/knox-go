@@ -29,34 +29,43 @@ func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, 
 }
 
 func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
-
-	nonce, err := c.parseChallenge(p.Challenge, p.Token)
-	if err != nil {
-		return err
-	}
 	did := c.s.GetDid()
-	signed, err := c.s.Sign(signer.Authentication, []byte(did+"."+nonce))
-	if err != nil {
-		return err
-	}
-
-	err = c.auth.AuthnWithDidRegister(did, nonce, signed)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *identityClient) parseChallenge(challenge *params.RegisterIdentityChallenge, token string) (string, error) {
-	if challenge != nil {
-		return challenge.Nonce, nil
-	} else {
-		challenge, _, err := c.auth.CreateDidRegistrationChallenge(token)
+	if p.Challenge != nil {
+		nonce := p.Challenge.Nonce
+		signed, err := c.s.Sign(signer.Authentication, []byte(did+"."+nonce))
 		if err != nil {
-			return "", err
+			return err
 		}
-		return challenge.Nonce, nil
+
+		err = c.auth.AuthnWithDidRegister(did, nonce, signed)
+		if err != nil {
+			return err
+		}
+	} else {
+		challenge, stream, err := c.auth.CreateDidRegistrationChallenge(p.Token)
+		if err != nil {
+			return err
+		}
+		nonce := challenge.Nonce
+		signed, err := c.s.Sign(signer.Authentication, []byte(did+"."+nonce))
+		if err != nil {
+			return err
+		}
+
+		err = c.auth.AuthnWithDidRegister(did, nonce, signed)
+		if err != nil {
+			return err
+		}
+
+		err = stream.WaitForCompletion()
+		if err != nil {
+			return err
+		}
+
+		stream.Close()
 	}
+
+	return nil
 }
 
 func (c *identityClient) Generate(params *params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {

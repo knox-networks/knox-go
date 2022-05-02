@@ -128,3 +128,7 @@ func (s *StreamClient) WaitForCompletion() error {
 
 	return errors.New("unexpected error")
 }
+
+func (s *StreamClient) Close() {
+	s.stream.CloseSend()
+}
