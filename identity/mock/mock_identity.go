@@ -37,7 +37,7 @@ func (m *MockIdentityClient) EXPECT() *MockIdentityClientMockRecorder {
 }
 
 // Generate mocks base method.
-func (m *MockIdentityClient) Generate(params params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
+func (m *MockIdentityClient) Generate(params *params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Generate", params)
 	ret0, _ := ret[0].(*model.DidDocument)
@@ -53,7 +53,7 @@ func (mr *MockIdentityClientMockRecorder) Generate(params interface{}) *gomock.C
 }
 
 // Register mocks base method.
-func (m *MockIdentityClient) Register(p params.RegisterIdentityParams) error {
+func (m *MockIdentityClient) Register(p *params.RegisterIdentityParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Register", p)
 	ret0, _ := ret[0].(error)

@@ -19,7 +19,13 @@ type RequestPresentationParams struct {
 	CredentialTypes []string
 }
 
+type RegisterIdentityChallenge struct {
+	Nonce string
+}
+
 type RegisterIdentityParams struct {
+	Challenge *RegisterIdentityChallenge
+	Token     string
 }
 
 type GenerateIdentityParams struct {

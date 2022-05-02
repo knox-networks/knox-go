@@ -50,7 +50,7 @@ func TestUpdateConfig(t *testing.T) {
 	identity := c.Identity
 	pres := c.Presentation
 
-	_, kps, _ := c.Identity.Generate(params.GenerateIdentityParams{})
+	_, kps, _ := c.Identity.Generate(&params.GenerateIdentityParams{})
 
 	c.UpdateConfig(&KnoxConfig{
 		Signer: kps,

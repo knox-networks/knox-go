@@ -1,8 +1,6 @@
 package identity
 
 import (
-	"errors"
-
 	"github.com/knox-networks/knox-go/helpers/crypto"
 	"github.com/knox-networks/knox-go/helpers/did"
 	"github.com/knox-networks/knox-go/model"
@@ -18,8 +16,8 @@ type identityClient struct {
 }
 
 type IdentityClient interface {
-	Register(p params.RegisterIdentityParams) error
-	Generate(params params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error)
+	Register(p *params.RegisterIdentityParams) error
+	Generate(params *params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error)
 }
 
 func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, error) {
@@ -30,11 +28,47 @@ func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, 
 	return &identityClient{auth: auth, s: s, cm: crypto.NewCryptoManager()}, nil
 }
 
-func (c *identityClient) Register(params params.RegisterIdentityParams) error {
-	return errors.New("not implemented")
+func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
+	did := c.s.GetDid()
+	if p.Challenge != nil {
+		nonce := p.Challenge.Nonce
+		signed, err := c.s.Sign(signer.Authentication, []byte(did+"."+nonce))
+		if err != nil {
+			return err
+		}
+
+		if err := c.auth.AuthnWithDidRegister(did, nonce, signed); err != nil {
+			return err
+		}
+
+	} else {
+		challenge, stream, err := c.auth.CreateDidRegistrationChallenge(p.Token)
+		if err != nil {
+			return err
+		}
+		nonce := challenge.Nonce
+		signed, err := c.s.Sign(signer.Authentication, []byte(did+"."+nonce))
+		if err != nil {
+			return err
+		}
+
+		if err := c.auth.AuthnWithDidRegister(did, nonce, signed); err != nil {
+			return err
+		}
+
+		if err := stream.WaitForCompletion(); err != nil {
+			return err
+		}
+
+		if err := stream.Close(); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func (c *identityClient) Generate(params params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
+func (c *identityClient) Generate(params *params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
 	kps, err := c.cm.GenerateKeyPair()
 	if err != nil {
 		return &model.DidDocument{}, &crypto.KeyPairs{}, err
