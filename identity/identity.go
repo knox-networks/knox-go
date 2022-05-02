@@ -62,7 +62,10 @@ func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
 			return err
 		}
 
-		stream.Close()
+		err = stream.Close()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
