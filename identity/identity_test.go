@@ -63,7 +63,7 @@ func TestGenerateIdentity(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			test.prepare(f, &test.args)
 			c := &identityClient{cm: f.cm}
-			_, _, err := c.Generate(params.GenerateIdentityParams{})
+			_, _, err := c.Generate(&params.GenerateIdentityParams{})
 
 			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
 				t.Errorf("Expected error: %v, got: %v", test.expectedError, err)
@@ -82,7 +82,7 @@ type registerIdentityFields struct {
 	signer signer.DynamicSigner
 }
 type registerIdentityArgs struct {
-	p params.RegisterIdentityParams
+	p *params.RegisterIdentityParams
 }
 
 type registerIdentityTest struct {
@@ -103,7 +103,7 @@ func TestRegisterIdentity(t *testing.T) {
 		{
 			name: "RegisterIdentity Succeeds With",
 			args: registerIdentityArgs{
-				p: params.RegisterIdentityParams{
+				p: &params.RegisterIdentityParams{
 					Token: "token",
 				},
 			},
@@ -128,7 +128,7 @@ func TestRegisterIdentity(t *testing.T) {
 		{
 			name: "RegisterIdentity Succeeds With Pre-Existing Challenge",
 			args: registerIdentityArgs{
-				p: params.RegisterIdentityParams{
+				p: &params.RegisterIdentityParams{
 					Challenge: &params.RegisterIdentityChallenge{
 						Nonce: "nonce",
 					},
@@ -152,7 +152,7 @@ func TestRegisterIdentity(t *testing.T) {
 		{
 			name: "RegisterIdentity Succeeds Fails Due To Error Creating Challenge",
 			args: registerIdentityArgs{
-				p: params.RegisterIdentityParams{
+				p: &params.RegisterIdentityParams{
 					Token: "token",
 				},
 			},
@@ -168,7 +168,7 @@ func TestRegisterIdentity(t *testing.T) {
 		{
 			name: "RegisterIdentity Fails Due To Signing Error",
 			args: registerIdentityArgs{
-				p: params.RegisterIdentityParams{
+				p: &params.RegisterIdentityParams{
 					Token: "token",
 				},
 			},
@@ -190,7 +190,7 @@ func TestRegisterIdentity(t *testing.T) {
 		{
 			name: "RegisterIdentity Fails Due To AuthnWithDidRegister Error",
 			args: registerIdentityArgs{
-				p: params.RegisterIdentityParams{
+				p: &params.RegisterIdentityParams{
 					Token: "token",
 				},
 			},

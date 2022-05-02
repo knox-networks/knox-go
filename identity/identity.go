@@ -16,8 +16,8 @@ type identityClient struct {
 }
 
 type IdentityClient interface {
-	Register(p params.RegisterIdentityParams) error
-	Generate(params params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error)
+	Register(p *params.RegisterIdentityParams) error
+	Generate(params *params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error)
 }
 
 func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, error) {
@@ -28,7 +28,7 @@ func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, 
 	return &identityClient{auth: auth, s: s, cm: crypto.NewCryptoManager()}, nil
 }
 
-func (c *identityClient) Register(p params.RegisterIdentityParams) error {
+func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
 
 	nonce, err := c.parseChallenge(p.Challenge, p.Token)
 	if err != nil {
@@ -59,7 +59,7 @@ func (c *identityClient) parseChallenge(challenge *params.RegisterIdentityChalle
 	}
 }
 
-func (c *identityClient) Generate(params params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
+func (c *identityClient) Generate(params *params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
 	kps, err := c.cm.GenerateKeyPair()
 	if err != nil {
 		return &model.DidDocument{}, &crypto.KeyPairs{}, err
