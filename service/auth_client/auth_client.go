@@ -37,7 +37,7 @@ type AuthClient interface {
 	Close()
 	AuthnWithDid(did string, nonce string, enc []byte) error
 	AuthnWithDidRegister(did string, nonce string, enc []byte) error
-	CreateDidAuthenticationChallenge() (*DidAuthenticationChallenge, StreamClient, error)
+	CreateDidAuthenticationChallenge() (*DidAuthenticationChallenge, AuthApi.AuthApiService_AuthnWithDidStartClient, error)
 	CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error)
 }
 
@@ -120,7 +120,7 @@ func (r *authClient) AuthnWithDidRegister(did string, nonce string, enc []byte) 
 	return nil
 }
 
-func (r *authClient) CreateDidAuthenticationChallenge() (*DidAuthenticationChallenge, StreamClient, error) {
+func (r *authClient) CreateDidAuthenticationChallenge() (*DidAuthenticationChallenge, AuthApi.AuthApiService_AuthnWithDidStartClient, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -138,7 +138,7 @@ func (r *authClient) CreateDidAuthenticationChallenge() (*DidAuthenticationChall
 
 	resp.GetNonce()
 
-	return &DidAuthenticationChallenge{}, NewAuthStream(stream), nil
+	return &DidAuthenticationChallenge{}, stream, nil
 }
 
 func (s *streamClient) WaitForCompletion() error {

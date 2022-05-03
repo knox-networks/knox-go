@@ -3,6 +3,7 @@ package token
 import (
 	"errors"
 
+	"github.com/knox-networks/knox-go/model"
 	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/auth_client"
 	"github.com/knox-networks/knox-go/signer"
@@ -13,7 +14,7 @@ type tokenClient struct {
 	s    signer.DynamicSigner
 }
 type TokenClient interface {
-	Create(p *params.CreateTokenParams) (string, error)
+	Create(p *params.CreateTokenParams) (*model.AuthToken, error)
 }
 
 func NewTokenClient(address string, s signer.DynamicSigner) (TokenClient, error) {
@@ -24,33 +25,44 @@ func NewTokenClient(address string, s signer.DynamicSigner) (TokenClient, error)
 	return &tokenClient{auth: auth, s: s}, nil
 }
 
-func (c *tokenClient) Create(p *params.CreateTokenParams) (string, error) {
+func (c *tokenClient) Create(p *params.CreateTokenParams) (*model.AuthToken, error) {
 
 	if p.Password != nil {
-		return "", errors.New("password authentication not supported")
+		return &model.AuthToken{}, errors.New("password authentication not supported")
 	} else if p.Did != nil {
 		challenge, streamClient, err := c.auth.CreateDidAuthenticationChallenge()
 		if err != nil {
-			return "", err
+			return &model.AuthToken{}, err
 		}
 
 		signature, err := c.s.Sign(signer.Authentication, []byte(p.Did.Did+"."+challenge.Nonce))
 		if err != nil {
-			return "", err
+			return &model.AuthToken{}, err
 		}
 
 		if err := c.auth.AuthnWithDid(p.Did.Did, challenge.Nonce, signature); err != nil {
-			return "", err
+			return &model.AuthToken{}, err
 		}
 
-		err = streamClient.WaitForCompletion()
+		message, err := streamClient.Recv()
 
 		if err != nil {
-			return "", err
+			return &model.AuthToken{}, err
 		}
 
-		return "", errors.New("did authentication not supported")
+		token := message.GetAuthToken().AuthToken
+
+		if err := streamClient.CloseSend(); err != nil {
+			return &model.AuthToken{}, err
+		}
+
+		return &model.AuthToken{
+			Token:        token.Token,
+			TokenType:    token.TokenType,
+			RefreshToken: token.RefreshToken,
+			ExpiresIn:    token.ExpiresIn,
+		}, nil
 	} else {
-		return "", errors.New("no authentication method specified")
+		return &model.AuthToken{}, errors.New("no authentication method specified")
 	}
 }

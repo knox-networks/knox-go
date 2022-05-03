@@ -9,6 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	auth_client "github.com/knox-networks/knox-go/service/auth_client"
+	auth_apiv1 "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
 )
 
 // MockStreamClient is a mock of StreamClient interface.
@@ -126,11 +127,11 @@ func (mr *MockAuthClientMockRecorder) Close() *gomock.Call {
 }
 
 // CreateDidAuthenticationChallenge mocks base method.
-func (m *MockAuthClient) CreateDidAuthenticationChallenge() (*auth_client.DidAuthenticationChallenge, auth_client.StreamClient, error) {
+func (m *MockAuthClient) CreateDidAuthenticationChallenge() (*auth_client.DidAuthenticationChallenge, auth_apiv1.AuthApiService_AuthnWithDidStartClient, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateDidAuthenticationChallenge")
 	ret0, _ := ret[0].(*auth_client.DidAuthenticationChallenge)
-	ret1, _ := ret[1].(auth_client.StreamClient)
+	ret1, _ := ret[1].(auth_apiv1.AuthApiService_AuthnWithDidStartClient)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
