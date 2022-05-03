@@ -6,14 +6,16 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/auth_client"
+	grpc_auth_mock "github.com/knox-networks/knox-go/service/auth_client/grpc_mock"
 	auth_mock "github.com/knox-networks/knox-go/service/auth_client/mock"
 	"github.com/knox-networks/knox-go/signer"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
+	AuthApi "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
 )
 
 type createTokenFields struct {
 	auth       auth_client.AuthClient
-	authStream auth_client.StreamClient
+	authStream AuthApi.AuthApiService_AuthnWithDidStartClient
 	signer     signer.DynamicSigner
 }
 type createTokenArgs struct {
@@ -33,7 +35,7 @@ func TestCreateToken(t *testing.T) {
 	f := &createTokenFields{
 		auth:       auth_mock.NewMockAuthClient(mockController),
 		signer:     s_mock.NewMockDynamicSigner(mockController),
-		authStream: auth_mock.NewMockStreamClient(mockController),
+		authStream: grpc_auth_mock.NewMockAuthApiService_AuthnWithDidStartClient(mockController),
 	}
 	tests := []createTokenTest{
 		{
@@ -55,8 +57,18 @@ func TestCreateToken(t *testing.T) {
 						EXPECT().
 						AuthnWithDid(args.p.Did.Did, args.nonce, signature).
 						Return(nil),
-					f.authStream.(*auth_mock.MockStreamClient).
-						EXPECT().WaitForCompletion().Return(nil),
+					f.authStream.(*grpc_auth_mock.MockAuthApiService_AuthnWithDidStartClient).
+						EXPECT().Recv().Return(&AuthApi.AuthnWithDidStartResponse{
+						DidStart: &AuthApi.AuthnWithDidStartResponse_AuthToken{
+							AuthToken: &AuthApi.AuthTokenResponse{
+								AuthToken: &AuthApi.AuthToken{
+									Token: "token",
+								},
+							},
+						},
+					}, nil),
+					f.authStream.(*grpc_auth_mock.MockAuthApiService_AuthnWithDidStartClient).
+						EXPECT().CloseSend().Return(nil),
 				)
 			},
 			args: createTokenArgs{

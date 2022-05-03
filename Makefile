@@ -36,4 +36,4 @@ mockgen: ## generate mock go files
 	mockgen -destination=./signer/mock/mock_signer.go -package=mock -source=signer/signer.go
 	mockgen -destination=./helpers/crypto/mock/mock_crypto.go -package=mock -source=helpers/crypto/crypto.go
 	mockgen -build_flags=--mod=mod -destination=./service/credential_adapter/grpc_mock/mock_grpc_credential_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1" AdapterServiceClient
-	mockgen -build_flags=--mod=mod -destination=./service/auth_client/grpc_mock/mock_grpc_auth_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1" AuthApiService_AuthnWithDidRegisterStartClient,AuthApiServiceClient
+	mockgen -build_flags=--mod=mod -destination=./service/auth_client/grpc_mock/mock_grpc_auth_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1" AuthApiService_AuthnWithDidRegisterStartClient,AuthApiServiceClient,AuthApiService_AuthnWithDidStartClient
