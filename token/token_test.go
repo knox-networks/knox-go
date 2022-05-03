@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/knox-networks/knox-go/model"
 	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/auth_client"
 	grpc_auth_mock "github.com/knox-networks/knox-go/service/auth_client/grpc_mock"
@@ -239,6 +240,48 @@ func TestCreateToken(t *testing.T) {
 				p: &params.CreateTokenParams{},
 			},
 			expectedError: errors.New("no authentication method specified"),
+		},
+		{
+			name: "CreateToken With Password Authentication Succeeds",
+			prepare: func(f *createTokenFields, args *createTokenArgs) {
+				gomock.InOrder(
+					f.auth.(*auth_mock.MockAuthClient).
+						EXPECT().AuthenticateWithPassword(args.p.Password.Email, args.p.Password.Password).
+						Return(&model.AuthToken{
+							Token: "token",
+						}, nil),
+				)
+			},
+			args: createTokenArgs{
+				p: &params.CreateTokenParams{
+					Password: &params.PasswordAuthentication{
+						Email:    "testuser@email.com",
+						Password: "123445667",
+					},
+				},
+				nonce: "nonce",
+			},
+			expectedError: nil,
+		},
+		{
+			name: "CreateToken With Password Authentication Fails Due To Authentication Error",
+			prepare: func(f *createTokenFields, args *createTokenArgs) {
+				gomock.InOrder(
+					f.auth.(*auth_mock.MockAuthClient).
+						EXPECT().AuthenticateWithPassword(args.p.Password.Email, args.p.Password.Password).
+						Return(&model.AuthToken{}, errors.New("authentication error")),
+				)
+			},
+			args: createTokenArgs{
+				p: &params.CreateTokenParams{
+					Password: &params.PasswordAuthentication{
+						Email:    "testuser@email.com",
+						Password: "123445667",
+					},
+				},
+				nonce: "nonce",
+			},
+			expectedError: errors.New("authentication error"),
 		},
 	}
 
