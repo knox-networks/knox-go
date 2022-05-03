@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	model "github.com/knox-networks/knox-go/model"
 	auth_client "github.com/knox-networks/knox-go/service/auth_client"
 	auth_apiv1 "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
 )
@@ -84,6 +85,21 @@ func NewMockAuthClient(ctrl *gomock.Controller) *MockAuthClient {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAuthClient) EXPECT() *MockAuthClientMockRecorder {
 	return m.recorder
+}
+
+// AuthenticateWithPassword mocks base method.
+func (m *MockAuthClient) AuthenticateWithPassword(email, password string) (*model.AuthToken, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AuthenticateWithPassword", email, password)
+	ret0, _ := ret[0].(*model.AuthToken)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AuthenticateWithPassword indicates an expected call of AuthenticateWithPassword.
+func (mr *MockAuthClientMockRecorder) AuthenticateWithPassword(email, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthenticateWithPassword", reflect.TypeOf((*MockAuthClient)(nil).AuthenticateWithPassword), email, password)
 }
 
 // AuthnWithDid mocks base method.

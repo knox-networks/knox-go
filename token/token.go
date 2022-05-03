@@ -28,7 +28,12 @@ func NewTokenClient(address string, s signer.DynamicSigner) (TokenClient, error)
 func (c *tokenClient) Create(p *params.CreateTokenParams) (*model.AuthToken, error) {
 
 	if p.Password != nil {
-		return &model.AuthToken{}, errors.New("password authentication not supported")
+
+		token, err := c.auth.AuthenticateWithPassword(p.Password.Email, p.Password.Password)
+		if err != nil {
+			return nil, err
+		}
+		return token, nil
 	} else if p.Did != nil {
 		challenge, streamClient, err := c.auth.CreateDidAuthenticationChallenge()
 		if err != nil {
