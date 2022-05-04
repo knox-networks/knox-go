@@ -2,6 +2,7 @@ package presentation
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/knox-networks/knox-go/service/credential_adapter"
 	ca_mock "github.com/knox-networks/knox-go/service/credential_adapter/mock"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
+	"github.com/piprate/json-gold/ld"
 )
 
 func TestSharePresentation(t *testing.T) {
@@ -52,6 +54,14 @@ func TestSharePresentation(t *testing.T) {
 			"proofValue":         "z4xTXcWHhZY8oXCXTKSw3N9qmRKjQAUUVbNnQz1FqKCAYiGieYohBRcSKGK9YcBuKqyqzjbaohmtMZBAenC9huBJ",
 		},
 	}
+
+	proc := ld.NewJsonLdProcessor()
+	options := ld.NewJsonLdOptions("")
+	options.Format = model.NormalizationFormat
+	options.Algorithm = model.NormalizationAlgo
+	normalized, _ := proc.Normalize(credential, options)
+
+	fmt.Printf("Cred Normalized: %v\n", (normalized.(string)))
 
 	mock_controller := gomock.NewController(t)
 	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
