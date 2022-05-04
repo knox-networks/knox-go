@@ -5,6 +5,7 @@ import (
 	"github.com/knox-networks/knox-go/identity"
 	"github.com/knox-networks/knox-go/presentation"
 	"github.com/knox-networks/knox-go/signer"
+	"github.com/knox-networks/knox-go/token"
 )
 
 type KnoxClient struct {
@@ -12,6 +13,7 @@ type KnoxClient struct {
 	Identity     identity.IdentityClient
 	Credential   credential.CredentialClient
 	Presentation presentation.PresentationClient
+	Token        token.TokenClient
 }
 
 type NetworkConfig struct {
@@ -38,10 +40,16 @@ func NewKnoxClient(c *KnoxConfig) (*KnoxClient, error) {
 		return &KnoxClient{}, err
 	}
 
+	tokenClient, err := token.NewTokenClient(c.Network.AuthServiceURL, c.Signer)
+	if err != nil {
+		return &KnoxClient{}, err
+	}
+
 	return &KnoxClient{s: c.Signer,
 		Credential:   credClient,
 		Presentation: presClient,
 		Identity:     identityClient,
+		Token:        tokenClient,
 	}, nil
 }
 
@@ -72,7 +80,13 @@ func (k *KnoxClient) UpdateConfig(c *KnoxConfig) error {
 			return err
 		}
 
+		tokenClient, err := token.NewTokenClient(c.Network.AuthServiceURL, c.Signer)
+		if err != nil {
+			return err
+		}
+
 		k.Identity = identityClient
+		k.Token = tokenClient
 
 	}
 	return nil

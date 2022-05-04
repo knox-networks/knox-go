@@ -34,3 +34,10 @@ type DidDocument struct {
 	CapabilityDelegation []KeyMaterial `json:"capabilityDelegation"`
 	AssertionMethod      []KeyMaterial `json:"assertionMethod"`
 }
+
+type AuthToken struct {
+	Token        string
+	TokenType    string
+	ExpiresIn    int32
+	RefreshToken string
+}

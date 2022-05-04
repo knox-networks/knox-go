@@ -30,3 +30,16 @@ type RegisterIdentityParams struct {
 
 type GenerateIdentityParams struct {
 }
+
+type PasswordAuthentication struct {
+	Password string
+	Email    string
+}
+
+type DidAuthentication struct {
+	Did string
+}
+type CreateTokenParams struct {
+	Password *PasswordAuthentication
+	Did      *DidAuthentication
+}

@@ -2,9 +2,9 @@ package auth_client
 
 import (
 	"context"
-	"errors"
 	"time"
 
+	"github.com/knox-networks/knox-go/model"
 	"google.golang.org/grpc/credentials/insecure"
 
 	AuthApi "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
@@ -18,7 +18,7 @@ type authClient struct {
 }
 
 type streamClient struct {
-	stream AuthApi.AuthApiService_AuthnWithDidRegisterStartClient
+	stream grpc.ClientStream
 }
 
 type StreamClient interface {
@@ -30,11 +30,16 @@ type DidRegistrationChallenge struct {
 	Nonce string
 }
 
+type DidAuthenticationChallenge struct {
+	Nonce string
+}
+
 type AuthClient interface {
 	Close()
 	AuthnWithDid(did string, nonce string, enc []byte) error
+	AuthenticateWithPassword(email string, password string) (*model.AuthToken, error)
 	AuthnWithDidRegister(did string, nonce string, enc []byte) error
-	AuthnWithDidStart() (AuthApi.AuthApiService_AuthnWithDidStartClient, error)
+	CreateDidAuthenticationChallenge() (*DidAuthenticationChallenge, AuthApi.AuthApiService_AuthnWithDidStartClient, error)
 	CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error)
 }
 
@@ -54,7 +59,7 @@ func NewAuthClient(address string) (AuthClient, error) {
 	}, nil
 }
 
-func NewAuthStream(s AuthApi.AuthApiService_AuthnWithDidRegisterStartClient) StreamClient {
+func NewAuthStream(s grpc.ClientStream) StreamClient {
 	return &streamClient{stream: s}
 }
 
@@ -78,6 +83,28 @@ func (r *authClient) AuthnWithDid(did string, nonce string, enc []byte) error {
 	}
 
 	return nil
+}
+
+func (r *authClient) AuthenticateWithPassword(email string, password string) (*model.AuthToken, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &AuthApi.AuthnWithPasswordRequest{
+		Email:    email,
+		Password: password,
+	}
+
+	res, err := r.client.AuthnWithPassword(ctx, req)
+	if err != nil {
+		return &model.AuthToken{}, err
+	}
+
+	return &model.AuthToken{
+		Token:        res.AuthToken.Token,
+		TokenType:    res.AuthToken.TokenType,
+		ExpiresIn:    res.AuthToken.ExpiresIn,
+		RefreshToken: res.AuthToken.RefreshToken,
+	}, nil
 }
 
 func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error) {
@@ -117,25 +144,34 @@ func (r *authClient) AuthnWithDidRegister(did string, nonce string, enc []byte) 
 	return nil
 }
 
-func (r *authClient) AuthnWithDidStart() (AuthApi.AuthApiService_AuthnWithDidStartClient, error) {
+func (r *authClient) CreateDidAuthenticationChallenge() (*DidAuthenticationChallenge, AuthApi.AuthApiService_AuthnWithDidStartClient, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &AuthApi.AuthnWithDidStartRequest{}
-	return r.client.AuthnWithDidStart(ctx, req)
+	stream, err := r.client.AuthnWithDidStart(ctx, req)
+	if err != nil {
+		return &DidAuthenticationChallenge{}, nil, err
+	}
+
+	resp, err := stream.Recv()
+
+	if err != nil {
+		return &DidAuthenticationChallenge{}, nil, err
+	}
+
+	resp.GetNonce()
+
+	return &DidAuthenticationChallenge{}, stream, nil
 }
 
 func (s *streamClient) WaitForCompletion() error {
-	res, err := s.stream.Recv()
+	err := s.stream.RecvMsg(nil)
 	if err != nil {
 		return err
 	}
 
-	if res.GetOk() != "" {
-		return nil
-	}
-
-	return errors.New("unexpected error")
+	return nil
 }
 
 func (s *streamClient) Close() error {
