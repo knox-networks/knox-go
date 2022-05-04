@@ -33,11 +33,6 @@ func NewPresentationClient(address string, s signer.DynamicSigner) (Presentation
 
 func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	creds := p.Credentials
-	challenge, err := c.ca.CreatePresentationChallenge(p.CredentialTypes)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("Challenge: %s, %s\n", challenge.Nonce, challenge.Url)
 
 	vp := map[string]interface{}{
 		"@context":             []string{"https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"},
@@ -67,7 +62,7 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		return err
 	}
 
-	signature, err := c.s.Sign(signer.AssertionMethod, []byte(challenge.Nonce))
+	signature, err := c.s.Sign(signer.AssertionMethod, []byte(p.Challenge.Nonce))
 
 	if err != nil {
 		return err
@@ -76,10 +71,10 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
 		Type:               model.ProofType,
 		Created:            time.Now().UTC().Format(time.RFC3339),
-		VerificationMethod: "",
+		VerificationMethod: "PLACEHOLDER",
 		ProofPurpose:       signer.AssertionMethod.String(),
 		ProofValue:         encoded,
-	}, c.s.GetDid(), challenge.Nonce, signature)
+	}, c.s.GetDid(), p.Challenge.Nonce, signature)
 	if err != nil {
 		return err
 	}
