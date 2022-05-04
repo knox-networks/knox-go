@@ -2,7 +2,6 @@ package presentation
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -12,16 +11,14 @@ import (
 	"github.com/knox-networks/knox-go/service/credential_adapter"
 	ca_mock "github.com/knox-networks/knox-go/service/credential_adapter/mock"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
-	"github.com/piprate/json-gold/ld"
 )
 
 func TestSharePresentation(t *testing.T) {
 	credTypes := []string{"PermanentResidentCard"}
 
 	credential := map[string]interface{}{
-		"context": []interface{}{
+		"@context": []interface{}{
 			"https://www.w3.org/2018/credentials/v1",
-			"https://www.w3.org/2018/credentials/examples/v1",
 		},
 		"id": "http://credential_mock:8000/api/credential/z6MkpEo5be7ieVT5VGekfCBkD6L7Mr17KdgcTTA6J1Za6P95",
 		"type": []interface{}{
@@ -30,7 +27,7 @@ func TestSharePresentation(t *testing.T) {
 		},
 		"issuer":       "did:knox:z9j11k9soh9kJ1vD9pYR87ZhD7zE1U7ZA3XVSkWjY4YLg",
 		"issuanceDate": "2022-05-04T21:47:18Z",
-		"subject": map[string]interface{}{
+		"credentialSubject": map[string]interface{}{
 			"birthCountry":           "Bahamas",
 			"birthDate":              "1981-04-01",
 			"commuterClassification": "C1",
@@ -56,23 +53,11 @@ func TestSharePresentation(t *testing.T) {
 		},
 	}
 
-	proc := ld.NewJsonLdProcessor()
-	options := ld.NewJsonLdOptions("")
-	options.Format = model.NormalizationFormat
-	options.Algorithm = model.NormalizationAlgo
-	normalized, err := proc.Normalize(credential, options)
-
-	if err != nil {
-		t.Errorf("Error normalizing credential: %s", err)
-	}
-
-	fmt.Printf("Normalized: %v\n", (normalized.(string)))
-
 	mock_controller := gomock.NewController(t)
 	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
 	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
 	pc := &presentationClient{s: mock_wallet, ca: mock_ca}
-	err = pc.Share(params.SharePresentationParams{
+	err := pc.Share(params.SharePresentationParams{
 		Credentials: []model.SerializedDocument{credential},
 		Challenge: params.SharePresentationChallenge{
 			Nonce:           "nonce",

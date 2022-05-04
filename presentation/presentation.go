@@ -1,6 +1,7 @@
 package presentation
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -39,6 +40,9 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		"type":                 []string{"VerifiablePresentation"},
 		"verifiableCredential": creds,
 	}
+
+	testing, _ := json.Marshal(vp)
+	println(string(testing))
 
 	proc := ld.NewJsonLdProcessor()
 	options := ld.NewJsonLdOptions("")
