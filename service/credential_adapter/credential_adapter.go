@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"io"
 	"strings"
 	"time"
@@ -135,8 +136,12 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.Seri
 
 	for i, cred := range creds {
 
+		encoded_cred, err := json.Marshal(cred)
+		if err != nil {
+			return err
+		}
 		var structured_cred AdapterApi.VerifiableCredential
-		err := protojson.Unmarshal(cred, &structured_cred)
+		err = protojson.Unmarshal(encoded_cred, &structured_cred)
 		if err != nil {
 			return err
 		}
@@ -148,6 +153,10 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.Seri
 		Presentation: &AdapterApi.VerifiablePresentation{
 			VerifiableCredential: converted_creds,
 		},
+		Nonce:          "",
+		Signature:      []byte(""),
+		Did:            "",
+		CredentialType: []AdapterApi.CredentialType{},
 	})
 
 	if err != nil {

@@ -1,7 +1,6 @@
 package presentation
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -39,21 +38,11 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		return err
 	}
 	fmt.Printf("Challenge: %s, %s\n", challenge.Nonce, challenge.Url)
-	convertedCreds := make([]map[string]interface{}, len(creds))
-
-	for i, cred := range creds {
-		var converted map[string]interface{}
-		if err := json.Unmarshal(cred, &converted); err != nil {
-			return err
-		}
-
-		convertedCreds[i] = converted
-	}
 
 	vp := map[string]interface{}{
 		"@context":             []string{"https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"},
 		"type":                 []string{"VerifiablePresentation"},
-		"verifiableCredential": convertedCreds,
+		"verifiableCredential": creds,
 	}
 
 	proc := ld.NewJsonLdProcessor()
