@@ -72,8 +72,13 @@ func TestSharePresentation(t *testing.T) {
 	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
 	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
 	pc := &presentationClient{s: mock_wallet, ca: mock_ca}
-	mock_ca.EXPECT().CreatePresentationChallenge(credTypes).Return(&credential_adapter.PresentationChallenge{}, nil)
-	err = pc.Share(params.SharePresentationParams{Credentials: []model.SerializedDocument{credential}})
+	err = pc.Share(params.SharePresentationParams{
+		Credentials: []model.SerializedDocument{credential},
+		Challenge: params.SharePresentationChallenge{
+			Nonce:           "nonce",
+			CredentialTypes: credTypes,
+		},
+	})
 
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)

@@ -13,7 +13,6 @@ type RequestCredentialParams struct {
 
 type SharePresentationChallenge struct {
 	Nonce           string
-	Url             string
 	CredentialTypes []string
 }
 type SharePresentationParams struct {
