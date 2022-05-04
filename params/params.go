@@ -12,7 +12,8 @@ type RequestCredentialParams struct {
 }
 
 type SharePresentationParams struct {
-	Credentials []model.SerializedDocument
+	Credentials     []model.SerializedDocument
+	CredentialTypes []string
 }
 
 type RequestPresentationParams struct {

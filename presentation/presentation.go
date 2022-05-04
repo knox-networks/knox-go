@@ -33,7 +33,7 @@ func NewPresentationClient(address string, s signer.DynamicSigner) (Presentation
 
 func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	creds := p.Credentials
-	challenge, err := c.ca.CreatePresentationChallenge([]string{"PermanentResidentCard"})
+	challenge, err := c.ca.CreatePresentationChallenge(p.CredentialTypes)
 	if err != nil {
 		return err
 	}
@@ -67,13 +67,19 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		return err
 	}
 
+	signature, err := c.s.Sign(signer.AssertionMethod, []byte(challenge.Nonce))
+
+	if err != nil {
+		return err
+	}
+
 	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
 		Type:               model.ProofType,
 		Created:            time.Now().UTC().Format(time.RFC3339),
 		VerificationMethod: "",
 		ProofPurpose:       signer.AssertionMethod.String(),
 		ProofValue:         encoded,
-	})
+	}, c.s.GetDid(), challenge.Nonce, signature)
 	if err != nil {
 		return err
 	}
