@@ -17,8 +17,8 @@ jobs:
 
       - name: Build
         run: |-
-          make build
+          make docker-build
 
       - name: Test
         run: |-
-          make test
+          make docker-test
