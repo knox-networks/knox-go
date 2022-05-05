@@ -11,8 +11,14 @@ type RequestCredentialParams struct {
 	Challenge      RequestCredentialChallenge
 }
 
+type SharePresentationChallenge struct {
+	Nonce           string
+	CredentialTypes []string
+}
 type SharePresentationParams struct {
-	Credentials []model.SerializedDocument
+	Credentials     []model.SerializedDocument
+	CredentialTypes []string
+	Challenge       SharePresentationChallenge
 }
 
 type RequestPresentationParams struct {

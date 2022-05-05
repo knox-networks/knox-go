@@ -1,9 +1,6 @@
 package presentation
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
 	"time"
 
 	"github.com/knox-networks/knox-go/model"
@@ -34,26 +31,11 @@ func NewPresentationClient(address string, s signer.DynamicSigner) (Presentation
 
 func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	creds := p.Credentials
-	challenge, err := c.ca.CreatePresentationChallenge([]string{"PermanentResidentCard"})
-	if err != nil {
-		return err
-	}
-	fmt.Printf("Challenge: %s, %s\n", challenge.Nonce, challenge.Url)
-	convertedCreds := make([]map[string]interface{}, len(creds))
-
-	for i, cred := range creds {
-		var converted map[string]interface{}
-		if err := json.Unmarshal(cred, &converted); err != nil {
-			return err
-		}
-
-		convertedCreds[i] = converted
-	}
 
 	vp := map[string]interface{}{
-		"@context":             []string{"https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"},
-		"type":                 []string{"VerifiablePresentation"},
-		"verifiableCredential": convertedCreds,
+		"@context":             []interface{}{"https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"},
+		"type":                 []interface{}{"VerifiablePresentation"},
+		"verifiableCredential": creds,
 	}
 
 	proc := ld.NewJsonLdProcessor()
@@ -66,8 +48,6 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		return err
 	}
 
-	fmt.Printf("Normalized: %v\n", (normalized.(string)))
-
 	proofValue, err := c.s.Sign(signer.AssertionMethod, []byte(normalized.(string)))
 	if err != nil {
 		return err
@@ -78,18 +58,25 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		return err
 	}
 
-	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
-		Type:               model.ProofType,
-		Created:            time.Now().UTC().Format(time.RFC3339),
-		VerificationMethod: "",
-		ProofPurpose:       signer.AssertionMethod.String(),
-		ProofValue:         encoded,
-	})
+	signature, err := c.s.Sign(signer.AssertionMethod, []byte(p.Challenge.Nonce))
+
 	if err != nil {
 		return err
 	}
 
-	return errors.New("not implemented")
+	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
+		Type:               model.ProofType,
+		Created:            time.Now().UTC().Format(time.RFC3339),
+		VerificationMethod: "PLACEHOLDER",
+		ProofPurpose:       signer.AssertionMethod.String(),
+		ProofValue:         encoded,
+	}, c.s.GetDid(), p.Challenge.Nonce, signature)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *presentationClient) Request(p params.RequestPresentationParams) (*credential_adapter.PresentationChallenge, error) {

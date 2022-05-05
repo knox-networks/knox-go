@@ -1,6 +1,6 @@
 package model
 
-type SerializedDocument = []byte
+type SerializedDocument = interface{}
 
 type Proof struct {
 	Type               string
@@ -20,10 +20,10 @@ const (
 )
 
 type KeyMaterial struct {
-	Id                 string
-	Type               string
-	Controller         string
-	PublicKeyMultibase string
+	Id                 string `json:"id"`
+	Type               string `json:"type"`
+	Controller         string `json:"controller"`
+	PublicKeyMultibase string `json:"publicKeyMultibase"`
 }
 
 type DidDocument struct {

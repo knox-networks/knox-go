@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"io"
 	"strings"
 	"time"
@@ -48,7 +49,7 @@ type CredentialAdapterClient interface {
 	CreateIssuanceChallenge(cred_type string, did string) (IssuanceChallenge, error)
 	CreatePresentationChallenge(credTypes []string) (*PresentationChallenge, error)
 	IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte) (VerifiableCredential, error)
-	PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof) error
+	PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof, did string, nonce string, signature []byte) error
 }
 
 func NewCredentialAdapterClient(address string) (CredentialAdapterClient, error) {
@@ -126,7 +127,7 @@ func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, di
 	return VerifiableCredential{Doc: doc, Alias: CreateDefaultAlias(), Type: cred_type}, nil
 }
 
-func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof) error {
+func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof, did string, nonce string, signature []byte) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -135,8 +136,12 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.Seri
 
 	for i, cred := range creds {
 
+		encodedCred, err := json.Marshal(cred)
+		if err != nil {
+			return err
+		}
 		var structured_cred AdapterApi.VerifiableCredential
-		err := protojson.Unmarshal(cred, &structured_cred)
+		err = protojson.Unmarshal(encodedCred, &structured_cred)
 		if err != nil {
 			return err
 		}
@@ -148,6 +153,10 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.Seri
 		Presentation: &AdapterApi.VerifiablePresentation{
 			VerifiableCredential: converted_creds,
 		},
+		Nonce:          "",
+		Signature:      []byte(""),
+		Did:            "",
+		CredentialType: []AdapterApi.CredentialType{},
 	})
 
 	if err != nil {
