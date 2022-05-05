@@ -37,6 +37,10 @@ type RegisterIdentityParams struct {
 type GenerateIdentityParams struct {
 }
 
+type RecoverIdentityParams struct {
+	Mnemonic string
+}
+
 type PasswordAuthentication struct {
 	Password string
 	Email    string

@@ -39,22 +39,15 @@ type cryptoManager struct {
 }
 
 type CryptoManager interface {
-	GenerateKeyPair() (*KeyPairs, error)
+	GenerateKeyPair(mnemonic string) (*KeyPairs, error)
+	GenerateMnemonic() (string, error)
 }
 
 func NewCryptoManager() CryptoManager {
 	return &cryptoManager{}
 }
 
-func (c *cryptoManager) GenerateKeyPair() (*KeyPairs, error) {
-	entropy, err := bip39.NewEntropy(256)
-	if err != nil {
-		return &KeyPairs{}, err
-	}
-	mnemonic, err := bip39.NewMnemonic(entropy)
-	if err != nil {
-		return &KeyPairs{}, err
-	}
+func (c *cryptoManager) GenerateKeyPair(mnemonic string) (*KeyPairs, error) {
 
 	public, private, err := ed25519.GenerateKey(strings.NewReader(mnemonic))
 	if err != nil {
@@ -80,6 +73,19 @@ func (c *cryptoManager) GenerateKeyPair() (*KeyPairs, error) {
 		AssertionMethodPrivateKey:      private,
 	}, nil
 
+}
+
+func (c *cryptoManager) GenerateMnemonic() (string, error) {
+	entropy, err := bip39.NewEntropy(256)
+	if err != nil {
+		return "", err
+	}
+	mnemonic, err := bip39.NewMnemonic(entropy)
+	if err != nil {
+		return "", err
+	}
+
+	return mnemonic, nil
 }
 
 func (k *KeyPairs) Sign(relation signer.VerificationRelation, message []byte) ([]byte, error) {

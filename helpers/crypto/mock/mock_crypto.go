@@ -35,16 +35,31 @@ func (m *MockCryptoManager) EXPECT() *MockCryptoManagerMockRecorder {
 }
 
 // GenerateKeyPair mocks base method.
-func (m *MockCryptoManager) GenerateKeyPair() (*crypto.KeyPairs, error) {
+func (m *MockCryptoManager) GenerateKeyPair(mnemonic string) (*crypto.KeyPairs, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateKeyPair")
+	ret := m.ctrl.Call(m, "GenerateKeyPair", mnemonic)
 	ret0, _ := ret[0].(*crypto.KeyPairs)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GenerateKeyPair indicates an expected call of GenerateKeyPair.
-func (mr *MockCryptoManagerMockRecorder) GenerateKeyPair() *gomock.Call {
+func (mr *MockCryptoManagerMockRecorder) GenerateKeyPair(mnemonic interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateKeyPair", reflect.TypeOf((*MockCryptoManager)(nil).GenerateKeyPair))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateKeyPair", reflect.TypeOf((*MockCryptoManager)(nil).GenerateKeyPair), mnemonic)
+}
+
+// GenerateMnemonic mocks base method.
+func (m *MockCryptoManager) GenerateMnemonic() (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GenerateMnemonic")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GenerateMnemonic indicates an expected call of GenerateMnemonic.
+func (mr *MockCryptoManagerMockRecorder) GenerateMnemonic() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateMnemonic", reflect.TypeOf((*MockCryptoManager)(nil).GenerateMnemonic))
 }
