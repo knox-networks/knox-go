@@ -358,3 +358,77 @@ func TestRegisterIdentity(t *testing.T) {
 	}
 	t.Skip("not implemented")
 }
+
+type recoverIdentityFields struct {
+	cm crypto.CryptoManager
+}
+type recoverIdentityArgs struct {
+	p *params.RecoverIdentityParams
+}
+
+type recoverIdentityTest struct {
+	name          string
+	prepare       func(f *recoverIdentityFields, args *recoverIdentityArgs)
+	args          recoverIdentityArgs
+	expectedError error
+}
+
+func TestRecoverIdentity(t *testing.T) {
+	mock_controller := gomock.NewController(t)
+
+	mock_cm := cm_mock.NewMockCryptoManager(mock_controller)
+	f := &recoverIdentityFields{
+		cm: mock_cm,
+	}
+
+	tests := []recoverIdentityTest{
+		{
+			name: "RecoverIdentity Succeeds",
+			args: recoverIdentityArgs{
+				p: &params.RecoverIdentityParams{
+					Mnemonic: "mnemonic",
+				},
+			},
+			prepare: func(f *recoverIdentityFields, args *recoverIdentityArgs) {
+				f.cm.(*cm_mock.MockCryptoManager).EXPECT().
+					GenerateKeyPair(args.p.Mnemonic).
+					Return(&crypto.KeyPairs{}, nil)
+			},
+			expectedError: nil,
+		},
+		{
+			name: "RecoverIdentity Fails Due To Key Generation Error",
+			args: recoverIdentityArgs{
+				p: &params.RecoverIdentityParams{
+					Mnemonic: "mnemonic",
+				},
+			},
+			prepare: func(f *recoverIdentityFields, args *recoverIdentityArgs) {
+				f.cm.(*cm_mock.MockCryptoManager).EXPECT().
+					GenerateKeyPair(args.p.Mnemonic).
+					Return(&crypto.KeyPairs{}, errors.New("key generation error"))
+			},
+			expectedError: errors.New("key generation error"),
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.prepare(f, &test.args)
+
+			c := &identityClient{
+				cm: f.cm,
+			}
+
+			_, _, err := c.Recover(test.args.p)
+
+			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
+				t.Errorf("Expected error: %v, got: %v", test.expectedError, err)
+			}
+
+			if err != nil && test.expectedError != nil && err.Error() != test.expectedError.Error() {
+				t.Errorf("Expected error %v, got %v", test.expectedError, err)
+			}
+		})
+	}
+}
