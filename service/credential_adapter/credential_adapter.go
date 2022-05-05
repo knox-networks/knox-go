@@ -136,12 +136,12 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.Seri
 
 	for i, cred := range creds {
 
-		encoded_cred, err := json.Marshal(cred)
+		encodedCred, err := json.Marshal(cred)
 		if err != nil {
 			return err
 		}
 		var structured_cred AdapterApi.VerifiableCredential
-		err = protojson.Unmarshal(encoded_cred, &structured_cred)
+		err = protojson.Unmarshal(encodedCred, &structured_cred)
 		if err != nil {
 			return err
 		}
