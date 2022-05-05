@@ -1,9 +1,6 @@
 package presentation
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
 	"time"
 
 	"github.com/knox-networks/knox-go/model"
@@ -38,11 +35,8 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	vp := map[string]interface{}{
 		"@context":             []interface{}{"https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"},
 		"type":                 []interface{}{"VerifiablePresentation"},
-		"verifiableCredential": []interface{}{creds[0]},
+		"verifiableCredential": creds,
 	}
-
-	testing, _ := json.Marshal(vp)
-	println(string(testing))
 
 	proc := ld.NewJsonLdProcessor()
 	options := ld.NewJsonLdOptions("")
@@ -53,8 +47,6 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Printf("Normalized: %v\n", (normalized.(string)))
 
 	proofValue, err := c.s.Sign(signer.AssertionMethod, []byte(normalized.(string)))
 	if err != nil {
@@ -79,11 +71,12 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		ProofPurpose:       signer.AssertionMethod.String(),
 		ProofValue:         encoded,
 	}, c.s.GetDid(), p.Challenge.Nonce, signature)
+
 	if err != nil {
 		return err
 	}
 
-	return errors.New("not implemented")
+	return nil
 }
 
 func (c *presentationClient) Request(p params.RequestPresentationParams) (*credential_adapter.PresentationChallenge, error) {

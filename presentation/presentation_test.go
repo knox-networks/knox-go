@@ -2,7 +2,6 @@ package presentation
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -11,11 +10,27 @@ import (
 	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/credential_adapter"
 	ca_mock "github.com/knox-networks/knox-go/service/credential_adapter/mock"
+	"github.com/knox-networks/knox-go/signer"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
-	"github.com/piprate/json-gold/ld"
 )
 
+type sharePresentationFields struct {
+	s  signer.DynamicSigner
+	ca credential_adapter.CredentialAdapterClient
+}
+type sharePresentationArgs struct {
+	p params.SharePresentationParams
+}
+
+type sharePresentationTest struct {
+	name          string
+	prepare       func(f *sharePresentationFields, args *sharePresentationArgs)
+	args          *sharePresentationArgs
+	expectedError error
+}
+
 func TestSharePresentation(t *testing.T) {
+	mock_controller := gomock.NewController(t)
 	credTypes := []string{"PermanentResidentCard"}
 
 	credential := map[string]interface{}{
@@ -55,28 +70,135 @@ func TestSharePresentation(t *testing.T) {
 		},
 	}
 
-	proc := ld.NewJsonLdProcessor()
-	options := ld.NewJsonLdOptions("")
-	options.Format = model.NormalizationFormat
-	options.Algorithm = model.NormalizationAlgo
-	normalized, _ := proc.Normalize(credential, options)
+	f := &sharePresentationFields{
+		s:  s_mock.NewMockDynamicSigner(mock_controller),
+		ca: ca_mock.NewMockCredentialAdapterClient(mock_controller),
+	}
 
-	fmt.Printf("Cred Normalized: %v\n", (normalized.(string)))
+	tests := []sharePresentationTest{
+		{
+			name: "SharePresentation Succeeds",
+			prepare: func(f *sharePresentationFields, args *sharePresentationArgs) {
+				did := "did:knox:z9j11k9soh9kJ1vD9pYR87ZhD7zE1U7ZA3XVSkWjY4YLg"
+				nonceSignature := []byte("nonceSignature")
+				gomock.InOrder(
+					f.s.(*s_mock.MockDynamicSigner).
+						EXPECT().Sign(signer.AssertionMethod, gomock.Any()).
+						Return([]byte("signature"), nil),
+					f.s.(*s_mock.MockDynamicSigner).
+						EXPECT().Sign(signer.AssertionMethod, []byte(args.p.Challenge.Nonce)).
+						Return(nonceSignature, nil),
+					f.s.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
+						PresentVerifiableCredential(gomock.Any(), gomock.Any(), did, args.p.Challenge.Nonce, nonceSignature).
+						Return(nil),
+				)
 
-	mock_controller := gomock.NewController(t)
-	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
-	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
-	pc := &presentationClient{s: mock_wallet, ca: mock_ca}
-	err := pc.Share(params.SharePresentationParams{
-		Credentials: []model.SerializedDocument{credential},
-		Challenge: params.SharePresentationChallenge{
-			Nonce:           "nonce",
-			CredentialTypes: credTypes,
+			},
+			args: &sharePresentationArgs{
+				p: params.SharePresentationParams{
+					Credentials:     []model.SerializedDocument{credential},
+					CredentialTypes: credTypes,
+					Challenge: params.SharePresentationChallenge{
+						Nonce:           "nonce",
+						CredentialTypes: credTypes},
+				},
+			},
+			expectedError: nil,
 		},
-	})
+		{
+			name: "SharePresentation Fails Due To Error Signing ProofValue",
+			prepare: func(f *sharePresentationFields, args *sharePresentationArgs) {
+				gomock.InOrder(
+					f.s.(*s_mock.MockDynamicSigner).
+						EXPECT().Sign(signer.AssertionMethod, gomock.Any()).
+						Return([]byte(""), errors.New("proofValue signing error")),
+				)
 
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
+			},
+			args: &sharePresentationArgs{
+				p: params.SharePresentationParams{
+					Credentials:     []model.SerializedDocument{credential},
+					CredentialTypes: credTypes,
+					Challenge: params.SharePresentationChallenge{
+						Nonce:           "nonce",
+						CredentialTypes: credTypes},
+				},
+			},
+			expectedError: errors.New("proofValue signing error"),
+		},
+		{
+			name: "SharePresentation Fails Due To Error Signing Nonce",
+			prepare: func(f *sharePresentationFields, args *sharePresentationArgs) {
+				gomock.InOrder(
+					f.s.(*s_mock.MockDynamicSigner).
+						EXPECT().Sign(signer.AssertionMethod, gomock.Any()).
+						Return([]byte("signature"), nil),
+					f.s.(*s_mock.MockDynamicSigner).
+						EXPECT().Sign(signer.AssertionMethod, []byte(args.p.Challenge.Nonce)).
+						Return([]byte(""), errors.New("nonce signing error")),
+				)
+
+			},
+			args: &sharePresentationArgs{
+				p: params.SharePresentationParams{
+					Credentials:     []model.SerializedDocument{credential},
+					CredentialTypes: credTypes,
+					Challenge: params.SharePresentationChallenge{
+						Nonce:           "nonce",
+						CredentialTypes: credTypes},
+				},
+			},
+			expectedError: errors.New("nonce signing error"),
+		},
+		{
+			name: "SharePresentation Fails Due To Erorr In Credential Adapter",
+			prepare: func(f *sharePresentationFields, args *sharePresentationArgs) {
+				did := "did:knox:z9j11k9soh9kJ1vD9pYR87ZhD7zE1U7ZA3XVSkWjY4YLg"
+				nonceSignature := []byte("nonceSignature")
+				gomock.InOrder(
+					f.s.(*s_mock.MockDynamicSigner).
+						EXPECT().Sign(signer.AssertionMethod, gomock.Any()).
+						Return([]byte("signature"), nil),
+					f.s.(*s_mock.MockDynamicSigner).
+						EXPECT().Sign(signer.AssertionMethod, []byte(args.p.Challenge.Nonce)).
+						Return(nonceSignature, nil),
+					f.s.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
+					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
+						PresentVerifiableCredential(gomock.Any(), gomock.Any(), did, args.p.Challenge.Nonce, nonceSignature).
+						Return(errors.New("credential adapter error")),
+				)
+
+			},
+			args: &sharePresentationArgs{
+				p: params.SharePresentationParams{
+					Credentials:     []model.SerializedDocument{credential},
+					CredentialTypes: credTypes,
+					Challenge: params.SharePresentationChallenge{
+						Nonce:           "nonce",
+						CredentialTypes: credTypes},
+				},
+			},
+			expectedError: errors.New("credential adapter error"),
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			test.prepare(f, test.args)
+			pc := &presentationClient{s: f.s, ca: f.ca}
+			err := pc.Share(test.args.p)
+
+			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
+				t.Errorf("Expected error: %v, got: %v", test.expectedError, err)
+			}
+
+			if err != nil && test.expectedError != nil && err.Error() != test.expectedError.Error() {
+				t.Errorf("Expected error: %v, got: %v", test.expectedError, err)
+			}
+
+		})
 	}
 
 }
@@ -162,5 +284,16 @@ func TestRequestPresentation(t *testing.T) {
 				t.Errorf("Expected credential types %v, got %v", test.args.credTypes, challenge.CredentialTypes)
 			}
 		})
+	}
+}
+
+func TestNewPresentationClient(t *testing.T) {
+	mock_controller := gomock.NewController(t)
+	mock_signer := s_mock.NewMockDynamicSigner(mock_controller)
+
+	_, err := NewPresentationClient("", mock_signer)
+
+	if err != nil {
+		t.Errorf("Expected error to be nil, got %v", err)
 	}
 }

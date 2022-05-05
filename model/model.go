@@ -1,6 +1,6 @@
 package model
 
-type SerializedDocument = map[string]interface{}
+type SerializedDocument = interface{}
 
 type Proof struct {
 	Type               string
