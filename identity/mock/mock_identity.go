@@ -52,6 +52,22 @@ func (mr *MockIdentityClientMockRecorder) Generate(params interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Generate", reflect.TypeOf((*MockIdentityClient)(nil).Generate), params)
 }
 
+// Recover mocks base method.
+func (m *MockIdentityClient) Recover(p *params.RecoverIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Recover", p)
+	ret0, _ := ret[0].(*model.DidDocument)
+	ret1, _ := ret[1].(*crypto.KeyPairs)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// Recover indicates an expected call of Recover.
+func (mr *MockIdentityClientMockRecorder) Recover(p interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Recover", reflect.TypeOf((*MockIdentityClient)(nil).Recover), p)
+}
+
 // Register mocks base method.
 func (m *MockIdentityClient) Register(p *params.RegisterIdentityParams) error {
 	m.ctrl.T.Helper()

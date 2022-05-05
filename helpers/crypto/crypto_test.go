@@ -15,7 +15,8 @@ func TestGenerateKeyPair(t *testing.T) {
 
 func TestGetPrivateKey(t *testing.T) {
 	cm := cryptoManager{}
-	kp, _ := cm.GenerateKeyPair()
+	mnemonic, _ := cm.GenerateMnemonic()
+	kp, _ := cm.GenerateKeyPair(mnemonic)
 	if kp.MasterPrivateKey == nil {
 		t.Errorf("Expected private key, got nil")
 	}
@@ -33,7 +34,8 @@ func TestGetPrivateKey(t *testing.T) {
 
 func TestGetPublicKey(t *testing.T) {
 	cm := cryptoManager{}
-	kp, _ := cm.GenerateKeyPair()
+	mnemonic, _ := cm.GenerateMnemonic()
+	kp, _ := cm.GenerateKeyPair(mnemonic)
 	if kp.MasterPrivateKey == nil {
 		t.Errorf("Expected private key, got nil")
 	}
@@ -58,7 +60,8 @@ func TestGetPublicKey(t *testing.T) {
 
 func TestDecodePrefixed(t *testing.T) {
 	cm := cryptoManager{}
-	kp, _ := cm.GenerateKeyPair()
+	mnemonic, _ := cm.GenerateMnemonic()
+	kp, _ := cm.GenerateKeyPair(mnemonic)
 	message := []byte("hello")
 	key_prefix := "z6Mk"
 
@@ -80,7 +83,8 @@ func TestDecodePrefixed(t *testing.T) {
 
 func TestKeyPairShouldImplementDynamicSigner(t *testing.T) {
 	cm := cryptoManager{}
-	kps, _ := cm.GenerateKeyPair()
+	mnemonic, _ := cm.GenerateMnemonic()
+	kps, _ := cm.GenerateKeyPair(mnemonic)
 
 	var s signer.DynamicSigner = kps
 

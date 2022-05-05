@@ -18,6 +18,7 @@ type identityClient struct {
 type IdentityClient interface {
 	Register(p *params.RegisterIdentityParams) error
 	Generate(params *params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error)
+	Recover(p *params.RecoverIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error)
 }
 
 func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, error) {
@@ -69,7 +70,22 @@ func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
 }
 
 func (c *identityClient) Generate(params *params.GenerateIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
-	kps, err := c.cm.GenerateKeyPair()
+	mnemonic, err := c.cm.GenerateMnemonic()
+	if err != nil {
+		return nil, nil, err
+	}
+	kps, err := c.cm.GenerateKeyPair(mnemonic)
+	if err != nil {
+		return &model.DidDocument{}, &crypto.KeyPairs{}, err
+	}
+
+	doc := did.CreateDidDocument(kps)
+
+	return doc, kps, nil
+}
+
+func (c *identityClient) Recover(p *params.RecoverIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error) {
+	kps, err := c.cm.GenerateKeyPair(p.Mnemonic)
 	if err != nil {
 		return &model.DidDocument{}, &crypto.KeyPairs{}, err
 	}

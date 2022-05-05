@@ -41,8 +41,11 @@ func TestGenerateIdentity(t *testing.T) {
 				p: params.GenerateIdentityParams{},
 			},
 			prepare: func(f *generateIdentityFields, args *generateIdentityArgs) {
-
-				f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair().Return(&crypto.KeyPairs{}, nil)
+				mnemonic := "mnemonic"
+				gomock.InOrder(
+					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateMnemonic().Return(mnemonic, nil),
+					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair(mnemonic).Return(&crypto.KeyPairs{}, nil),
+				)
 			},
 			expectedError: nil,
 		},
@@ -52,10 +55,23 @@ func TestGenerateIdentity(t *testing.T) {
 				p: params.GenerateIdentityParams{},
 			},
 			prepare: func(f *generateIdentityFields, args *generateIdentityArgs) {
-
-				f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair().Return(&crypto.KeyPairs{}, errors.New("error"))
+				mnemonic := "mnemonic"
+				gomock.InOrder(
+					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateMnemonic().Return(mnemonic, nil),
+					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair(mnemonic).Return(&crypto.KeyPairs{}, errors.New("error")),
+				)
 			},
 			expectedError: errors.New("error"),
+		},
+		{
+			name: "GenerateIdentity Fails Due To Mnemonic Generation Error",
+			args: generateIdentityArgs{
+				p: params.GenerateIdentityParams{},
+			},
+			prepare: func(f *generateIdentityFields, args *generateIdentityArgs) {
+				f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateMnemonic().Return("", errors.New("mnemonic error"))
+			},
+			expectedError: errors.New("mnemonic error"),
 		},
 	}
 
