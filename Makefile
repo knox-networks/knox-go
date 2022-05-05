@@ -11,7 +11,7 @@ build:   ## build the project
 	go build
 
 docker-build:
-	docker build -t knox-go:latest -f ./etc/docker/Dockerfile.test .
+	docker build -t knox-go:latest -f ./etc/docker/Dockerfile .
 
 test:   ## run tests
 	go test -cover ./...
