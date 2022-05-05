@@ -38,7 +38,7 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	vp := map[string]interface{}{
 		"@context":             []interface{}{"https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"},
 		"type":                 []interface{}{"VerifiablePresentation"},
-		"verifiableCredential": creds,
+		"verifiableCredential": []interface{}{creds[0]},
 	}
 
 	testing, _ := json.Marshal(vp)
