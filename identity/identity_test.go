@@ -1,6 +1,7 @@
 package identity
 
 import (
+	"bytes"
 	"errors"
 	"testing"
 
@@ -12,6 +13,7 @@ import (
 	auth_mock "github.com/knox-networks/knox-go/service/auth_client/mock"
 	"github.com/knox-networks/knox-go/signer"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
+	"github.com/multiformats/go-multibase"
 )
 
 type generateIdentityFields struct {
@@ -431,4 +433,56 @@ func TestRecoverIdentity(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestDeterministicKeyGeneration(t *testing.T) {
+
+	c := &identityClient{
+		cm: crypto.NewCryptoManager(),
+	}
+
+	doc, kps, _ := c.Generate(&params.GenerateIdentityParams{})
+
+	recoveredDocs, recoveredKeys, _ := c.Recover(&params.RecoverIdentityParams{
+		Mnemonic: kps.Mnemonic,
+	})
+
+	if doc.Id != recoveredDocs.Id {
+		t.Errorf("Expected did %v, got %v", doc.Id, recoveredDocs.Id)
+	}
+
+	if !bytes.Equal(kps.MasterPrivateKey, recoveredKeys.MasterPrivateKey) {
+		encodedO, _ := multibase.Encode(multibase.Base58BTC, kps.MasterPrivateKey)
+		encodedR, _ := multibase.Encode(multibase.Base58BTC, recoveredKeys.MasterPrivateKey)
+		t.Errorf("Expected %s, got %s", encodedO, encodedR)
+	}
+
+	if !bytes.Equal(kps.AuthenticationPrivateKey, recoveredKeys.AuthenticationPrivateKey) {
+		encodedO, _ := multibase.Encode(multibase.Base58BTC, kps.AuthenticationPrivateKey)
+		encodedR, _ := multibase.Encode(multibase.Base58BTC, recoveredKeys.AuthenticationPrivateKey)
+		t.Errorf("Expected %s, got %s", encodedO, encodedR)
+	}
+
+	if !bytes.Equal(kps.CapabilityInvocationPrivateKey, recoveredKeys.CapabilityInvocationPrivateKey) {
+		encodedO, _ := multibase.Encode(multibase.Base58BTC, kps.CapabilityInvocationPrivateKey)
+		encodedR, _ := multibase.Encode(multibase.Base58BTC, recoveredKeys.CapabilityInvocationPrivateKey)
+		t.Errorf("Expected %s, got %s", encodedO, encodedR)
+	}
+
+	if !bytes.Equal(kps.CapabilityDelegationPrivateKey, recoveredKeys.CapabilityDelegationPrivateKey) {
+		encodedO, _ := multibase.Encode(multibase.Base58BTC, kps.CapabilityDelegationPrivateKey)
+		encodedR, _ := multibase.Encode(multibase.Base58BTC, recoveredKeys.CapabilityDelegationPrivateKey)
+		t.Errorf("Expected %s, got %s", encodedO, encodedR)
+	}
+
+	if !bytes.Equal(kps.AssertionMethodPrivateKey, recoveredKeys.AssertionMethodPrivateKey) {
+		encodedO, _ := multibase.Encode(multibase.Base58BTC, kps.AssertionMethodPrivateKey)
+		encodedR, _ := multibase.Encode(multibase.Base58BTC, recoveredKeys.AssertionMethodPrivateKey)
+		t.Errorf("Expected %s, got %s", encodedO, encodedR)
+	}
+
+	if kps.MasterPublicKey != recoveredKeys.MasterPublicKey {
+		t.Errorf("Expected %s, got %s", kps.MasterPublicKey, recoveredKeys.MasterPublicKey)
+	}
+
 }
