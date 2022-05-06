@@ -5,6 +5,7 @@ import (
 	"crypto/ed25519"
 	"strings"
 
+	"github.com/knox-networks/knox-go/model"
 	"github.com/knox-networks/knox-go/signer"
 	mb "github.com/multiformats/go-multibase"
 	"github.com/tyler-smith/go-bip39"
@@ -90,7 +91,11 @@ func (c *cryptoManager) GenerateMnemonic() (string, error) {
 
 func (k *KeyPairs) Sign(relation signer.VerificationRelation, message []byte) (*signer.SigningResponse, error) {
 	pvk := k.GetPrivateKey(relation)
-	return &signer.SigningResponse{ProofValue: ed25519.Sign(pvk, message)}, nil
+	return &signer.SigningResponse{
+		ProofValue:         ed25519.Sign(pvk, message),
+		ProofType:          model.ProofType,
+		VerificationMethod: k.GetVerificationMethod(relation),
+	}, nil
 }
 
 func (k *KeyPairs) GetPrivateKey(relation signer.VerificationRelation) []byte {
@@ -130,6 +135,23 @@ func (k *KeyPairs) GetPublicKey(relation signer.VerificationRelation) ([]byte, e
 
 func (k *KeyPairs) GetDid() string {
 	return DidPrefix + k.MasterPublicKey
+}
+
+func (k *KeyPairs) GetVerificationMethod(rel signer.VerificationRelation) string {
+
+	switch rel {
+	case signer.Authentication:
+		return DidPrefix + k.MasterPublicKey + "#" + k.AuthenticationPublicKey
+	case signer.CapabilityInvocation:
+		return DidPrefix + k.MasterPublicKey + "#" + k.CapabilityInvocationPublicKey
+	case signer.CapabilityDelegation:
+		return DidPrefix + k.MasterPublicKey + "#" + k.CapabilityDelegationPublicKey
+	case signer.AssertionMethod:
+		return DidPrefix + k.MasterPublicKey + "#" + k.AssertionMethodPublicKey
+	default:
+		return DidPrefix + k.MasterPublicKey
+	}
+
 }
 
 func DecodePrefixed(encoded_key string) (mb.Encoding, []byte, error) {

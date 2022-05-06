@@ -48,12 +48,12 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		return err
 	}
 
-	proofValue, err := c.s.Sign(signer.AssertionMethod, []byte(normalized.(string)))
+	presentationSig, err := c.s.Sign(signer.AssertionMethod, []byte(normalized.(string)))
 	if err != nil {
 		return err
 	}
 
-	encoded, err := mb.Encode(mb.Base58BTC, proofValue.ProofValue)
+	encoded, err := mb.Encode(mb.Base58BTC, presentationSig.ProofValue)
 	if err != nil {
 		return err
 	}
@@ -65,9 +65,9 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 	}
 
 	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
-		Type:               model.ProofType,
+		Type:               presentationSig.ProofType,
 		Created:            time.Now().UTC().Format(time.RFC3339),
-		VerificationMethod: "PLACEHOLDER",
+		VerificationMethod: presentationSig.VerificationMethod,
 		ProofPurpose:       signer.AssertionMethod.String(),
 		ProofValue:         encoded,
 	}, c.s.GetDid(), p.Challenge.Nonce, signature.ProofValue)
