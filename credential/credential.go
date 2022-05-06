@@ -42,7 +42,7 @@ func (c *credentialClient) Request(params params.RequestCredentialParams) (crede
 	fmt.Printf("Created Signature For Nonce %s\n", nonce)
 
 	fmt.Printf("About to request issuance of credential of type %s\n", cred_type)
-	cred, err := c.ca.IssueVerifiableCredential(cred_type, did, nonce, signature)
+	cred, err := c.ca.IssueVerifiableCredential(cred_type, did, nonce, signature.Signature)
 	if err != nil {
 		return credential_adapter.VerifiableCredential{}, err
 	}

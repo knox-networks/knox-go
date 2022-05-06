@@ -84,10 +84,10 @@ func TestSharePresentation(t *testing.T) {
 				gomock.InOrder(
 					f.s.(*s_mock.MockDynamicSigner).
 						EXPECT().Sign(signer.AssertionMethod, gomock.Any()).
-						Return([]byte("signature"), nil),
+						Return(&signer.SigningResponse{Signature: []byte("signature")}, nil),
 					f.s.(*s_mock.MockDynamicSigner).
 						EXPECT().Sign(signer.AssertionMethod, []byte(args.p.Challenge.Nonce)).
-						Return(nonceSignature, nil),
+						Return(&signer.SigningResponse{Signature: nonceSignature}, nil),
 					f.s.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
 						PresentVerifiableCredential(gomock.Any(), gomock.Any(), did, args.p.Challenge.Nonce, nonceSignature).
@@ -112,7 +112,7 @@ func TestSharePresentation(t *testing.T) {
 				gomock.InOrder(
 					f.s.(*s_mock.MockDynamicSigner).
 						EXPECT().Sign(signer.AssertionMethod, gomock.Any()).
-						Return([]byte(""), errors.New("proofValue signing error")),
+						Return(&signer.SigningResponse{}, errors.New("proofValue signing error")),
 				)
 
 			},
@@ -133,10 +133,10 @@ func TestSharePresentation(t *testing.T) {
 				gomock.InOrder(
 					f.s.(*s_mock.MockDynamicSigner).
 						EXPECT().Sign(signer.AssertionMethod, gomock.Any()).
-						Return([]byte("signature"), nil),
+						Return(&signer.SigningResponse{Signature: []byte("signature")}, nil),
 					f.s.(*s_mock.MockDynamicSigner).
 						EXPECT().Sign(signer.AssertionMethod, []byte(args.p.Challenge.Nonce)).
-						Return([]byte(""), errors.New("nonce signing error")),
+						Return(&signer.SigningResponse{}, errors.New("nonce signing error")),
 				)
 
 			},
@@ -159,10 +159,10 @@ func TestSharePresentation(t *testing.T) {
 				gomock.InOrder(
 					f.s.(*s_mock.MockDynamicSigner).
 						EXPECT().Sign(signer.AssertionMethod, gomock.Any()).
-						Return([]byte("signature"), nil),
+						Return(&signer.SigningResponse{Signature: []byte("signature")}, nil),
 					f.s.(*s_mock.MockDynamicSigner).
 						EXPECT().Sign(signer.AssertionMethod, []byte(args.p.Challenge.Nonce)).
-						Return(nonceSignature, nil),
+						Return(&signer.SigningResponse{Signature: nonceSignature}, nil),
 					f.s.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
 						PresentVerifiableCredential(gomock.Any(), gomock.Any(), did, args.p.Challenge.Nonce, nonceSignature).

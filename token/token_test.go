@@ -54,7 +54,7 @@ func TestCreateToken(t *testing.T) {
 						}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, message).
-						Return(signature, nil),
+						Return(&signer.SigningResponse{Signature: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).
 						EXPECT().
 						AuthnWithDid(args.p.Did.Did, args.nonce, signature).
@@ -114,7 +114,7 @@ func TestCreateToken(t *testing.T) {
 						Return(&auth_client.DidAuthenticationChallenge{Nonce: args.nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, message).
-						Return([]byte(""), errors.New("signature error")),
+						Return(&signer.SigningResponse{}, errors.New("signature error")),
 				)
 			},
 			args: createTokenArgs{
@@ -139,7 +139,7 @@ func TestCreateToken(t *testing.T) {
 						Return(&auth_client.DidAuthenticationChallenge{Nonce: args.nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, message).
-						Return(signature, nil),
+						Return(&signer.SigningResponse{Signature: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).
 						EXPECT().
 						AuthnWithDid(args.p.Did.Did, args.nonce, signature).
@@ -170,7 +170,7 @@ func TestCreateToken(t *testing.T) {
 						}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, message).
-						Return(signature, nil),
+						Return(&signer.SigningResponse{Signature: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).
 						EXPECT().
 						AuthnWithDid(args.p.Did.Did, args.nonce, signature).
@@ -203,7 +203,7 @@ func TestCreateToken(t *testing.T) {
 						}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, message).
-						Return(signature, nil),
+						Return(&signer.SigningResponse{Signature: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).
 						EXPECT().
 						AuthnWithDid(args.p.Did.Did, args.nonce, signature).
