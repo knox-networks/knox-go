@@ -3,6 +3,7 @@ package did
 import (
 	"github.com/knox-networks/knox-go/helpers/crypto"
 	"github.com/knox-networks/knox-go/model"
+	"github.com/knox-networks/knox-go/signer"
 )
 
 func CreateDidDocument(kps *crypto.KeyPairs) *model.DidDocument {
@@ -12,7 +13,7 @@ func CreateDidDocument(kps *crypto.KeyPairs) *model.DidDocument {
 		Id: kps.MasterPublicKey,
 		Authentication: []model.KeyMaterial{
 			{
-				Id:                 crypto.DidPrefix + kps.MasterPublicKey + "#" + kps.AuthenticationPublicKey,
+				Id:                 kps.GetVerificationMethod(signer.Authentication),
 				Type:               crypto.ProofType,
 				Controller:         crypto.DidPrefix + kps.MasterPublicKey,
 				PublicKeyMultibase: kps.AuthenticationPublicKey,
@@ -20,7 +21,7 @@ func CreateDidDocument(kps *crypto.KeyPairs) *model.DidDocument {
 		},
 		CapabilityInvocation: []model.KeyMaterial{
 			{
-				Id:                 crypto.DidPrefix + kps.MasterPublicKey + "#" + kps.CapabilityInvocationPublicKey,
+				Id:                 kps.GetVerificationMethod(signer.CapabilityInvocation),
 				Type:               crypto.ProofType,
 				Controller:         crypto.DidPrefix + kps.MasterPublicKey,
 				PublicKeyMultibase: kps.CapabilityInvocationPublicKey,
@@ -28,7 +29,7 @@ func CreateDidDocument(kps *crypto.KeyPairs) *model.DidDocument {
 		},
 		CapabilityDelegation: []model.KeyMaterial{
 			{
-				Id:                 crypto.DidPrefix + kps.MasterPublicKey + "#" + kps.CapabilityDelegationPublicKey,
+				Id:                 kps.GetVerificationMethod(signer.CapabilityDelegation),
 				Type:               crypto.ProofType,
 				Controller:         crypto.DidPrefix + kps.MasterPublicKey,
 				PublicKeyMultibase: kps.CapabilityDelegationPublicKey,
@@ -36,7 +37,7 @@ func CreateDidDocument(kps *crypto.KeyPairs) *model.DidDocument {
 		},
 		AssertionMethod: []model.KeyMaterial{
 			{
-				Id:                 crypto.DidPrefix + kps.MasterPublicKey + "#" + kps.AssertionMethodPublicKey,
+				Id:                 kps.GetVerificationMethod(signer.AssertionMethod),
 				Type:               crypto.ProofType,
 				Controller:         crypto.DidPrefix + kps.MasterPublicKey,
 				PublicKeyMultibase: kps.AssertionMethodPublicKey,

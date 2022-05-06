@@ -94,13 +94,13 @@ func TestKeyPairShouldImplementDynamicSigner(t *testing.T) {
 		t.Errorf("Expected did:knox:z1x2y3z4, got %s", did)
 	}
 
-	signature, _ := s.Sign(signer.AssertionMethod, []byte("test"))
+	signed, _ := s.Sign(signer.AssertionMethod, []byte("test"))
 
-	if signature == nil {
+	if signed == nil {
 		t.Errorf("Expected signature, got nil")
 	}
 	public, _ := kps.GetPublicKey(signer.AssertionMethod)
-	isVerified := ed25519.Verify(ed25519.PublicKey(public), []byte("test"), signature)
+	isVerified := ed25519.Verify(ed25519.PublicKey(public), []byte("test"), signed.ProofValue)
 
 	if !isVerified {
 		t.Errorf("Expected signature to be valid")

@@ -49,10 +49,10 @@ func (mr *MockDynamicSignerMockRecorder) GetDid() *gomock.Call {
 }
 
 // Sign mocks base method.
-func (m *MockDynamicSigner) Sign(rel signer.VerificationRelation, message []byte) ([]byte, error) {
+func (m *MockDynamicSigner) Sign(rel signer.VerificationRelation, message []byte) (*signer.SigningResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Sign", rel, message)
-	ret0, _ := ret[0].([]byte)
+	ret0, _ := ret[0].(*signer.SigningResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

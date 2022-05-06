@@ -28,7 +28,13 @@ func (vr VerificationRelation) String() string {
 	}
 }
 
+type SigningResponse struct {
+	ProofValue         []byte
+	VerificationMethod string
+	ProofType          string
+}
+
 type DynamicSigner interface {
-	Sign(rel VerificationRelation, message []byte) ([]byte, error)
+	Sign(rel VerificationRelation, message []byte) (*SigningResponse, error)
 	GetDid() string
 }
