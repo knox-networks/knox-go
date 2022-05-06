@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/knox-networks/knox-go/model"
 	"github.com/knox-networks/knox-go/params"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
 )
@@ -71,39 +70,6 @@ func TestUpdateConfig(t *testing.T) {
 
 	if identity == c.Identity {
 		t.Errorf("Identity client not updated")
-	}
-
-}
-
-func TestEndToEnd(t *testing.T) {
-
-	c, _ := NewKnoxClient(&KnoxConfig{
-		Network: &NetworkConfig{
-			CredentialAdapterURL: "vc.knoxnetworks.io:5051",
-			AuthServiceURL:       "auth.knoxnetworks.io:5051",
-			RegistryURL:          "reg.knoxnetworks.io:5051",
-		},
-	})
-
-	_, kps, err := c.Identity.Generate(&params.GenerateIdentityParams{})
-	if err != nil {
-		t.Errorf("Error generating identity: %s", err)
-	}
-	c.UpdateConfig(&KnoxConfig{
-		Signer: kps,
-		Network: &NetworkConfig{
-			CredentialAdapterURL: "vc.knoxnetworks.io:5051",
-			AuthServiceURL:       "auth.knoxnetworks.io:5051",
-			RegistryURL:          "registry.knoxnetworks.io:5051",
-		},
-	})
-
-	_, err = c.Credential.Request(params.RequestCredentialParams{
-		CredentialType: model.PermanentResidentCard,
-	})
-
-	if err != nil {
-		t.Errorf("Error requesting credential: %s", err)
 	}
 
 }
