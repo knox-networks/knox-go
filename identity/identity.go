@@ -94,7 +94,10 @@ func (c *identityClient) Generate(params *params.GenerateIdentityParams) (*model
 		return &model.DidDocument{}, &crypto.KeyPairs{}, err
 	}
 
-	c.registry.Create(kps.GetDid(), encoded_doc)
+	err = c.registry.Create(kps.GetDid(), encoded_doc)
+	if err != nil {
+		return &model.DidDocument{}, &crypto.KeyPairs{}, err
+	}
 
 	return doc, kps, nil
 }

@@ -11,13 +11,16 @@ import (
 	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/auth_client"
 	auth_mock "github.com/knox-networks/knox-go/service/auth_client/mock"
+	"github.com/knox-networks/knox-go/service/registry_client"
+	registry_mock "github.com/knox-networks/knox-go/service/registry_client/mock"
 	"github.com/knox-networks/knox-go/signer"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
 	"github.com/multiformats/go-multibase"
 )
 
 type generateIdentityFields struct {
-	cm crypto.CryptoManager
+	cm       crypto.CryptoManager
+	registry registry_client.RegistryClient
 }
 type generateIdentityArgs struct {
 	p params.GenerateIdentityParams
@@ -34,7 +37,8 @@ func TestGenerateIdentity(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 	mock_cm := cm_mock.NewMockCryptoManager(mock_controller)
 	f := &generateIdentityFields{
-		cm: mock_cm,
+		cm:       mock_cm,
+		registry: registry_mock.NewMockRegistryClient(mock_controller),
 	}
 	tests := []generateIdentityTest{
 		{
@@ -44,9 +48,13 @@ func TestGenerateIdentity(t *testing.T) {
 			},
 			prepare: func(f *generateIdentityFields, args *generateIdentityArgs) {
 				mnemonic := "mnemonic"
+				publicKey := "publicKey"
 				gomock.InOrder(
 					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateMnemonic().Return(mnemonic, nil),
-					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair(mnemonic).Return(&crypto.KeyPairs{}, nil),
+					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair(mnemonic).
+						Return(&crypto.KeyPairs{MasterPublicKey: publicKey}, nil),
+					f.registry.(*registry_mock.MockRegistryClient).EXPECT().
+						Create(crypto.DidPrefix+publicKey, gomock.Any()).Return(nil),
 				)
 			},
 			expectedError: nil,
@@ -60,7 +68,8 @@ func TestGenerateIdentity(t *testing.T) {
 				mnemonic := "mnemonic"
 				gomock.InOrder(
 					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateMnemonic().Return(mnemonic, nil),
-					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair(mnemonic).Return(&crypto.KeyPairs{}, errors.New("error")),
+					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair(mnemonic).
+						Return(&crypto.KeyPairs{}, errors.New("error")),
 				)
 			},
 			expectedError: errors.New("error"),
@@ -75,12 +84,30 @@ func TestGenerateIdentity(t *testing.T) {
 			},
 			expectedError: errors.New("mnemonic error"),
 		},
+		{
+			name: "GenerateIdentity Fails Due To Registry Error",
+			args: generateIdentityArgs{
+				p: params.GenerateIdentityParams{},
+			},
+			prepare: func(f *generateIdentityFields, args *generateIdentityArgs) {
+				mnemonic := "mnemonic"
+				publicKey := "publicKey"
+				gomock.InOrder(
+					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateMnemonic().Return(mnemonic, nil),
+					f.cm.(*cm_mock.MockCryptoManager).EXPECT().GenerateKeyPair(mnemonic).
+						Return(&crypto.KeyPairs{MasterPublicKey: publicKey}, nil),
+					f.registry.(*registry_mock.MockRegistryClient).EXPECT().
+						Create(crypto.DidPrefix+publicKey, gomock.Any()).Return(errors.New("registry error")),
+				)
+			},
+			expectedError: errors.New("registry error"),
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.prepare(f, &test.args)
-			c := &identityClient{cm: f.cm}
+			c := &identityClient{cm: f.cm, registry: f.registry}
 			_, _, err := c.Generate(&params.GenerateIdentityParams{})
 
 			if (err != nil && test.expectedError == nil) || (err == nil && test.expectedError != nil) {
@@ -436,10 +463,14 @@ func TestRecoverIdentity(t *testing.T) {
 }
 
 func TestDeterministicKeyGeneration(t *testing.T) {
-
+	mock_controller := gomock.NewController(t)
+	mockReg := registry_mock.NewMockRegistryClient(mock_controller)
 	c := &identityClient{
-		cm: crypto.NewCryptoManager(),
+		cm:       crypto.NewCryptoManager(),
+		registry: mockReg,
 	}
+
+	mockReg.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
 
 	doc, kps, _ := c.Generate(&params.GenerateIdentityParams{})
 
