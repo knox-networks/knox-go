@@ -1,6 +1,7 @@
 package presentation
 
 import (
+	"crypto/sha256"
 	"time"
 
 	"github.com/knox-networks/knox-go/model"
@@ -48,7 +49,11 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		return err
 	}
 
-	presentationSig, err := c.s.Sign(signer.AssertionMethod, []byte(normalized.(string)))
+	ks := sha256.New()
+	ks.Write([]byte(normalized.(string)))
+	digestedTarget := ks.Sum(nil)
+
+	presentationSig, err := c.s.Sign(signer.AssertionMethod, digestedTarget)
 	if err != nil {
 		return err
 	}

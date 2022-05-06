@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/structpb"
 
 	RegistryApi "go.buf.build/grpc/go/knox-networks/registry-mgmt/registry_api/v1"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type registryClient struct {
@@ -23,14 +23,15 @@ type RegistryClient interface {
 }
 
 func NewRegistryClient(address string) (RegistryClient, error) {
-	var opts []grpc.DialOption
-
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
 
 	conn, err := grpc.Dial(address, opts...)
 	if err != nil {
 		return nil, err
 	}
+
 	client := RegistryApi.NewRegistryServiceClient(conn)
 	return &registryClient{
 		conn:   conn,

@@ -116,9 +116,13 @@ func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, di
 		Nonce:          nonce,
 	})
 
+	println("About to check network error")
+
 	if err != nil {
 		return VerifiableCredential{}, err
 	}
+
+	println("About to marshal results")
 
 	doc, err := protojson.Marshal(resp.Credential)
 	if err != nil {
