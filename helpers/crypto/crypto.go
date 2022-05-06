@@ -88,10 +88,9 @@ func (c *cryptoManager) GenerateMnemonic() (string, error) {
 	return mnemonic, nil
 }
 
-func (k *KeyPairs) Sign(relation signer.VerificationRelation, message []byte) ([]byte, error) {
+func (k *KeyPairs) Sign(relation signer.VerificationRelation, message []byte) (*signer.SigningResponse, error) {
 	pvk := k.GetPrivateKey(relation)
-
-	return ed25519.Sign(pvk, message), nil
+	return &signer.SigningResponse{Signature: ed25519.Sign(pvk, message)}, nil
 }
 
 func (k *KeyPairs) GetPrivateKey(relation signer.VerificationRelation) []byte {

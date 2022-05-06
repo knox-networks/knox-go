@@ -38,7 +38,7 @@ func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
 			return err
 		}
 
-		if err := c.auth.AuthnWithDidRegister(did, nonce, signed); err != nil {
+		if err := c.auth.AuthnWithDidRegister(did, nonce, signed.Signature); err != nil {
 			return err
 		}
 
@@ -53,7 +53,7 @@ func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
 			return err
 		}
 
-		if err := c.auth.AuthnWithDidRegister(did, nonce, signed); err != nil {
+		if err := c.auth.AuthnWithDidRegister(did, nonce, signed.Signature); err != nil {
 			return err
 		}
 
