@@ -19,6 +19,7 @@ type KnoxClient struct {
 type NetworkConfig struct {
 	CredentialAdapterURL string
 	AuthServiceURL       string
+	RegistryURL          string
 }
 type KnoxConfig struct {
 	Signer  signer.DynamicSigner
@@ -35,7 +36,7 @@ func NewKnoxClient(c *KnoxConfig) (*KnoxClient, error) {
 		return &KnoxClient{}, err
 	}
 
-	identityClient, err := identity.NewIdentityClient(c.Network.AuthServiceURL, c.Signer)
+	identityClient, err := identity.NewIdentityClient(c.Network.AuthServiceURL, c.Network.RegistryURL, c.Signer)
 	if err != nil {
 		return &KnoxClient{}, err
 	}
@@ -75,7 +76,7 @@ func (k *KnoxClient) UpdateConfig(c *KnoxConfig) error {
 	}
 
 	if c.Network.AuthServiceURL != "" {
-		identityClient, err := identity.NewIdentityClient(c.Network.AuthServiceURL, c.Signer)
+		identityClient, err := identity.NewIdentityClient(c.Network.AuthServiceURL, c.Network.RegistryURL, c.Signer)
 		if err != nil {
 			return err
 		}

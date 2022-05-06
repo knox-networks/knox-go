@@ -1,18 +1,22 @@
 package identity
 
 import (
+	"encoding/json"
+
 	"github.com/knox-networks/knox-go/helpers/crypto"
 	"github.com/knox-networks/knox-go/helpers/did"
 	"github.com/knox-networks/knox-go/model"
 	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/auth_client"
+	"github.com/knox-networks/knox-go/service/registry_client"
 	"github.com/knox-networks/knox-go/signer"
 )
 
 type identityClient struct {
-	auth auth_client.AuthClient
-	s    signer.DynamicSigner
-	cm   crypto.CryptoManager
+	auth     auth_client.AuthClient
+	s        signer.DynamicSigner
+	cm       crypto.CryptoManager
+	registry registry_client.RegistryClient
 }
 
 type IdentityClient interface {
@@ -21,12 +25,16 @@ type IdentityClient interface {
 	Recover(p *params.RecoverIdentityParams) (*model.DidDocument, *crypto.KeyPairs, error)
 }
 
-func NewIdentityClient(address string, s signer.DynamicSigner) (IdentityClient, error) {
-	auth, err := auth_client.NewAuthClient(address)
+func NewIdentityClient(authAdress string, registryAddress string, s signer.DynamicSigner) (IdentityClient, error) {
+	auth, err := auth_client.NewAuthClient(authAdress)
+	if err != nil {
+		return nil, err
+	}
+	registry, err := registry_client.NewRegistryClient(registryAddress)
 	if err != nil {
 		return &identityClient{}, err
 	}
-	return &identityClient{auth: auth, s: s, cm: crypto.NewCryptoManager()}, nil
+	return &identityClient{auth: auth, s: s, cm: crypto.NewCryptoManager(), registry: registry}, nil
 }
 
 func (c *identityClient) Register(p *params.RegisterIdentityParams) error {
@@ -80,6 +88,13 @@ func (c *identityClient) Generate(params *params.GenerateIdentityParams) (*model
 	}
 
 	doc := did.CreateDidDocument(kps)
+
+	encoded_doc, err := json.Marshal(doc)
+	if err != nil {
+		return &model.DidDocument{}, &crypto.KeyPairs{}, err
+	}
+
+	c.registry.Create(kps.GetDid(), encoded_doc)
 
 	return doc, kps, nil
 }

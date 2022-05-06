@@ -30,9 +30,10 @@ lint:  ## run linter
 mockgen: ## generate mock go files
 	mockgen -destination=./service/credential_adapter/mock/mock_credential_adapter.go -package=mock -source=./service/credential_adapter/credential_adapter.go
 	mockgen -destination=./service/auth_client/mock/mock_auth_client.go -package=mock -source=./service/auth_client/auth_client.go
+	mockgen -destination=./service/registry_client/mock/mock_registry_client.go -package=mock -source=./service/registry_client/registry_client.go
 	mockgen -destination=./credential/mock/mock_credential.go -package=mock -source=./credential/credential.go
 	mockgen -destination=./identity/mock/mock_identity.go -package=mock -source=./identity/identity.go
-	mockgen -destination=./presentation/mock/mock_presentation.go -package=mock -source=./presentation/presentation.go
+	mockgen -destination=./presentation/mock/mock_presentation.go -package=mock -s`ource=./presentation/presentation.go
 	mockgen -destination=./signer/mock/mock_signer.go -package=mock -source=signer/signer.go
 	mockgen -destination=./helpers/crypto/mock/mock_crypto.go -package=mock -source=helpers/crypto/crypto.go
 	mockgen -build_flags=--mod=mod -destination=./service/credential_adapter/grpc_mock/mock_grpc_credential_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1" AdapterServiceClient
