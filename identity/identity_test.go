@@ -138,7 +138,7 @@ func TestRegisterIdentity(t *testing.T) {
 						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
-						Return(&signer.SigningResponse{Signature: signature}, nil),
+						Return(&signer.SigningResponse{ProofValue: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(nil),
@@ -165,7 +165,7 @@ func TestRegisterIdentity(t *testing.T) {
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
-						Return(&signer.SigningResponse{Signature: signature}, nil),
+						Return(&signer.SigningResponse{ProofValue: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(nil),
@@ -209,7 +209,7 @@ func TestRegisterIdentity(t *testing.T) {
 						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
-						Return(&signer.SigningResponse{Signature: signature}, errors.New("signing error")),
+						Return(&signer.SigningResponse{ProofValue: signature}, errors.New("signing error")),
 				)
 			},
 			expectedError: errors.New("signing error"),
@@ -231,7 +231,7 @@ func TestRegisterIdentity(t *testing.T) {
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
-						Return(&signer.SigningResponse{Signature: signature}, errors.New("signing error")),
+						Return(&signer.SigningResponse{ProofValue: signature}, errors.New("signing error")),
 				)
 			},
 			expectedError: errors.New("signing error"),
@@ -254,7 +254,7 @@ func TestRegisterIdentity(t *testing.T) {
 						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
-						Return(&signer.SigningResponse{Signature: signature}, nil),
+						Return(&signer.SigningResponse{ProofValue: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(errors.New("registration error")),
@@ -279,7 +279,7 @@ func TestRegisterIdentity(t *testing.T) {
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
-						Return(&signer.SigningResponse{Signature: signature}, nil),
+						Return(&signer.SigningResponse{ProofValue: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(errors.New("registration error")),
@@ -305,7 +305,7 @@ func TestRegisterIdentity(t *testing.T) {
 						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
-						Return(&signer.SigningResponse{Signature: signature}, nil),
+						Return(&signer.SigningResponse{ProofValue: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(nil),
@@ -332,7 +332,7 @@ func TestRegisterIdentity(t *testing.T) {
 						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
-						Return(&signer.SigningResponse{Signature: signature}, nil),
+						Return(&signer.SigningResponse{ProofValue: signature}, nil),
 					f.auth.(*auth_mock.MockAuthClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(nil),

@@ -53,7 +53,7 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		return err
 	}
 
-	encoded, err := mb.Encode(mb.Base58BTC, proofValue.Signature)
+	encoded, err := mb.Encode(mb.Base58BTC, proofValue.ProofValue)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		VerificationMethod: "PLACEHOLDER",
 		ProofPurpose:       signer.AssertionMethod.String(),
 		ProofValue:         encoded,
-	}, c.s.GetDid(), p.Challenge.Nonce, signature.Signature)
+	}, c.s.GetDid(), p.Challenge.Nonce, signature.ProofValue)
 
 	if err != nil {
 		return err

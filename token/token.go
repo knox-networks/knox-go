@@ -45,7 +45,7 @@ func (c *tokenClient) Create(p *params.CreateTokenParams) (*model.AuthToken, err
 			return &model.AuthToken{}, err
 		}
 
-		if err := c.auth.AuthnWithDid(p.Did.Did, challenge.Nonce, signature.Signature); err != nil {
+		if err := c.auth.AuthnWithDid(p.Did.Did, challenge.Nonce, signature.ProofValue); err != nil {
 			return &model.AuthToken{}, err
 		}
 

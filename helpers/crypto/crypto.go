@@ -90,7 +90,7 @@ func (c *cryptoManager) GenerateMnemonic() (string, error) {
 
 func (k *KeyPairs) Sign(relation signer.VerificationRelation, message []byte) (*signer.SigningResponse, error) {
 	pvk := k.GetPrivateKey(relation)
-	return &signer.SigningResponse{Signature: ed25519.Sign(pvk, message)}, nil
+	return &signer.SigningResponse{ProofValue: ed25519.Sign(pvk, message)}, nil
 }
 
 func (k *KeyPairs) GetPrivateKey(relation signer.VerificationRelation) []byte {

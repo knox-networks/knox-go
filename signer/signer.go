@@ -29,7 +29,7 @@ func (vr VerificationRelation) String() string {
 }
 
 type SigningResponse struct {
-	Signature          []byte
+	ProofValue         []byte
 	VerificationMethod string
 	ProofType          string
 }
