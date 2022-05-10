@@ -8,7 +8,6 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "github.com/knox-networks/knox-go/model"
 	credential_adapter "github.com/knox-networks/knox-go/service/credential_adapter"
 )
 
@@ -95,15 +94,15 @@ func (mr *MockCredentialAdapterClientMockRecorder) IssueVerifiableCredential(cre
 }
 
 // PresentVerifiableCredential mocks base method.
-func (m *MockCredentialAdapterClient) PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof, did, nonce string, signature []byte) error {
+func (m *MockCredentialAdapterClient) PresentVerifiableCredential(vp map[string]interface{}, did, nonce string, signature []byte) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PresentVerifiableCredential", creds, proof, did, nonce, signature)
+	ret := m.ctrl.Call(m, "PresentVerifiableCredential", vp, did, nonce, signature)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PresentVerifiableCredential indicates an expected call of PresentVerifiableCredential.
-func (mr *MockCredentialAdapterClientMockRecorder) PresentVerifiableCredential(creds, proof, did, nonce, signature interface{}) *gomock.Call {
+func (mr *MockCredentialAdapterClientMockRecorder) PresentVerifiableCredential(vp, did, nonce, signature interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PresentVerifiableCredential", reflect.TypeOf((*MockCredentialAdapterClient)(nil).PresentVerifiableCredential), creds, proof, did, nonce, signature)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PresentVerifiableCredential", reflect.TypeOf((*MockCredentialAdapterClient)(nil).PresentVerifiableCredential), vp, did, nonce, signature)
 }

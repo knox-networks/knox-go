@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/json"
 	"io"
 	"strings"
 	"time"
@@ -15,6 +14,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 var (
@@ -49,7 +49,7 @@ type CredentialAdapterClient interface {
 	CreateIssuanceChallenge(cred_type string, did string) (IssuanceChallenge, error)
 	CreatePresentationChallenge(credTypes []string) (*PresentationChallenge, error)
 	IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte) (VerifiableCredential, error)
-	PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof, did string, nonce string, signature []byte) error
+	PresentVerifiableCredential(vp map[string]interface{}, did string, nonce string, signature []byte) error
 }
 
 func NewCredentialAdapterClient(address string) (CredentialAdapterClient, error) {
@@ -131,32 +131,18 @@ func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, di
 	return VerifiableCredential{Doc: doc, Alias: CreateDefaultAlias(), Type: cred_type}, nil
 }
 
-func (c *credentialAdapterClient) PresentVerifiableCredential(creds []model.SerializedDocument, proof model.Proof, did string, nonce string, signature []byte) error {
+func (c *credentialAdapterClient) PresentVerifiableCredential(vp map[string]interface{}, did string, nonce string, signature []byte) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var converted_creds = make([]*AdapterApi.VerifiableCredential, len(creds))
-
-	for i, cred := range creds {
-
-		encodedCred, err := json.Marshal(cred)
-		if err != nil {
-			return err
-		}
-		var structured_cred AdapterApi.VerifiableCredential
-		err = protojson.Unmarshal(encodedCred, &structured_cred)
-		if err != nil {
-			return err
-		}
-
-		converted_creds[i] = &structured_cred
+	encodedVp, err := structpb.NewStruct(vp)
+	if err != nil {
+		return err
 	}
 
-	_, err := c.client.PresentVerifiableCredential(ctx, &AdapterApi.PresentVerifiableCredentialRequest{
-		Presentation: &AdapterApi.VerifiablePresentation{
-			VerifiableCredential: converted_creds,
-		},
+	_, err = c.client.PresentVerifiableCredential(ctx, &AdapterApi.PresentVerifiableCredentialRequest{
+		Presentation:   encodedVp,
 		Nonce:          "",
 		Signature:      []byte(""),
 		Did:            "",
