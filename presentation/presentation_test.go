@@ -90,7 +90,7 @@ func TestSharePresentation(t *testing.T) {
 						Return(&signer.SigningResponse{ProofValue: nonceSignature}, nil),
 					f.s.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
-						PresentVerifiableCredential(gomock.Any(), gomock.Any(), did, args.p.Challenge.Nonce, nonceSignature).
+						PresentVerifiableCredential(gomock.Any(), did, args.p.Challenge.Nonce, nonceSignature).
 						Return(nil),
 				)
 
@@ -165,7 +165,7 @@ func TestSharePresentation(t *testing.T) {
 						Return(&signer.SigningResponse{ProofValue: nonceSignature}, nil),
 					f.s.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
-						PresentVerifiableCredential(gomock.Any(), gomock.Any(), did, args.p.Challenge.Nonce, nonceSignature).
+						PresentVerifiableCredential(gomock.Any(), did, args.p.Challenge.Nonce, nonceSignature).
 						Return(errors.New("credential adapter error")),
 				)
 

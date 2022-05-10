@@ -69,13 +69,15 @@ func (c *presentationClient) Share(p params.SharePresentationParams) error {
 		return err
 	}
 
-	err = c.ca.PresentVerifiableCredential(creds, model.Proof{
-		Type:               presentationSig.ProofType,
-		Created:            time.Now().UTC().Format(time.RFC3339),
-		VerificationMethod: presentationSig.VerificationMethod,
-		ProofPurpose:       signer.AssertionMethod.String(),
-		ProofValue:         encoded,
-	}, c.s.GetDid(), p.Challenge.Nonce, signature.ProofValue)
+	vp["proof"] = map[string]interface{}{
+		"type":               presentationSig.ProofType,
+		"created":            time.Now().UTC().Format(time.RFC3339),
+		"verificationMethod": presentationSig.VerificationMethod,
+		"proofPurpose":       signer.AssertionMethod.String(),
+		"proofValue":         encoded,
+	}
+
+	err = c.ca.PresentVerifiableCredential(vp, c.s.GetDid(), p.Challenge.Nonce, signature.ProofValue)
 
 	if err != nil {
 		return err
