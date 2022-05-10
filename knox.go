@@ -27,31 +27,35 @@ type KnoxConfig struct {
 }
 
 func NewKnoxClient(c *KnoxConfig) (*KnoxClient, error) {
-	credClient, err := credential.NewCredentialClient(c.Network.CredentialAdapterURL, c.Signer)
-	if err != nil {
-		return &KnoxClient{}, err
-	}
-	presClient, err := presentation.NewPresentationClient(c.Network.CredentialAdapterURL, c.Signer)
-	if err != nil {
-		return &KnoxClient{}, err
+	client := &KnoxClient{}
+	client.s = c.Signer
+	if c.Network != nil {
+		credClient, err := credential.NewCredentialClient(c.Network.CredentialAdapterURL, c.Signer)
+		if err != nil {
+			return &KnoxClient{}, err
+		}
+		presClient, err := presentation.NewPresentationClient(c.Network.CredentialAdapterURL, c.Signer)
+		if err != nil {
+			return &KnoxClient{}, err
+		}
+
+		identityClient, err := identity.NewIdentityClient(c.Network.AuthServiceURL, c.Network.RegistryURL, c.Signer)
+		if err != nil {
+			return &KnoxClient{}, err
+		}
+
+		tokenClient, err := token.NewTokenClient(c.Network.AuthServiceURL, c.Signer)
+		if err != nil {
+			return &KnoxClient{}, err
+		}
+
+		client.Credential = credClient
+		client.Presentation = presClient
+		client.Identity = identityClient
+		client.Token = tokenClient
 	}
 
-	identityClient, err := identity.NewIdentityClient(c.Network.AuthServiceURL, c.Network.RegistryURL, c.Signer)
-	if err != nil {
-		return &KnoxClient{}, err
-	}
-
-	tokenClient, err := token.NewTokenClient(c.Network.AuthServiceURL, c.Signer)
-	if err != nil {
-		return &KnoxClient{}, err
-	}
-
-	return &KnoxClient{s: c.Signer,
-		Credential:   credClient,
-		Presentation: presClient,
-		Identity:     identityClient,
-		Token:        tokenClient,
-	}, nil
+	return client, nil
 }
 
 func (k *KnoxClient) UpdateConfig(c *KnoxConfig) error {
