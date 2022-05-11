@@ -160,9 +160,7 @@ func (r *authClient) CreateDidAuthenticationChallenge() (*DidAuthenticationChall
 		return &DidAuthenticationChallenge{}, nil, err
 	}
 
-	resp.GetNonce()
-
-	return &DidAuthenticationChallenge{}, stream, nil
+	return &DidAuthenticationChallenge{Nonce: resp.GetNonce()}, stream, nil
 }
 
 func (s *streamClient) WaitForCompletion() error {
