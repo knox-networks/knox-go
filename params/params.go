@@ -46,8 +46,13 @@ type PasswordAuthentication struct {
 	Email    string
 }
 
+type DidAuthenticationChallenge struct {
+	Nonce string
+}
+
 type DidAuthentication struct {
-	Did string
+	Did       string
+	Challenge *DidAuthenticationChallenge
 }
 type CreateTokenParams struct {
 	Password *PasswordAuthentication

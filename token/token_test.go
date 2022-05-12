@@ -283,6 +283,33 @@ func TestCreateToken(t *testing.T) {
 			},
 			expectedError: errors.New("authentication error"),
 		},
+		{
+			name: "CreateToken With Did Authentication Succeeds With Pre-Existing Challenge",
+			prepare: func(f *createTokenFields, args *createTokenArgs) {
+				signature := []byte("signature")
+				message := []byte(args.p.Did.Did + "." + args.nonce)
+				gomock.InOrder(
+					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
+						Sign(signer.Authentication, message).
+						Return(&signer.SigningResponse{ProofValue: signature}, nil),
+					f.auth.(*auth_mock.MockAuthClient).
+						EXPECT().
+						AuthnWithDid(args.p.Did.Did, args.nonce, signature).
+						Return(nil),
+				)
+			},
+			args: createTokenArgs{
+				p: &params.CreateTokenParams{
+					Did: &params.DidAuthentication{
+						Did: "did:knox:test",
+						Challenge: &params.DidAuthenticationChallenge{
+							Nonce: "nonce",
+						},
+					},
+				},
+			},
+			expectedError: nil,
+		},
 	}
 
 	for _, test := range tests {
