@@ -7,7 +7,6 @@ import (
 	"github.com/knox-networks/knox-go/params"
 	"github.com/knox-networks/knox-go/service/auth_client"
 	"github.com/knox-networks/knox-go/signer"
-	AuthApi "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
 )
 
 type tokenClient struct {
@@ -36,7 +35,7 @@ func (c *tokenClient) Create(p *params.CreateTokenParams) (*model.AuthToken, err
 		}
 		return token, nil
 	} else if p.Did != nil {
-		challenge, streamClient, err := c.parseChallenge(p.Did.Challenge)
+		challenge, err := c.parseChallenge(p.Did.Challenge, p.Did.Did)
 		if err != nil {
 			return &model.AuthToken{}, err
 		}
@@ -46,45 +45,25 @@ func (c *tokenClient) Create(p *params.CreateTokenParams) (*model.AuthToken, err
 			return &model.AuthToken{}, err
 		}
 
-		if err := c.auth.AuthnWithDid(p.Did.Did, challenge.Nonce, signature.ProofValue); err != nil {
+		token, err := c.auth.AuthenticateWithDid(p.Did.Did, challenge.Nonce, signature.ProofValue)
+		if err != nil {
 			return &model.AuthToken{}, err
 		}
 
-		if streamClient != nil {
-			message, err := streamClient.Recv()
-
-			if err != nil {
-				return &model.AuthToken{}, err
-			}
-
-			token := message.GetAuthToken().AuthToken
-
-			if err := streamClient.CloseSend(); err != nil {
-				return &model.AuthToken{}, err
-			}
-
-			return &model.AuthToken{
-				Token:        token.Token,
-				TokenType:    token.TokenType,
-				RefreshToken: token.RefreshToken,
-				ExpiresIn:    token.ExpiresIn,
-			}, nil
-		} else {
-			return &model.AuthToken{}, nil
-		}
+		return token, nil
 	} else {
 		return &model.AuthToken{}, errors.New("no authentication method specified")
 	}
 }
 
-func (c *tokenClient) parseChallenge(challenge *params.DidAuthenticationChallenge) (*auth_client.DidAuthenticationChallenge, AuthApi.AuthApiService_AuthnWithDidStartClient, error) {
+func (c *tokenClient) parseChallenge(challenge *params.DidAuthenticationChallenge, did string) (*auth_client.DidAuthenticationChallenge, error) {
 	if challenge != nil {
-		return &auth_client.DidAuthenticationChallenge{}, nil, nil
+		return &auth_client.DidAuthenticationChallenge{}, nil
 	} else {
-		challenge, streamClient, err := c.auth.CreateDidAuthenticationChallenge()
+		challenge, err := c.auth.CreateDidAuthenticationChallenge(did)
 		if err != nil {
-			return &auth_client.DidAuthenticationChallenge{}, nil, err
+			return &auth_client.DidAuthenticationChallenge{}, err
 		}
-		return challenge, streamClient, nil
+		return challenge, nil
 	}
 }

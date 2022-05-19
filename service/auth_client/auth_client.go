@@ -39,7 +39,8 @@ type AuthClient interface {
 	AuthnWithDid(did string, nonce string, enc []byte) error
 	AuthenticateWithPassword(email string, password string) (*model.AuthToken, error)
 	AuthnWithDidRegister(did string, nonce string, enc []byte) error
-	CreateDidAuthenticationChallenge() (*DidAuthenticationChallenge, AuthApi.AuthApiService_AuthnWithDidStartClient, error)
+	AuthenticateWithDid(did string, nonce string, signature []byte) (*model.AuthToken, error)
+	CreateDidAuthenticationChallenge(did string) (*DidAuthenticationChallenge, error)
 	CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error)
 }
 
@@ -144,23 +145,40 @@ func (r *authClient) AuthnWithDidRegister(did string, nonce string, enc []byte) 
 	return nil
 }
 
-func (r *authClient) CreateDidAuthenticationChallenge() (*DidAuthenticationChallenge, AuthApi.AuthApiService_AuthnWithDidStartClient, error) {
+func (r *authClient) CreateDidAuthenticationChallenge(did string) (*DidAuthenticationChallenge, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	req := &AuthApi.AuthnWithDidStartRequest{}
-	stream, err := r.client.AuthnWithDidStart(ctx, req)
+	req := &AuthApi.CreateDidAuthenticationChallengeRequest{Did: did}
+	resp, err := r.client.CreateDidAuthenticationChallenge(ctx, req)
 	if err != nil {
-		return &DidAuthenticationChallenge{}, nil, err
+		return &DidAuthenticationChallenge{}, err
 	}
 
-	resp, err := stream.Recv()
+	return &DidAuthenticationChallenge{Nonce: resp.Nonce}, nil
+}
 
-	if err != nil {
-		return &DidAuthenticationChallenge{}, nil, err
+func (r *authClient) AuthenticateWithDid(did string, nonce string, enc []byte) (*model.AuthToken, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &AuthApi.AuthenticateWithDidRequest{
+		Did:       did,
+		Nonce:     nonce,
+		Signature: enc,
 	}
 
-	return &DidAuthenticationChallenge{Nonce: resp.GetNonce()}, stream, nil
+	res, err := r.client.AuthenticateWithDid(ctx, req)
+	if err != nil {
+		return &model.AuthToken{}, err
+	}
+
+	return &model.AuthToken{
+		Token:        res.AuthToken.Token,
+		TokenType:    res.AuthToken.TokenType,
+		ExpiresIn:    res.AuthToken.ExpiresIn,
+		RefreshToken: res.AuthToken.RefreshToken,
+	}, nil
 }
 
 func (s *streamClient) WaitForCompletion() error {
