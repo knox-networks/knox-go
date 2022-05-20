@@ -36,7 +36,6 @@ type DidAuthenticationChallenge struct {
 
 type AuthClient interface {
 	Close()
-	AuthnWithDid(did string, nonce string, enc []byte) error
 	AuthenticateWithPassword(email string, password string) (*model.AuthToken, error)
 	AuthnWithDidRegister(did string, nonce string, enc []byte) error
 	AuthenticateWithDid(did string, nonce string, signature []byte) (*model.AuthToken, error)
@@ -66,24 +65,6 @@ func NewAuthStream(s grpc.ClientStream) StreamClient {
 
 func (r *authClient) Close() {
 	defer r.conn.Close()
-}
-
-func (r *authClient) AuthnWithDid(did string, nonce string, enc []byte) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &AuthApi.AuthnWithDidRequest{
-		Did:       did,
-		Nonce:     nonce,
-		Signature: enc,
-	}
-
-	_, err := r.client.AuthnWithDid(ctx, req)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (r *authClient) AuthenticateWithPassword(email string, password string) (*model.AuthToken, error) {

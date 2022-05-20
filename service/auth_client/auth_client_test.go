@@ -193,3 +193,7 @@ func TestCreateDidRegistrationChallenge(t *testing.T) {
 	}
 
 }
+
+func TestAuthenticateWithDid(t *testing.T) {
+	t.Skip("TODO: Implement")
+}
