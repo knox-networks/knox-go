@@ -160,6 +160,26 @@ func (m *MockAuthApiServiceClient) EXPECT() *MockAuthApiServiceClientMockRecorde
 	return m.recorder
 }
 
+// AuthenticateWithDid mocks base method.
+func (m *MockAuthApiServiceClient) AuthenticateWithDid(arg0 context.Context, arg1 *auth_apiv1.AuthenticateWithDidRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthenticateWithDidResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "AuthenticateWithDid", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.AuthenticateWithDidResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AuthenticateWithDid indicates an expected call of AuthenticateWithDid.
+func (mr *MockAuthApiServiceClientMockRecorder) AuthenticateWithDid(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthenticateWithDid", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthenticateWithDid), varargs...)
+}
+
 // AuthnWithDid mocks base method.
 func (m *MockAuthApiServiceClient) AuthnWithDid(arg0 context.Context, arg1 *auth_apiv1.AuthnWithDidRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthnWithDidResponse, error) {
 	m.ctrl.T.Helper()
@@ -338,6 +358,26 @@ func (mr *MockAuthApiServiceClientMockRecorder) ConfirmRegister(arg0, arg1 inter
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfirmRegister", reflect.TypeOf((*MockAuthApiServiceClient)(nil).ConfirmRegister), varargs...)
+}
+
+// CreateDidAuthenticationChallenge mocks base method.
+func (m *MockAuthApiServiceClient) CreateDidAuthenticationChallenge(arg0 context.Context, arg1 *auth_apiv1.CreateDidAuthenticationChallengeRequest, arg2 ...grpc.CallOption) (*auth_apiv1.CreateDidAuthenticationChallengeResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateDidAuthenticationChallenge", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.CreateDidAuthenticationChallengeResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateDidAuthenticationChallenge indicates an expected call of CreateDidAuthenticationChallenge.
+func (mr *MockAuthApiServiceClientMockRecorder) CreateDidAuthenticationChallenge(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDidAuthenticationChallenge", reflect.TypeOf((*MockAuthApiServiceClient)(nil).CreateDidAuthenticationChallenge), varargs...)
 }
 
 // FindByEmail mocks base method.

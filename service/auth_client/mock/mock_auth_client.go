@@ -10,7 +10,6 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	model "github.com/knox-networks/knox-go/model"
 	auth_client "github.com/knox-networks/knox-go/service/auth_client"
-	auth_apiv1 "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
 )
 
 // MockStreamClient is a mock of StreamClient interface.
@@ -87,6 +86,21 @@ func (m *MockAuthClient) EXPECT() *MockAuthClientMockRecorder {
 	return m.recorder
 }
 
+// AuthenticateWithDid mocks base method.
+func (m *MockAuthClient) AuthenticateWithDid(did, nonce string, signature []byte) (*model.AuthToken, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AuthenticateWithDid", did, nonce, signature)
+	ret0, _ := ret[0].(*model.AuthToken)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AuthenticateWithDid indicates an expected call of AuthenticateWithDid.
+func (mr *MockAuthClientMockRecorder) AuthenticateWithDid(did, nonce, signature interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthenticateWithDid", reflect.TypeOf((*MockAuthClient)(nil).AuthenticateWithDid), did, nonce, signature)
+}
+
 // AuthenticateWithPassword mocks base method.
 func (m *MockAuthClient) AuthenticateWithPassword(email, password string) (*model.AuthToken, error) {
 	m.ctrl.T.Helper()
@@ -143,19 +157,18 @@ func (mr *MockAuthClientMockRecorder) Close() *gomock.Call {
 }
 
 // CreateDidAuthenticationChallenge mocks base method.
-func (m *MockAuthClient) CreateDidAuthenticationChallenge() (*auth_client.DidAuthenticationChallenge, auth_apiv1.AuthApiService_AuthnWithDidStartClient, error) {
+func (m *MockAuthClient) CreateDidAuthenticationChallenge(did string) (*auth_client.DidAuthenticationChallenge, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateDidAuthenticationChallenge")
+	ret := m.ctrl.Call(m, "CreateDidAuthenticationChallenge", did)
 	ret0, _ := ret[0].(*auth_client.DidAuthenticationChallenge)
-	ret1, _ := ret[1].(auth_apiv1.AuthApiService_AuthnWithDidStartClient)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateDidAuthenticationChallenge indicates an expected call of CreateDidAuthenticationChallenge.
-func (mr *MockAuthClientMockRecorder) CreateDidAuthenticationChallenge() *gomock.Call {
+func (mr *MockAuthClientMockRecorder) CreateDidAuthenticationChallenge(did interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDidAuthenticationChallenge", reflect.TypeOf((*MockAuthClient)(nil).CreateDidAuthenticationChallenge))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDidAuthenticationChallenge", reflect.TypeOf((*MockAuthClient)(nil).CreateDidAuthenticationChallenge), did)
 }
 
 // CreateDidRegistrationChallenge mocks base method.
