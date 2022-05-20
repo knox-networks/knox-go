@@ -12,6 +12,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+const DefaultTimeout = 5 * time.Second
+
 type authClient struct {
 	client AuthApi.AuthApiServiceClient
 	conn   *grpc.ClientConn
@@ -68,7 +70,7 @@ func (r *authClient) Close() {
 }
 
 func (r *authClient) AuthenticateWithPassword(email string, password string) (*model.AuthToken, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
 	req := &AuthApi.AuthnWithPasswordRequest{
@@ -90,7 +92,7 @@ func (r *authClient) AuthenticateWithPassword(email string, password string) (*m
 }
 
 func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
 	req := &AuthApi.AuthnWithDidRegisterStartRequest{}
@@ -109,7 +111,7 @@ func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegi
 }
 
 func (r *authClient) AuthnWithDidRegister(did string, nonce string, enc []byte) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
 	req := &AuthApi.AuthnWithDidRegisterRequest{
@@ -127,7 +129,7 @@ func (r *authClient) AuthnWithDidRegister(did string, nonce string, enc []byte) 
 }
 
 func (r *authClient) CreateDidAuthenticationChallenge(did string) (*DidAuthenticationChallenge, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
 	req := &AuthApi.CreateDidAuthenticationChallengeRequest{Did: did}
@@ -140,7 +142,7 @@ func (r *authClient) CreateDidAuthenticationChallenge(did string) (*DidAuthentic
 }
 
 func (r *authClient) AuthenticateWithDid(did string, nonce string, enc []byte) (*model.AuthToken, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
 	req := &AuthApi.AuthenticateWithDidRequest{
