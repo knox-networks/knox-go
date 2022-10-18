@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"io"
 	"strings"
 	"time"
@@ -13,8 +14,6 @@ import (
 	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 var (
@@ -122,13 +121,7 @@ func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, di
 		return VerifiableCredential{}, err
 	}
 
-	println("About to marshal results")
-
-	doc, err := protojson.Marshal(resp.Credential)
-	if err != nil {
-		return VerifiableCredential{}, err
-	}
-	return VerifiableCredential{Doc: doc, Alias: CreateDefaultAlias(), Type: cred_type}, nil
+	return VerifiableCredential{Doc: []byte(resp.Credential), Alias: CreateDefaultAlias(), Type: cred_type}, nil
 }
 
 func (c *credentialAdapterClient) PresentVerifiableCredential(vp map[string]interface{}, did string, nonce string, signature []byte) error {
@@ -136,13 +129,13 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(vp map[string]inte
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	encodedVp, err := structpb.NewStruct(vp)
+	encodedVp, err := json.Marshal(vp)
 	if err != nil {
 		return err
 	}
 
 	_, err = c.client.PresentVerifiableCredential(ctx, &AdapterApi.PresentVerifiableCredentialRequest{
-		Presentation:   encodedVp,
+		Presentation:   string(encodedVp),
 		Nonce:          "",
 		Signature:      []byte(""),
 		Did:            "",
