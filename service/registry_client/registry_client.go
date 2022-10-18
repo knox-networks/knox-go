@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/protobuf/types/known/structpb"
 
 	RegistryApi "go.buf.build/grpc/go/knox-networks/registry-mgmt/registry_api/v1"
 	"google.golang.org/grpc"
@@ -52,13 +51,10 @@ func (r *registryClient) Create(did string, doc []byte) error {
 	if err != nil {
 		return err
 	}
-	pbDid, err := structpb.NewStruct(docMap)
-	if err != nil {
-		return err
-	}
+
 	req := &RegistryApi.CreateRequest{
 		Did:      did,
-		Document: pbDid,
+		Document: string(doc),
 	}
 	_, err = r.client.Create(ctx, req)
 	if err != nil {
