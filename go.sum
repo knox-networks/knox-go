@@ -74,8 +74,8 @@ go.buf.build/grpc/go/knox-networks/auth-mgmt v1.3.8 h1:7chhZRwG3MJzjLi/4iiiTwXR5
 go.buf.build/grpc/go/knox-networks/auth-mgmt v1.3.8/go.mod h1:lYlpn0nu5RWH+5rrgViBvzs7WivQmMqQxeDKuiN6mrw=
 go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.29 h1:sTLGt1zQW8BNHW9BY5Rn1OcxOsWXyC1sVZsWUP2OHKg=
 go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.29/go.mod h1:qGz6I9Viltv5V3HjouG9rzLEDch50V3YI16XUEfohBw=
-go.buf.build/grpc/go/knox-networks/registry-mgmt v1.3.3 h1:U/zY9r1KdTtbxbdYw3Q4zcwbvjy86HEtyreC6aZTrRg=
-go.buf.build/grpc/go/knox-networks/registry-mgmt v1.3.3/go.mod h1:z44JQMAyui80rTHR4+K85b1QDheFnM4I88C9VE4Aqx4=
+go.buf.build/grpc/go/knox-networks/registry-mgmt v1.3.4 h1:3ZyRmEkQ7kTeCcYyS5yMNFUQqp75s8ip6s/xI5U0u+U=
+go.buf.build/grpc/go/knox-networks/registry-mgmt v1.3.4/go.mod h1:z44JQMAyui80rTHR4+K85b1QDheFnM4I88C9VE4Aqx4=
 go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
