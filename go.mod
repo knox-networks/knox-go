@@ -8,7 +8,7 @@ require (
 	github.com/piprate/json-gold v0.4.1
 	github.com/tyler-smith/go-bip39 v1.1.0
 	go.buf.build/grpc/go/knox-networks/auth-mgmt v1.3.8
-	go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.28
+	go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.29
 	go.buf.build/grpc/go/knox-networks/registry-mgmt v1.3.3
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.28.0

@@ -72,8 +72,8 @@ github.com/tyler-smith/go-bip39 v1.1.0/go.mod h1:gUYDtqQw1JS3ZJ8UWVcGTGqqr6YIN3C
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 go.buf.build/grpc/go/knox-networks/auth-mgmt v1.3.8 h1:7chhZRwG3MJzjLi/4iiiTwXR5ipGbxh3ikTXcQ81HMk=
 go.buf.build/grpc/go/knox-networks/auth-mgmt v1.3.8/go.mod h1:lYlpn0nu5RWH+5rrgViBvzs7WivQmMqQxeDKuiN6mrw=
-go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.28 h1:prQdH+g1VNLpTv/vpia4mAgUEWxZloqqdZMuyV5jIhM=
-go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.28/go.mod h1:qGz6I9Viltv5V3HjouG9rzLEDch50V3YI16XUEfohBw=
+go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.29 h1:sTLGt1zQW8BNHW9BY5Rn1OcxOsWXyC1sVZsWUP2OHKg=
+go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.29/go.mod h1:qGz6I9Viltv5V3HjouG9rzLEDch50V3YI16XUEfohBw=
 go.buf.build/grpc/go/knox-networks/registry-mgmt v1.3.3 h1:U/zY9r1KdTtbxbdYw3Q4zcwbvjy86HEtyreC6aZTrRg=
 go.buf.build/grpc/go/knox-networks/registry-mgmt v1.3.3/go.mod h1:z44JQMAyui80rTHR4+K85b1QDheFnM4I88C9VE4Aqx4=
 go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
