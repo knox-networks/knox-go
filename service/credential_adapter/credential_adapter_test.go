@@ -11,7 +11,6 @@ import (
 	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type createIssuanceChallengeTest struct {
@@ -220,7 +219,7 @@ func TestIssueVerifiableCredential(t *testing.T) {
 			Did:            did,
 			Nonce:          nonce,
 			Signature:      signature,
-		}).Return(&AdapterApi.IssueVerifiableCredentialResponse{Credential: &structpb.Struct{}}, test.mockClientRequestError)
+		}).Return(&AdapterApi.IssueVerifiableCredentialResponse{Credential: "{}"}, test.mockClientRequestError)
 
 		cred, err := adapter_client.IssueVerifiableCredential(cred_type, did, nonce, signature)
 
