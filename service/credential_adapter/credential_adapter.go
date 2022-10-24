@@ -3,6 +3,7 @@ package credential_adapter
 import (
 	"context"
 	"crypto/rand"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -13,7 +14,7 @@ import (
 	"github.com/knox-networks/knox-go/model"
 	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 )
 
 var (
@@ -52,9 +53,10 @@ type CredentialAdapterClient interface {
 }
 
 func NewCredentialAdapterClient(address string) (CredentialAdapterClient, error) {
+	config := &tls.Config{}
+
 	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}
+		grpc.WithTransportCredentials(credentials.NewTLS(config))}
 
 	conn, err := grpc.Dial(address, opts...)
 
