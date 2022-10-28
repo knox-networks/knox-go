@@ -7,9 +7,9 @@ require (
 	github.com/multiformats/go-multibase v0.0.3
 	github.com/piprate/json-gold v0.4.1
 	github.com/tyler-smith/go-bip39 v1.1.0
-	go.buf.build/grpc/go/knox-networks/auth-mgmt v1.3.8
-	go.buf.build/grpc/go/knox-networks/credential-adapter v1.3.29
-	go.buf.build/grpc/go/knox-networks/registry-mgmt v1.3.4
+	go.buf.build/grpc/go/knox-networks/auth-mgmt v1.4.18
+	go.buf.build/grpc/go/knox-networks/credential-adapter v1.4.33
+	go.buf.build/grpc/go/knox-networks/registry-mgmt v1.4.7
 	google.golang.org/grpc v1.44.0
 )
 
@@ -24,5 +24,5 @@ require (
 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
 	golang.org/x/text v0.3.3 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 )

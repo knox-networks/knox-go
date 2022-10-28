@@ -116,20 +116,6 @@ func (mr *MockAuthClientMockRecorder) AuthenticateWithPassword(email, password i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthenticateWithPassword", reflect.TypeOf((*MockAuthClient)(nil).AuthenticateWithPassword), email, password)
 }
 
-// AuthnWithDid mocks base method.
-func (m *MockAuthClient) AuthnWithDid(did, nonce string, enc []byte) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AuthnWithDid", did, nonce, enc)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// AuthnWithDid indicates an expected call of AuthnWithDid.
-func (mr *MockAuthClientMockRecorder) AuthnWithDid(did, nonce, enc interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithDid", reflect.TypeOf((*MockAuthClient)(nil).AuthnWithDid), did, nonce, enc)
-}
-
 // AuthnWithDidRegister mocks base method.
 func (m *MockAuthClient) AuthnWithDidRegister(did, nonce string, enc []byte) error {
 	m.ctrl.T.Helper()

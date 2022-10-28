@@ -160,6 +160,26 @@ func (m *MockAuthApiServiceClient) EXPECT() *MockAuthApiServiceClientMockRecorde
 	return m.recorder
 }
 
+// AssociateDID mocks base method.
+func (m *MockAuthApiServiceClient) AssociateDID(arg0 context.Context, arg1 *auth_apiv1.AssociateDIDRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AssociateDIDResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "AssociateDID", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.AssociateDIDResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AssociateDID indicates an expected call of AssociateDID.
+func (mr *MockAuthApiServiceClientMockRecorder) AssociateDID(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssociateDID", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AssociateDID), varargs...)
+}
+
 // AuthenticateWithDid mocks base method.
 func (m *MockAuthApiServiceClient) AuthenticateWithDid(arg0 context.Context, arg1 *auth_apiv1.AuthenticateWithDidRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthenticateWithDidResponse, error) {
 	m.ctrl.T.Helper()
@@ -180,24 +200,24 @@ func (mr *MockAuthApiServiceClientMockRecorder) AuthenticateWithDid(arg0, arg1 i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthenticateWithDid", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthenticateWithDid), varargs...)
 }
 
-// AuthnWithDid mocks base method.
-func (m *MockAuthApiServiceClient) AuthnWithDid(arg0 context.Context, arg1 *auth_apiv1.AuthnWithDidRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthnWithDidResponse, error) {
+// AuthnWithDidFinish mocks base method.
+func (m *MockAuthApiServiceClient) AuthnWithDidFinish(arg0 context.Context, arg1 *auth_apiv1.AuthnWithDidFinishRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthnWithDidFinishResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "AuthnWithDid", varargs...)
-	ret0, _ := ret[0].(*auth_apiv1.AuthnWithDidResponse)
+	ret := m.ctrl.Call(m, "AuthnWithDidFinish", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.AuthnWithDidFinishResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AuthnWithDid indicates an expected call of AuthnWithDid.
-func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithDid(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+// AuthnWithDidFinish indicates an expected call of AuthnWithDidFinish.
+func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithDidFinish(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithDid", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithDid), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithDidFinish", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithDidFinish), varargs...)
 }
 
 // AuthnWithDidRegister mocks base method.
@@ -260,44 +280,24 @@ func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithDidStart(arg0, arg1 int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithDidStart", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithDidStart), varargs...)
 }
 
-// AuthnWithExPrdCallback mocks base method.
-func (m *MockAuthApiServiceClient) AuthnWithExPrdCallback(arg0 context.Context, arg1 *auth_apiv1.AuthnWithExPrdCallbackRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthnWithExPrdCallbackResponse, error) {
+// AuthnWithOAuth2ProviderCallback mocks base method.
+func (m *MockAuthApiServiceClient) AuthnWithOAuth2ProviderCallback(arg0 context.Context, arg1 *auth_apiv1.AuthnWithOAuth2ProviderCallbackRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthnWithOAuth2ProviderCallbackResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "AuthnWithExPrdCallback", varargs...)
-	ret0, _ := ret[0].(*auth_apiv1.AuthnWithExPrdCallbackResponse)
+	ret := m.ctrl.Call(m, "AuthnWithOAuth2ProviderCallback", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.AuthnWithOAuth2ProviderCallbackResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AuthnWithExPrdCallback indicates an expected call of AuthnWithExPrdCallback.
-func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithExPrdCallback(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+// AuthnWithOAuth2ProviderCallback indicates an expected call of AuthnWithOAuth2ProviderCallback.
+func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithOAuth2ProviderCallback(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithExPrdCallback", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithExPrdCallback), varargs...)
-}
-
-// AuthnWithExPrdStart mocks base method.
-func (m *MockAuthApiServiceClient) AuthnWithExPrdStart(arg0 context.Context, arg1 *auth_apiv1.AuthnWithExPrdStartRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthnWithExPrdStartResponse, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1}
-	for _, a := range arg2 {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "AuthnWithExPrdStart", varargs...)
-	ret0, _ := ret[0].(*auth_apiv1.AuthnWithExPrdStartResponse)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// AuthnWithExPrdStart indicates an expected call of AuthnWithExPrdStart.
-func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithExPrdStart(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1}, arg2...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithExPrdStart", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithExPrdStart), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithOAuth2ProviderCallback", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithOAuth2ProviderCallback), varargs...)
 }
 
 // AuthnWithPassword mocks base method.
@@ -320,6 +320,26 @@ func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithPassword(arg0, arg1 int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithPassword", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithPassword), varargs...)
 }
 
+// AuthnWithProviderStart mocks base method.
+func (m *MockAuthApiServiceClient) AuthnWithProviderStart(arg0 context.Context, arg1 *auth_apiv1.AuthnWithProviderStartRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthnWithProviderStartResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "AuthnWithProviderStart", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.AuthnWithProviderStartResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AuthnWithProviderStart indicates an expected call of AuthnWithProviderStart.
+func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithProviderStart(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithProviderStart", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithProviderStart), varargs...)
+}
+
 // AuthnWithRefresh mocks base method.
 func (m *MockAuthApiServiceClient) AuthnWithRefresh(arg0 context.Context, arg1 *auth_apiv1.AuthnWithRefreshRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthnWithRefreshResponse, error) {
 	m.ctrl.T.Helper()
@@ -338,6 +358,26 @@ func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithRefresh(arg0, arg1 inte
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithRefresh", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithRefresh), varargs...)
+}
+
+// AuthnWithSAML2ProviderCallback mocks base method.
+func (m *MockAuthApiServiceClient) AuthnWithSAML2ProviderCallback(arg0 context.Context, arg1 *auth_apiv1.AuthnWithSAML2ProviderCallbackRequest, arg2 ...grpc.CallOption) (*auth_apiv1.AuthnWithSAML2ProviderCallbackResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "AuthnWithSAML2ProviderCallback", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.AuthnWithSAML2ProviderCallbackResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AuthnWithSAML2ProviderCallback indicates an expected call of AuthnWithSAML2ProviderCallback.
+func (mr *MockAuthApiServiceClientMockRecorder) AuthnWithSAML2ProviderCallback(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthnWithSAML2ProviderCallback", reflect.TypeOf((*MockAuthApiServiceClient)(nil).AuthnWithSAML2ProviderCallback), varargs...)
 }
 
 // ConfirmRegister mocks base method.
@@ -420,6 +460,26 @@ func (mr *MockAuthApiServiceClientMockRecorder) FindByID(arg0, arg1 interface{},
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockAuthApiServiceClient)(nil).FindByID), varargs...)
 }
 
+// GetAppSettings mocks base method.
+func (m *MockAuthApiServiceClient) GetAppSettings(arg0 context.Context, arg1 *auth_apiv1.GetAppSettingsRequest, arg2 ...grpc.CallOption) (*auth_apiv1.GetAppSettingsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetAppSettings", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.GetAppSettingsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAppSettings indicates an expected call of GetAppSettings.
+func (mr *MockAuthApiServiceClientMockRecorder) GetAppSettings(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAppSettings", reflect.TypeOf((*MockAuthApiServiceClient)(nil).GetAppSettings), varargs...)
+}
+
 // GetMe mocks base method.
 func (m *MockAuthApiServiceClient) GetMe(arg0 context.Context, arg1 *auth_apiv1.GetMeRequest, arg2 ...grpc.CallOption) (*auth_apiv1.GetMeResponse, error) {
 	m.ctrl.T.Helper()
@@ -440,6 +500,26 @@ func (mr *MockAuthApiServiceClientMockRecorder) GetMe(arg0, arg1 interface{}, ar
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMe", reflect.TypeOf((*MockAuthApiServiceClient)(nil).GetMe), varargs...)
 }
 
+// GetUserByDID mocks base method.
+func (m *MockAuthApiServiceClient) GetUserByDID(arg0 context.Context, arg1 *auth_apiv1.GetUserByDIDRequest, arg2 ...grpc.CallOption) (*auth_apiv1.GetUserByDIDResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetUserByDID", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.GetUserByDIDResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByDID indicates an expected call of GetUserByDID.
+func (mr *MockAuthApiServiceClientMockRecorder) GetUserByDID(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByDID", reflect.TypeOf((*MockAuthApiServiceClient)(nil).GetUserByDID), varargs...)
+}
+
 // Register mocks base method.
 func (m *MockAuthApiServiceClient) Register(arg0 context.Context, arg1 *auth_apiv1.RegisterRequest, arg2 ...grpc.CallOption) (*auth_apiv1.RegisterResponse, error) {
 	m.ctrl.T.Helper()
@@ -458,6 +538,26 @@ func (mr *MockAuthApiServiceClientMockRecorder) Register(arg0, arg1 interface{},
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockAuthApiServiceClient)(nil).Register), varargs...)
+}
+
+// SAMLSPMetadata mocks base method.
+func (m *MockAuthApiServiceClient) SAMLSPMetadata(arg0 context.Context, arg1 *auth_apiv1.SAMLSPMetadataRequest, arg2 ...grpc.CallOption) (*auth_apiv1.SAMLSPMetadataResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SAMLSPMetadata", varargs...)
+	ret0, _ := ret[0].(*auth_apiv1.SAMLSPMetadataResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SAMLSPMetadata indicates an expected call of SAMLSPMetadata.
+func (mr *MockAuthApiServiceClientMockRecorder) SAMLSPMetadata(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SAMLSPMetadata", reflect.TypeOf((*MockAuthApiServiceClient)(nil).SAMLSPMetadata), varargs...)
 }
 
 // MockAuthApiService_AuthnWithDidStartClient is a mock of AuthApiService_AuthnWithDidStartClient interface.
