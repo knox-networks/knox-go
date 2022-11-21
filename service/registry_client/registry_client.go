@@ -2,10 +2,10 @@ package registry_client
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
+	"google.golang.org/grpc/credentials"
 	"time"
-
-	"google.golang.org/grpc/credentials/insecure"
 
 	RegistryApi "go.buf.build/grpc/go/knox-networks/registry-mgmt/registry_api/v1"
 	"google.golang.org/grpc"
@@ -22,9 +22,10 @@ type RegistryClient interface {
 }
 
 func NewRegistryClient(address string) (RegistryClient, error) {
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}
+	var opts []grpc.DialOption
+	tlsConfig := &tls.Config{}
+
+	opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig)))
 
 	conn, err := grpc.Dial(address, opts...)
 	if err != nil {

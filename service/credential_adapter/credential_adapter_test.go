@@ -219,7 +219,7 @@ func TestIssueVerifiableCredential(t *testing.T) {
 			Did:            did,
 			Nonce:          nonce,
 			Signature:      signature,
-		}).Return(&AdapterApi.IssueVerifiableCredentialResponse{Credential: []byte("{}")}, test.mockClientRequestError)
+		}).Return(&AdapterApi.IssueVerifiableCredentialResponse{Credential: "{}"}, test.mockClientRequestError)
 
 		cred, err := adapter_client.IssueVerifiableCredential(cred_type, did, nonce, signature)
 

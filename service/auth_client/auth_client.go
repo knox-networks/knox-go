@@ -2,11 +2,11 @@ package auth_client
 
 import (
 	"context"
+	"crypto/tls"
+	"google.golang.org/grpc/credentials"
 	"time"
 
 	"github.com/knox-networks/knox-go/model"
-	"google.golang.org/grpc/credentials/insecure"
-
 	AuthApi "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
 
 	"google.golang.org/grpc"
@@ -47,8 +47,9 @@ type AuthClient interface {
 
 func NewAuthClient(address string) (AuthClient, error) {
 	var opts []grpc.DialOption
+	tlsConfig := &tls.Config{}
 
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig)))
 
 	conn, err := grpc.Dial(address, opts...)
 	if err != nil {
