@@ -20,6 +20,10 @@ docker-test:
 	chmod +x ./etc/docker/run_test.sh
 	./etc/docker/run_test.sh
 
+update-knox-org-deps:
+	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/auth-mgmt
+	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/credential-adapter
+	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/registry-mgmt
 # ==============================================================================
 # Tools commands
 
