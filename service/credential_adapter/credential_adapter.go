@@ -22,7 +22,7 @@ var (
 )
 
 type credentialAdapterClient struct {
-	client AdapterApi.AdapterServiceClient
+	client AdapterApi.CredentialAdapterServiceClient
 	conn   *grpc.ClientConn
 }
 
@@ -63,7 +63,7 @@ func NewCredentialAdapterClient(address string) (CredentialAdapterClient, error)
 	if err != nil {
 		return nil, err
 	}
-	client := AdapterApi.NewAdapterServiceClient(conn)
+	client := AdapterApi.NewCredentialAdapterServiceClient(conn)
 
 	return &credentialAdapterClient{
 		client: client,

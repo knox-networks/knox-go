@@ -7,14 +7,14 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/knox-networks/knox-go/model"
 	"github.com/knox-networks/knox-go/params"
-	"github.com/knox-networks/knox-go/service/auth_client"
-	auth_mock "github.com/knox-networks/knox-go/service/auth_client/mock"
+	"github.com/knox-networks/knox-go/service/user_client"
+	user_mock "github.com/knox-networks/knox-go/service/user_client/mock"
 	"github.com/knox-networks/knox-go/signer"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
 )
 
 type createTokenFields struct {
-	auth   auth_client.AuthClient
+	auth   user_client.UserClient
 	signer signer.DynamicSigner
 }
 type createTokenArgs struct {
@@ -32,7 +32,7 @@ type createTokenTest struct {
 func TestCreateToken(t *testing.T) {
 	mockController := gomock.NewController(t)
 	f := &createTokenFields{
-		auth:   auth_mock.NewMockAuthClient(mockController),
+		auth:   user_mock.NewMockUserClient(mockController),
 		signer: s_mock.NewMockDynamicSigner(mockController),
 	}
 	tests := []createTokenTest{
@@ -42,16 +42,16 @@ func TestCreateToken(t *testing.T) {
 				signature := []byte("signature")
 				message := []byte(args.p.Did.Did + "." + args.nonce)
 				gomock.InOrder(
-					f.auth.(*auth_mock.MockAuthClient).
+					f.auth.(*user_mock.MockUserClient).
 						EXPECT().
 						CreateDidAuthenticationChallenge(args.p.Did.Did).
-						Return(&auth_client.DidAuthenticationChallenge{
+						Return(&user_client.DidAuthenticationChallenge{
 							Nonce: args.nonce,
 						}, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, message).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
-					f.auth.(*auth_mock.MockAuthClient).
+					f.auth.(*user_mock.MockUserClient).
 						EXPECT().
 						AuthenticateWithDid(args.p.Did.Did, args.nonce, signature).
 						Return(&model.AuthToken{}, nil),
@@ -72,10 +72,10 @@ func TestCreateToken(t *testing.T) {
 			prepare: func(f *createTokenFields, args *createTokenArgs) {
 
 				gomock.InOrder(
-					f.auth.(*auth_mock.MockAuthClient).
+					f.auth.(*user_mock.MockUserClient).
 						EXPECT().
 						CreateDidAuthenticationChallenge(args.p.Did.Did).
-						Return(&auth_client.DidAuthenticationChallenge{}, errors.New("challenge error")),
+						Return(&user_client.DidAuthenticationChallenge{}, errors.New("challenge error")),
 				)
 			},
 			args: createTokenArgs{
@@ -92,10 +92,10 @@ func TestCreateToken(t *testing.T) {
 			prepare: func(f *createTokenFields, args *createTokenArgs) {
 				message := []byte(args.p.Did.Did + "." + args.nonce)
 				gomock.InOrder(
-					f.auth.(*auth_mock.MockAuthClient).
+					f.auth.(*user_mock.MockUserClient).
 						EXPECT().
 						CreateDidAuthenticationChallenge(args.p.Did.Did).
-						Return(&auth_client.DidAuthenticationChallenge{Nonce: args.nonce}, nil),
+						Return(&user_client.DidAuthenticationChallenge{Nonce: args.nonce}, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, message).
 						Return(&signer.SigningResponse{}, errors.New("signature error")),
@@ -117,14 +117,14 @@ func TestCreateToken(t *testing.T) {
 				signature := []byte("signature")
 				message := []byte(args.p.Did.Did + "." + args.nonce)
 				gomock.InOrder(
-					f.auth.(*auth_mock.MockAuthClient).
+					f.auth.(*user_mock.MockUserClient).
 						EXPECT().
 						CreateDidAuthenticationChallenge(args.p.Did.Did).
-						Return(&auth_client.DidAuthenticationChallenge{Nonce: args.nonce}, nil),
+						Return(&user_client.DidAuthenticationChallenge{Nonce: args.nonce}, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, message).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
-					f.auth.(*auth_mock.MockAuthClient).
+					f.auth.(*user_mock.MockUserClient).
 						EXPECT().
 						AuthenticateWithDid(args.p.Did.Did, args.nonce, signature).
 						Return(&model.AuthToken{}, errors.New("authentication error")),
@@ -153,7 +153,7 @@ func TestCreateToken(t *testing.T) {
 			name: "CreateToken With Password Authentication Succeeds",
 			prepare: func(f *createTokenFields, args *createTokenArgs) {
 				gomock.InOrder(
-					f.auth.(*auth_mock.MockAuthClient).
+					f.auth.(*user_mock.MockUserClient).
 						EXPECT().AuthenticateWithPassword(args.p.Password.Email, args.p.Password.Password).
 						Return(&model.AuthToken{
 							Token: "token",
@@ -175,7 +175,7 @@ func TestCreateToken(t *testing.T) {
 			name: "CreateToken With Password Authentication Fails Due To Authentication Error",
 			prepare: func(f *createTokenFields, args *createTokenArgs) {
 				gomock.InOrder(
-					f.auth.(*auth_mock.MockAuthClient).
+					f.auth.(*user_mock.MockUserClient).
 						EXPECT().AuthenticateWithPassword(args.p.Password.Email, args.p.Password.Password).
 						Return(&model.AuthToken{}, errors.New("authentication error")),
 				)
@@ -200,7 +200,7 @@ func TestCreateToken(t *testing.T) {
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, message).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
-					f.auth.(*auth_mock.MockAuthClient).
+					f.auth.(*user_mock.MockUserClient).
 						EXPECT().
 						AuthenticateWithDid(args.p.Did.Did, args.nonce, signature).
 						Return(&model.AuthToken{}, nil),

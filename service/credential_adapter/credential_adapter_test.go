@@ -47,7 +47,7 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		client := mock_client.NewMockAdapterServiceClient(mock_controller)
+		client := mock_client.NewMockCredentialAdapterServiceClient(mock_controller)
 		adapter_client := &credentialAdapterClient{
 			client: client,
 		}
@@ -90,7 +90,7 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 }
 
 type createPresentationChallengeFields struct {
-	client AdapterApi.AdapterServiceClient
+	client AdapterApi.CredentialAdapterServiceClient
 }
 type createPresentationChallengeArgs struct {
 	credTypes []string
@@ -108,14 +108,14 @@ func TestCreatePresentationChallenge(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 
 	f := &createPresentationChallengeFields{
-		client: mock_client.NewMockAdapterServiceClient(mock_controller),
+		client: mock_client.NewMockCredentialAdapterServiceClient(mock_controller),
 	}
 
 	tests := []createPresentationChallengeTest{
 		{
 			name: "CreatePresentationChallenge Succeeds",
 			prepare: func(f *createPresentationChallengeFields, args *createPresentationChallengeArgs) {
-				f.client.(*mock_client.MockAdapterServiceClient).EXPECT().
+				f.client.(*mock_client.MockCredentialAdapterServiceClient).EXPECT().
 					CreatePresentationChallenge(gomock.Any(), &AdapterApi.CreatePresentationChallengeRequest{
 						CredentialTypes: slices.Map(args.credTypes, func(credType string) AdapterApi.CredentialType {
 							return getCredentialEnumFromName(credType)
@@ -135,7 +135,7 @@ func TestCreatePresentationChallenge(t *testing.T) {
 		{
 			name: "CreatePresentationChallenge Fails Due To Server Error",
 			prepare: func(f *createPresentationChallengeFields, args *createPresentationChallengeArgs) {
-				f.client.(*mock_client.MockAdapterServiceClient).EXPECT().
+				f.client.(*mock_client.MockCredentialAdapterServiceClient).EXPECT().
 					CreatePresentationChallenge(gomock.Any(), &AdapterApi.CreatePresentationChallengeRequest{
 						CredentialTypes: slices.Map(args.credTypes, func(credType string) AdapterApi.CredentialType {
 							return getCredentialEnumFromName(credType)
@@ -207,7 +207,7 @@ func TestIssueVerifiableCredential(t *testing.T) {
 			expectedCredType:       "",
 		},
 	}
-	client := mock_client.NewMockAdapterServiceClient(mock_controller)
+	client := mock_client.NewMockCredentialAdapterServiceClient(mock_controller)
 
 	for _, test := range tests {
 

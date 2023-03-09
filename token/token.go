@@ -5,12 +5,12 @@ import (
 
 	"github.com/knox-networks/knox-go/model"
 	"github.com/knox-networks/knox-go/params"
-	"github.com/knox-networks/knox-go/service/auth_client"
+	"github.com/knox-networks/knox-go/service/user_client"
 	"github.com/knox-networks/knox-go/signer"
 )
 
 type tokenClient struct {
-	auth auth_client.AuthClient
+	auth user_client.UserClient
 	s    signer.DynamicSigner
 }
 type TokenClient interface {
@@ -18,7 +18,7 @@ type TokenClient interface {
 }
 
 func NewTokenClient(address string, s signer.DynamicSigner) (TokenClient, error) {
-	auth, err := auth_client.NewAuthClient(address)
+	auth, err := user_client.NewAuthClient(address)
 	if err != nil {
 		return &tokenClient{}, err
 	}
@@ -56,13 +56,13 @@ func (c *tokenClient) Create(p *params.CreateTokenParams) (*model.AuthToken, err
 	}
 }
 
-func (c *tokenClient) parseChallenge(challenge *params.DidAuthenticationChallenge, did string) (*auth_client.DidAuthenticationChallenge, error) {
+func (c *tokenClient) parseChallenge(challenge *params.DidAuthenticationChallenge, did string) (*user_client.DidAuthenticationChallenge, error) {
 	if challenge != nil {
-		return &auth_client.DidAuthenticationChallenge{}, nil
+		return &user_client.DidAuthenticationChallenge{}, nil
 	} else {
 		challenge, err := c.auth.CreateDidAuthenticationChallenge(did)
 		if err != nil {
-			return &auth_client.DidAuthenticationChallenge{}, err
+			return &user_client.DidAuthenticationChallenge{}, err
 		}
 		return challenge, nil
 	}

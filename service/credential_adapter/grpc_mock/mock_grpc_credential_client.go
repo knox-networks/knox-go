@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	v1 "go.buf.build/grpc/go/knox-networks/credential-adapter/vc_api/v1"
+	vc_apiv1 "go.buf.build/grpc/go/knox-networks/credential-adapter/vc_api/v1"
 	grpc "google.golang.org/grpc"
 )
 
@@ -37,14 +37,14 @@ func (m *MockCredentialAdapterServiceClient) EXPECT() *MockCredentialAdapterServ
 }
 
 // CreateIssuanceChallenge mocks base method.
-func (m *MockCredentialAdapterServiceClient) CreateIssuanceChallenge(arg0 context.Context, arg1 *v1.CreateIssuanceChallengeRequest, arg2 ...grpc.CallOption) (*v1.CreateIssuanceChallengeResponse, error) {
+func (m *MockCredentialAdapterServiceClient) CreateIssuanceChallenge(arg0 context.Context, arg1 *vc_apiv1.CreateIssuanceChallengeRequest, arg2 ...grpc.CallOption) (*vc_apiv1.CreateIssuanceChallengeResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CreateIssuanceChallenge", varargs...)
-	ret0, _ := ret[0].(*v1.CreateIssuanceChallengeResponse)
+	ret0, _ := ret[0].(*vc_apiv1.CreateIssuanceChallengeResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -57,14 +57,14 @@ func (mr *MockCredentialAdapterServiceClientMockRecorder) CreateIssuanceChalleng
 }
 
 // CreatePresentationChallenge mocks base method.
-func (m *MockCredentialAdapterServiceClient) CreatePresentationChallenge(arg0 context.Context, arg1 *v1.CreatePresentationChallengeRequest, arg2 ...grpc.CallOption) (*v1.CreatePresentationChallengeResponse, error) {
+func (m *MockCredentialAdapterServiceClient) CreatePresentationChallenge(arg0 context.Context, arg1 *vc_apiv1.CreatePresentationChallengeRequest, arg2 ...grpc.CallOption) (*vc_apiv1.CreatePresentationChallengeResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CreatePresentationChallenge", varargs...)
-	ret0, _ := ret[0].(*v1.CreatePresentationChallengeResponse)
+	ret0, _ := ret[0].(*vc_apiv1.CreatePresentationChallengeResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -77,14 +77,14 @@ func (mr *MockCredentialAdapterServiceClientMockRecorder) CreatePresentationChal
 }
 
 // IssueVerifiableCredential mocks base method.
-func (m *MockCredentialAdapterServiceClient) IssueVerifiableCredential(arg0 context.Context, arg1 *v1.IssueVerifiableCredentialRequest, arg2 ...grpc.CallOption) (*v1.IssueVerifiableCredentialResponse, error) {
+func (m *MockCredentialAdapterServiceClient) IssueVerifiableCredential(arg0 context.Context, arg1 *vc_apiv1.IssueVerifiableCredentialRequest, arg2 ...grpc.CallOption) (*vc_apiv1.IssueVerifiableCredentialResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "IssueVerifiableCredential", varargs...)
-	ret0, _ := ret[0].(*v1.IssueVerifiableCredentialResponse)
+	ret0, _ := ret[0].(*vc_apiv1.IssueVerifiableCredentialResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -97,14 +97,14 @@ func (mr *MockCredentialAdapterServiceClientMockRecorder) IssueVerifiableCredent
 }
 
 // PresentVerifiableCredential mocks base method.
-func (m *MockCredentialAdapterServiceClient) PresentVerifiableCredential(arg0 context.Context, arg1 *v1.PresentVerifiableCredentialRequest, arg2 ...grpc.CallOption) (*v1.PresentVerifiableCredentialResponse, error) {
+func (m *MockCredentialAdapterServiceClient) PresentVerifiableCredential(arg0 context.Context, arg1 *vc_apiv1.PresentVerifiableCredentialRequest, arg2 ...grpc.CallOption) (*vc_apiv1.PresentVerifiableCredentialResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "PresentVerifiableCredential", varargs...)
-	ret0, _ := ret[0].(*v1.PresentVerifiableCredentialResponse)
+	ret0, _ := ret[0].(*vc_apiv1.PresentVerifiableCredentialResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -117,14 +117,14 @@ func (mr *MockCredentialAdapterServiceClientMockRecorder) PresentVerifiableCrede
 }
 
 // WaitForCompletion mocks base method.
-func (m *MockCredentialAdapterServiceClient) WaitForCompletion(arg0 context.Context, arg1 *v1.WaitForCompletionRequest, arg2 ...grpc.CallOption) (v1.CredentialAdapterService_WaitForCompletionClient, error) {
+func (m *MockCredentialAdapterServiceClient) WaitForCompletion(arg0 context.Context, arg1 *vc_apiv1.WaitForCompletionRequest, arg2 ...grpc.CallOption) (vc_apiv1.CredentialAdapterService_WaitForCompletionClient, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WaitForCompletion", varargs...)
-	ret0, _ := ret[0].(v1.CredentialAdapterService_WaitForCompletionClient)
+	ret0, _ := ret[0].(vc_apiv1.CredentialAdapterService_WaitForCompletionClient)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

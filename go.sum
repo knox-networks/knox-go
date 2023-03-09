@@ -70,16 +70,8 @@ github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/tyler-smith/go-bip39 v1.1.0 h1:5eUemwrMargf3BSLRRCalXT93Ns6pQJIjYQN2nyfOP8=
 github.com/tyler-smith/go-bip39 v1.1.0/go.mod h1:gUYDtqQw1JS3ZJ8UWVcGTGqqr6YIN3CWg+kkNaLt55U=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
-go.buf.build/grpc/go/knox-networks/auth-mgmt v1.4.20 h1:RQGCiZAajodkthxplldvvi0WIJ9+YMOUJTStZOgO1E8=
-go.buf.build/grpc/go/knox-networks/auth-mgmt v1.4.20/go.mod h1:lN/N5v9RMrI66NimtKswXeyDzMH649Zn2pvZltGph3A=
-go.buf.build/grpc/go/knox-networks/auth-mgmt v1.4.25 h1:51wMWQfmCZfX6HYUsNxEF2LU6yWPVPS146Rq4ysAYgI=
-go.buf.build/grpc/go/knox-networks/auth-mgmt v1.4.25/go.mod h1:lN/N5v9RMrI66NimtKswXeyDzMH649Zn2pvZltGph3A=
-go.buf.build/grpc/go/knox-networks/credential-adapter v1.4.41 h1:CaQrhYrP0PqHlHoWIdPiv2KessmyWcUq/kDe3wrnnMQ=
-go.buf.build/grpc/go/knox-networks/credential-adapter v1.4.41/go.mod h1:J5jWmgHy+dm12GVRdEaixPxRTWhIwZvcHVZtr/x1ASQ=
 go.buf.build/grpc/go/knox-networks/credential-adapter v1.4.47 h1:FZnbJFz1p4PpCAZTVm+weYNKR8SW3LJNdpK+IHrfiM8=
 go.buf.build/grpc/go/knox-networks/credential-adapter v1.4.47/go.mod h1:J5jWmgHy+dm12GVRdEaixPxRTWhIwZvcHVZtr/x1ASQ=
-go.buf.build/grpc/go/knox-networks/registry-mgmt v1.4.7 h1:8yhqeeBWUv40bQx4EdIAweGa0NiXnfvJJF8EfiBVHs4=
-go.buf.build/grpc/go/knox-networks/registry-mgmt v1.4.7/go.mod h1:glpzi6uAaOmFSB3qDfBvxdOg6fjyv+hQ2LixNZk/wm8=
 go.buf.build/grpc/go/knox-networks/registry-mgmt v1.4.10 h1:sfXgW1lMujwHUN+mWz2jDCCa+QBgGUHtmAlTWQMOXL4=
 go.buf.build/grpc/go/knox-networks/registry-mgmt v1.4.10/go.mod h1:glpzi6uAaOmFSB3qDfBvxdOg6fjyv+hQ2LixNZk/wm8=
 go.buf.build/grpc/go/knox-networks/user-mgmt v1.4.3 h1:aE/BX+PSBUmWCp8gWTot8qGfzICkJLsLwYA7SSRDaOA=

@@ -1,21 +1,22 @@
-package auth_client
+package user_client
 
 import (
 	"context"
 	"crypto/tls"
-	"google.golang.org/grpc/credentials"
 	"time"
 
+	"google.golang.org/grpc/credentials"
+
 	"github.com/knox-networks/knox-go/model"
-	AuthApi "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
+	UserApi "go.buf.build/grpc/go/knox-networks/user-mgmt/user_api/v1"
 
 	"google.golang.org/grpc"
 )
 
 const DefaultTimeout = 5 * time.Second
 
-type authClient struct {
-	client AuthApi.AuthApiServiceClient
+type userClient struct {
+	client UserApi.UserApiServiceClient
 	conn   *grpc.ClientConn
 }
 
@@ -36,7 +37,7 @@ type DidAuthenticationChallenge struct {
 	Nonce string
 }
 
-type AuthClient interface {
+type UserClient interface {
 	Close()
 	AuthenticateWithPassword(email string, password string) (*model.AuthToken, error)
 	AuthnWithDidRegister(did string, nonce string, enc []byte) error
@@ -45,7 +46,7 @@ type AuthClient interface {
 	CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error)
 }
 
-func NewAuthClient(address string) (AuthClient, error) {
+func NewAuthClient(address string) (UserClient, error) {
 	var opts []grpc.DialOption
 	tlsConfig := &tls.Config{}
 
@@ -55,8 +56,8 @@ func NewAuthClient(address string) (AuthClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := AuthApi.NewAuthApiServiceClient(conn)
-	return &authClient{
+	client := UserApi.NewUserApiServiceClient(conn)
+	return &userClient{
 		conn:   conn,
 		client: client,
 	}, nil
@@ -66,15 +67,15 @@ func NewAuthStream(s grpc.ClientStream) StreamClient {
 	return &streamClient{stream: s}
 }
 
-func (r *authClient) Close() {
+func (r *userClient) Close() {
 	defer r.conn.Close()
 }
 
-func (r *authClient) AuthenticateWithPassword(email string, password string) (*model.AuthToken, error) {
+func (r *userClient) AuthenticateWithPassword(email string, password string) (*model.AuthToken, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
-	req := &AuthApi.AuthnWithPasswordRequest{
+	req := &UserApi.AuthnWithPasswordRequest{
 		Email:    email,
 		Password: password,
 	}
@@ -92,12 +93,12 @@ func (r *authClient) AuthenticateWithPassword(email string, password string) (*m
 	}, nil
 }
 
-func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error) {
+func (r *userClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
-	req := &AuthApi.AuthnWithDidRegisterStartRequest{}
-	respClient, err := r.client.AuthnWithDidRegisterStart(ctx, req)
+	req := &UserApi.CreateRegisterWalletChallengeRequest{}
+	respClient, err := r.client.CreateRegisterWalletChallenge(ctx, req)
 
 	if err != nil {
 		return &DidRegistrationChallenge{}, NewAuthStream(respClient), err
@@ -111,17 +112,17 @@ func (r *authClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegi
 	return &DidRegistrationChallenge{Nonce: resp.GetNonce()}, NewAuthStream(respClient), nil
 }
 
-func (r *authClient) AuthnWithDidRegister(did string, nonce string, enc []byte) error {
+func (r *userClient) AuthnWithDidRegister(did string, nonce string, enc []byte) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
-	req := &AuthApi.AuthnWithDidRegisterRequest{
+	req := &UserApi.RegisterWalletRequest{
 		Did:       did,
 		Nonce:     nonce,
 		Signature: enc,
 	}
 
-	_, err := r.client.AuthnWithDidRegister(ctx, req)
+	_, err := r.client.RegisterWallet(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -129,12 +130,12 @@ func (r *authClient) AuthnWithDidRegister(did string, nonce string, enc []byte) 
 	return nil
 }
 
-func (r *authClient) CreateDidAuthenticationChallenge(did string) (*DidAuthenticationChallenge, error) {
+func (r *userClient) CreateDidAuthenticationChallenge(did string) (*DidAuthenticationChallenge, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
-	req := &AuthApi.CreateDidAuthenticationChallengeRequest{Did: did}
-	resp, err := r.client.CreateDidAuthenticationChallenge(ctx, req)
+	req := &UserApi.CreateAuthnWalletChallengeRequest{Did: did}
+	resp, err := r.client.CreateAuthnWalletChallenge(ctx, req)
 	if err != nil {
 		return &DidAuthenticationChallenge{}, err
 	}
@@ -142,17 +143,17 @@ func (r *authClient) CreateDidAuthenticationChallenge(did string) (*DidAuthentic
 	return &DidAuthenticationChallenge{Nonce: resp.Nonce}, nil
 }
 
-func (r *authClient) AuthenticateWithDid(did string, nonce string, enc []byte) (*model.AuthToken, error) {
+func (r *userClient) AuthenticateWithDid(did string, nonce string, enc []byte) (*model.AuthToken, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 	defer cancel()
 
-	req := &AuthApi.AuthenticateWithDidRequest{
+	req := &UserApi.AuthnWalletRequest{
 		Did:       did,
 		Nonce:     nonce,
 		Signature: enc,
 	}
 
-	res, err := r.client.AuthenticateWithDid(ctx, req)
+	res, err := r.client.AuthnWallet(ctx, req)
 	if err != nil {
 		return &model.AuthToken{}, err
 	}

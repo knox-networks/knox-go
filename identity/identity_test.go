@@ -9,10 +9,10 @@ import (
 	"github.com/knox-networks/knox-go/helpers/crypto"
 	cm_mock "github.com/knox-networks/knox-go/helpers/crypto/mock"
 	"github.com/knox-networks/knox-go/params"
-	"github.com/knox-networks/knox-go/service/auth_client"
-	auth_mock "github.com/knox-networks/knox-go/service/auth_client/mock"
 	"github.com/knox-networks/knox-go/service/registry_client"
 	registry_mock "github.com/knox-networks/knox-go/service/registry_client/mock"
+	"github.com/knox-networks/knox-go/service/user_client"
+	user_mock "github.com/knox-networks/knox-go/service/user_client/mock"
 	"github.com/knox-networks/knox-go/signer"
 	s_mock "github.com/knox-networks/knox-go/signer/mock"
 	"github.com/multiformats/go-multibase"
@@ -123,8 +123,8 @@ func TestGenerateIdentity(t *testing.T) {
 
 type registerIdentityFields struct {
 	cm         crypto.CryptoManager
-	auth       auth_client.AuthClient
-	authStream auth_client.StreamClient
+	auth       user_client.UserClient
+	authStream user_client.StreamClient
 	signer     signer.DynamicSigner
 }
 type registerIdentityArgs struct {
@@ -142,9 +142,9 @@ func TestRegisterIdentity(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 	f := &registerIdentityFields{
 		cm:         cm_mock.NewMockCryptoManager(mock_controller),
-		auth:       auth_mock.NewMockAuthClient(mock_controller),
+		auth:       user_mock.NewMockUserClient(mock_controller),
 		signer:     s_mock.NewMockDynamicSigner(mock_controller),
-		authStream: auth_mock.NewMockStreamClient(mock_controller),
+		authStream: user_mock.NewMockStreamClient(mock_controller),
 	}
 	tests := []registerIdentityTest{
 		{
@@ -160,17 +160,17 @@ func TestRegisterIdentity(t *testing.T) {
 				signature := []byte("signature")
 				gomock.InOrder(
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						CreateDidRegistrationChallenge(args.p.Token).
-						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
+						Return(&user_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(nil),
-					f.authStream.(*auth_mock.MockStreamClient).EXPECT().WaitForCompletion().Return(nil),
-					f.authStream.(*auth_mock.MockStreamClient).EXPECT().Close().Return(nil),
+					f.authStream.(*user_mock.MockStreamClient).EXPECT().WaitForCompletion().Return(nil),
+					f.authStream.(*user_mock.MockStreamClient).EXPECT().Close().Return(nil),
 				)
 			},
 			expectedError: nil,
@@ -193,7 +193,7 @@ func TestRegisterIdentity(t *testing.T) {
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(nil),
 				)
@@ -211,9 +211,9 @@ func TestRegisterIdentity(t *testing.T) {
 				did := "did:knox:test"
 				gomock.InOrder(
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						CreateDidRegistrationChallenge(args.p.Token).
-						Return(&auth_client.DidRegistrationChallenge{}, f.authStream, errors.New("challenge error")),
+						Return(&user_client.DidRegistrationChallenge{}, f.authStream, errors.New("challenge error")),
 				)
 			},
 			expectedError: errors.New("challenge error"),
@@ -231,9 +231,9 @@ func TestRegisterIdentity(t *testing.T) {
 				signature := []byte("")
 				gomock.InOrder(
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						CreateDidRegistrationChallenge(args.p.Token).
-						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
+						Return(&user_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, errors.New("signing error")),
@@ -276,13 +276,13 @@ func TestRegisterIdentity(t *testing.T) {
 				signature := []byte("signature")
 				gomock.InOrder(
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						CreateDidRegistrationChallenge(args.p.Token).
-						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
+						Return(&user_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(errors.New("registration error")),
 				)
@@ -307,7 +307,7 @@ func TestRegisterIdentity(t *testing.T) {
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(errors.New("registration error")),
 				)
@@ -327,16 +327,16 @@ func TestRegisterIdentity(t *testing.T) {
 				signature := []byte("signature")
 				gomock.InOrder(
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						CreateDidRegistrationChallenge(args.p.Token).
-						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
+						Return(&user_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(nil),
-					f.authStream.(*auth_mock.MockStreamClient).EXPECT().WaitForCompletion().Return(errors.New("wait error")),
+					f.authStream.(*user_mock.MockStreamClient).EXPECT().WaitForCompletion().Return(errors.New("wait error")),
 				)
 			},
 			expectedError: errors.New("wait error"),
@@ -354,17 +354,17 @@ func TestRegisterIdentity(t *testing.T) {
 				signature := []byte("signature")
 				gomock.InOrder(
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().GetDid().Return(did),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						CreateDidRegistrationChallenge(args.p.Token).
-						Return(&auth_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
+						Return(&user_client.DidRegistrationChallenge{Nonce: nonce}, f.authStream, nil),
 					f.signer.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.Authentication, []byte(did+"."+nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
-					f.auth.(*auth_mock.MockAuthClient).EXPECT().
+					f.auth.(*user_mock.MockUserClient).EXPECT().
 						AuthnWithDidRegister(did, nonce, signature).
 						Return(nil),
-					f.authStream.(*auth_mock.MockStreamClient).EXPECT().WaitForCompletion().Return(nil),
-					f.authStream.(*auth_mock.MockStreamClient).EXPECT().Close().Return(errors.New("close error")),
+					f.authStream.(*user_mock.MockStreamClient).EXPECT().WaitForCompletion().Return(nil),
+					f.authStream.(*user_mock.MockStreamClient).EXPECT().Close().Return(errors.New("close error")),
 				)
 			},
 			expectedError: errors.New("close error"),

@@ -1,16 +1,16 @@
-package auth_client
+package user_client
 
 import (
 	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	grpc_mock "github.com/knox-networks/knox-go/service/auth_client/grpc_mock"
-	AuthApi "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1"
+	grpc_mock "github.com/knox-networks/knox-go/service/user_client/grpc_mock"
+	UserApi "go.buf.build/grpc/go/knox-networks/user-mgmt/user_api/v1"
 )
 
 type createDidAuthenticationChallengeFields struct {
-	client AuthApi.AuthApiServiceClient
+	client UserApi.UserApiServiceClient
 }
 type createDidAuthenticationChallengeArgs struct {
 	nonce string
@@ -28,7 +28,7 @@ func TestCreateDidAuthenticationChallenge(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 
 	f := &createDidAuthenticationChallengeFields{
-		client: grpc_mock.NewMockAuthApiServiceClient(mock_controller),
+		client: grpc_mock.NewMockUserApiServiceClient(mock_controller),
 	}
 
 	tests := []createDidAuthenticationChallengeTest{
@@ -36,9 +36,9 @@ func TestCreateDidAuthenticationChallenge(t *testing.T) {
 			name: "CreateDidAuthenticationChallenge Succeeds",
 			prepare: func(f *createDidAuthenticationChallengeFields, args *createDidAuthenticationChallengeArgs) {
 				gomock.InOrder(
-					f.client.(*grpc_mock.MockAuthApiServiceClient).EXPECT().
-						CreateDidAuthenticationChallenge(gomock.Any(), &AuthApi.CreateDidAuthenticationChallengeRequest{Did: args.did}).
-						Return(&AuthApi.CreateDidAuthenticationChallengeResponse{Nonce: args.nonce}, nil),
+					f.client.(*grpc_mock.MockUserApiServiceClient).EXPECT().
+						CreateAuthnWalletChallenge(gomock.Any(), &UserApi.CreateAuthnWalletChallengeRequest{Did: args.did}).
+						Return(&UserApi.CreateAuthnWalletChallengeResponse{Nonce: args.nonce}, nil),
 				)
 			},
 			expectedError: nil,
@@ -51,9 +51,9 @@ func TestCreateDidAuthenticationChallenge(t *testing.T) {
 			name: "CreateDidAuthenticationChallenge Fails Due To Error Getting Challenge",
 			prepare: func(f *createDidAuthenticationChallengeFields, args *createDidAuthenticationChallengeArgs) {
 				gomock.InOrder(
-					f.client.(*grpc_mock.MockAuthApiServiceClient).EXPECT().
-						CreateDidAuthenticationChallenge(gomock.Any(), &AuthApi.CreateDidAuthenticationChallengeRequest{Did: args.did}).
-						Return(&AuthApi.CreateDidAuthenticationChallengeResponse{}, errors.New("challenge error")),
+					f.client.(*grpc_mock.MockUserApiServiceClient).EXPECT().
+						CreateAuthnWalletChallenge(gomock.Any(), &UserApi.CreateAuthnWalletChallengeRequest{Did: args.did}).
+						Return(&UserApi.CreateAuthnWalletChallengeResponse{}, errors.New("challenge error")),
 				)
 			},
 			expectedError: errors.New("challenge error"),
@@ -68,7 +68,7 @@ func TestCreateDidAuthenticationChallenge(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			test.prepare(f, test.args)
 
-			c := &authClient{
+			c := &userClient{
 				client: f.client,
 			}
 			challenge, err := c.CreateDidAuthenticationChallenge(test.args.did)
@@ -91,8 +91,8 @@ func TestCreateDidAuthenticationChallenge(t *testing.T) {
 }
 
 type createDidRegistrationChallengeFields struct {
-	client        AuthApi.AuthApiServiceClient
-	stream_client AuthApi.AuthApiService_AuthnWithDidRegisterStartClient
+	client        UserApi.UserApiServiceClient
+	stream_client UserApi.UserApiService_CreateRegisterWalletChallengeClient
 }
 type createDidRegistrationChallengeArgs struct {
 	nonce string
@@ -110,8 +110,8 @@ func TestCreateDidRegistrationChallenge(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 
 	f := &createDidRegistrationChallengeFields{
-		client:        grpc_mock.NewMockAuthApiServiceClient(mock_controller),
-		stream_client: grpc_mock.NewMockAuthApiService_AuthnWithDidRegisterStartClient(mock_controller),
+		client:        grpc_mock.NewMockUserApiServiceClient(mock_controller),
+		stream_client: grpc_mock.NewMockUserApiService_CreateRegisterWalletChallengeClient(mock_controller),
 	}
 
 	tests := []createDidRegistrationChallengeTest{
@@ -119,12 +119,12 @@ func TestCreateDidRegistrationChallenge(t *testing.T) {
 			name: "CreateDidRegistrationChallenge Succeeds",
 			prepare: func(f *createDidRegistrationChallengeFields, args *createDidRegistrationChallengeArgs) {
 				gomock.InOrder(
-					f.client.(*grpc_mock.MockAuthApiServiceClient).EXPECT().
-						AuthnWithDidRegisterStart(gomock.Any(), &AuthApi.AuthnWithDidRegisterStartRequest{}).
+					f.client.(*grpc_mock.MockUserApiServiceClient).EXPECT().
+						CreateRegisterWalletChallenge(gomock.Any(), &UserApi.CreateRegisterWalletChallengeRequest{}).
 						Return(f.stream_client, nil),
-					f.stream_client.(*grpc_mock.MockAuthApiService_AuthnWithDidRegisterStartClient).EXPECT().
-						Recv().Return(&AuthApi.AuthnWithDidRegisterStartResponse{
-						RegistrationStart: &AuthApi.AuthnWithDidRegisterStartResponse_Nonce{Nonce: args.nonce},
+					f.stream_client.(*grpc_mock.MockUserApiService_CreateRegisterWalletChallengeClient).EXPECT().
+						Recv().Return(&UserApi.CreateRegisterWalletChallengeResponse{
+						RegistrationStart: &UserApi.CreateRegisterWalletChallengeResponse_Nonce{Nonce: args.nonce},
 					}, nil),
 				)
 			},
@@ -138,8 +138,8 @@ func TestCreateDidRegistrationChallenge(t *testing.T) {
 			name: "CreateDidRegistrationChallenge Fails Due To Error Starting Stream",
 			prepare: func(f *createDidRegistrationChallengeFields, args *createDidRegistrationChallengeArgs) {
 				gomock.InOrder(
-					f.client.(*grpc_mock.MockAuthApiServiceClient).EXPECT().
-						AuthnWithDidRegisterStart(gomock.Any(), &AuthApi.AuthnWithDidRegisterStartRequest{}).
+					f.client.(*grpc_mock.MockUserApiServiceClient).EXPECT().
+						CreateRegisterWalletChallenge(gomock.Any(), &UserApi.CreateRegisterWalletChallengeRequest{}).
 						Return(f.stream_client, errors.New("stream errror")),
 				)
 			},
@@ -153,11 +153,11 @@ func TestCreateDidRegistrationChallenge(t *testing.T) {
 			name: "CreateDidRegistrationChallenge Fails Due To Error Getting Challenge",
 			prepare: func(f *createDidRegistrationChallengeFields, args *createDidRegistrationChallengeArgs) {
 				gomock.InOrder(
-					f.client.(*grpc_mock.MockAuthApiServiceClient).EXPECT().
-						AuthnWithDidRegisterStart(gomock.Any(), &AuthApi.AuthnWithDidRegisterStartRequest{}).
+					f.client.(*grpc_mock.MockUserApiServiceClient).EXPECT().
+						CreateRegisterWalletChallenge(gomock.Any(), &UserApi.CreateRegisterWalletChallengeRequest{}).
 						Return(f.stream_client, nil),
-					f.stream_client.(*grpc_mock.MockAuthApiService_AuthnWithDidRegisterStartClient).EXPECT().
-						Recv().Return(&AuthApi.AuthnWithDidRegisterStartResponse{}, errors.New("challenge error")),
+					f.stream_client.(*grpc_mock.MockUserApiService_CreateRegisterWalletChallengeClient).EXPECT().
+						Recv().Return(&UserApi.CreateRegisterWalletChallengeResponse{}, errors.New("challenge error")),
 				)
 			},
 			expectedError: errors.New("challenge error"),
@@ -172,7 +172,7 @@ func TestCreateDidRegistrationChallenge(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			test.prepare(f, test.args)
 
-			c := &authClient{
+			c := &userClient{
 				client: f.client,
 			}
 			challenge, _, err := c.CreateDidRegistrationChallenge(test.args.token)

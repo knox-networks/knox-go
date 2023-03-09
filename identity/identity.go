@@ -7,13 +7,13 @@ import (
 	"github.com/knox-networks/knox-go/helpers/did"
 	"github.com/knox-networks/knox-go/model"
 	"github.com/knox-networks/knox-go/params"
-	"github.com/knox-networks/knox-go/service/auth_client"
 	"github.com/knox-networks/knox-go/service/registry_client"
+	"github.com/knox-networks/knox-go/service/user_client"
 	"github.com/knox-networks/knox-go/signer"
 )
 
 type identityClient struct {
-	auth     auth_client.AuthClient
+	auth     user_client.UserClient
 	s        signer.DynamicSigner
 	cm       crypto.CryptoManager
 	registry registry_client.RegistryClient
@@ -26,7 +26,7 @@ type IdentityClient interface {
 }
 
 func NewIdentityClient(authAdress string, registryAddress string, s signer.DynamicSigner) (IdentityClient, error) {
-	auth, err := auth_client.NewAuthClient(authAdress)
+	auth, err := user_client.NewAuthClient(authAdress)
 	if err != nil {
 		return nil, err
 	}
