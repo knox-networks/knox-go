@@ -32,6 +32,9 @@ lint:  ## run linter
 	golangci-lint run ./...
 
 mockgen: ## generate mock go files
+		GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/auth-mgmt
+	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/credential-adapter
+	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/registry-mgmt
 	mockgen -destination=./service/credential_adapter/mock/mock_credential_adapter.go -package=mock -source=./service/credential_adapter/credential_adapter.go
 	mockgen -destination=./service/auth_client/mock/mock_auth_client.go -package=mock -source=./service/auth_client/auth_client.go
 	mockgen -destination=./service/registry_client/mock/mock_registry_client.go -package=mock -source=./service/registry_client/registry_client.go
@@ -40,5 +43,12 @@ mockgen: ## generate mock go files
 	mockgen -destination=./presentation/mock/mock_presentation.go -package=mock -source=./presentation/presentation.go
 	mockgen -destination=./signer/mock/mock_signer.go -package=mock -source=signer/signer.go
 	mockgen -destination=./helpers/crypto/mock/mock_crypto.go -package=mock -source=helpers/crypto/crypto.go
-	mockgen -build_flags=--mod=mod -destination=./service/credential_adapter/grpc_mock/mock_grpc_credential_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1" AdapterServiceClient
-	mockgen -build_flags=--mod=mod -destination=./service/auth_client/grpc_mock/mock_grpc_auth_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/auth-mgmt/auth_api/v1" AuthApiService_AuthnWithDidRegisterStartClient,AuthApiServiceClient,AuthApiService_AuthnWithDidStartClient
+	mockgen -build_flags=--mod=mod -destination=./service/credential_adapter/grpc_mock/mock_grpc_credential_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/credential-adapter/vc_api/v1" CredentialAdapterServiceClient
+	mockgen -build_flags=--mod=mod -destination=./service/auth_client/grpc_mock/mock_grpc_auth_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/user-mgmt/user_api/v1" UserApiService_AuthnWithDidRegisterStartClient,UserApiServiceClient,UserApiServiceAuthnWithDidStartClient
+
+deps-tidy:   ## tidy up dependencies and update vendor folder
+	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/auth-mgmt
+	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/credential-adapter
+	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/registry-mgmt
+	go mod tidy
+	go mod vendor

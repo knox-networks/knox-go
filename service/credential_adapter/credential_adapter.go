@@ -12,7 +12,7 @@ import (
 
 	"github.com/knox-networks/knox-go/helpers/slices"
 	"github.com/knox-networks/knox-go/model"
-	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1"
+	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/vc_api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )

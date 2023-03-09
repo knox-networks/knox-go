@@ -8,7 +8,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/knox-networks/knox-go/helpers/slices"
 	mock_client "github.com/knox-networks/knox-go/service/credential_adapter/grpc_mock"
-	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/adapter_api/v1"
+	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/vc_api/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
