@@ -72,6 +72,7 @@ func TestRequestCredential(t *testing.T) {
 					Challenge: params.RequestCredentialChallenge{
 						Nonce: "nonce1234",
 					},
+					AccessToken: access_token,
 				}},
 			prepare: func(f *requestCredentialFields) {
 				did := "did:example:123456789"
@@ -95,6 +96,7 @@ func TestRequestCredential(t *testing.T) {
 			args: requestCredentialArgs{
 				p: params.RequestCredentialParams{
 					CredentialType: cred_type,
+					AccessToken:    access_token,
 				}},
 			prepare: func(f *requestCredentialFields) {
 				did := "did:example:123456789"
@@ -114,6 +116,7 @@ func TestRequestCredential(t *testing.T) {
 			args: requestCredentialArgs{
 				p: params.RequestCredentialParams{
 					CredentialType: cred_type,
+					AccessToken:    access_token,
 				}},
 			prepare: func(f *requestCredentialFields) {
 				did := "did:example:123456789"
@@ -137,6 +140,7 @@ func TestRequestCredential(t *testing.T) {
 			args: requestCredentialArgs{
 				p: params.RequestCredentialParams{
 					CredentialType: cred_type,
+					AccessToken:    access_token,
 				}},
 			prepare: func(f *requestCredentialFields) {
 				did := "did:example:123456789"
