@@ -29,6 +29,7 @@ type requestCredentialTest struct {
 
 func TestRequestCredential(t *testing.T) {
 	cred_type := "BankCard"
+	access_token := "placeholder"
 	mock_controller := gomock.NewController(t)
 	mock_wallet := s_mock.NewMockDynamicSigner(mock_controller)
 	mock_ca := ca_mock.NewMockCredentialAdapterClient(mock_controller)
@@ -40,6 +41,7 @@ func TestRequestCredential(t *testing.T) {
 			args: requestCredentialArgs{
 				p: params.RequestCredentialParams{
 					CredentialType: cred_type,
+					AccessToken:    access_token,
 				},
 			},
 			prepare: func(f *requestCredentialFields) {
@@ -49,13 +51,13 @@ func TestRequestCredential(t *testing.T) {
 				gomock.InOrder(f.w.(*s_mock.MockDynamicSigner).EXPECT().
 					GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
-						CreateIssuanceChallenge(cred_type, did).
+						CreateIssuanceChallenge(cred_type, did, access_token).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, nil),
 					f.w.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.AssertionMethod, []byte(nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
-						IssueVerifiableCredential(cred_type, did, nonce, signature).
+						IssueVerifiableCredential(cred_type, did, nonce, signature, access_token).
 						Return(credential_adapter.VerifiableCredential{}, nil),
 				)
 
@@ -81,7 +83,7 @@ func TestRequestCredential(t *testing.T) {
 						Sign(signer.AssertionMethod, []byte(nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
-						IssueVerifiableCredential(cred_type, did, nonce, signature).
+						IssueVerifiableCredential(cred_type, did, nonce, signature, access_token).
 						Return(credential_adapter.VerifiableCredential{}, nil),
 				)
 
@@ -100,7 +102,7 @@ func TestRequestCredential(t *testing.T) {
 				gomock.InOrder(f.w.(*s_mock.MockDynamicSigner).EXPECT().
 					GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
-						CreateIssuanceChallenge(cred_type, did).
+						CreateIssuanceChallenge(cred_type, did, access_token).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, errors.New("error creating challenge")),
 				)
 
@@ -120,7 +122,7 @@ func TestRequestCredential(t *testing.T) {
 				gomock.InOrder(f.w.(*s_mock.MockDynamicSigner).EXPECT().
 					GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
-						CreateIssuanceChallenge(cred_type, did).
+						CreateIssuanceChallenge(cred_type, did, access_token).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, nil),
 					f.w.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.AssertionMethod, []byte(nonce)).
@@ -143,13 +145,13 @@ func TestRequestCredential(t *testing.T) {
 				gomock.InOrder(f.w.(*s_mock.MockDynamicSigner).EXPECT().
 					GetDid().Return(did),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
-						CreateIssuanceChallenge(cred_type, did).
+						CreateIssuanceChallenge(cred_type, did, access_token).
 						Return(credential_adapter.IssuanceChallenge{Nonce: nonce}, nil),
 					f.w.(*s_mock.MockDynamicSigner).EXPECT().
 						Sign(signer.AssertionMethod, []byte(nonce)).
 						Return(&signer.SigningResponse{ProofValue: signature}, nil),
 					f.ca.(*ca_mock.MockCredentialAdapterClient).EXPECT().
-						IssueVerifiableCredential(cred_type, did, nonce, signature).
+						IssueVerifiableCredential(cred_type, did, nonce, signature, access_token).
 						Return(credential_adapter.VerifiableCredential{}, errors.New("error issuing credential")),
 				)
 

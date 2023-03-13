@@ -25,6 +25,7 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 	cred_type := "test"
 	nonce := "rbmtI32kWmVpdv22i4QDEYtFwjIP22W7"
 	url := "localhost:5051"
+	access_token := "access_token"
 	mock_controller := gomock.NewController(t)
 
 	tests := []createIssuanceChallengeTest{
@@ -63,7 +64,7 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 				Endpoint:       "localhost:5051",
 			}, test.mockClientRequestError)
 
-		challenge, err := adapter_client.CreateIssuanceChallenge(cred_type, did)
+		challenge, err := adapter_client.CreateIssuanceChallenge(cred_type, did, access_token)
 
 		if err != nil && test.expectedError == nil || err == nil && test.expectedError != nil {
 			t.Errorf("Expected error %v, but got %v", test.expectedError, err)
@@ -193,6 +194,7 @@ func TestIssueVerifiableCredential(t *testing.T) {
 	cred_type := "test"
 	nonce := "rbmtI32kWmVpdv22i4QDEYtFwjIP22W7"
 	signature := []byte("signature")
+	access_token := "placeholder"
 	mock_controller := gomock.NewController(t)
 
 	tests := []IssueVerifiableCredentialTest{
@@ -221,7 +223,7 @@ func TestIssueVerifiableCredential(t *testing.T) {
 			Signature:      signature,
 		}).Return(&AdapterApi.IssueVerifiableCredentialResponse{Credential: "{}"}, test.mockClientRequestError)
 
-		cred, err := adapter_client.IssueVerifiableCredential(cred_type, did, nonce, signature)
+		cred, err := adapter_client.IssueVerifiableCredential(cred_type, did, nonce, signature, access_token)
 
 		if err != nil && test.expectedError == nil || err == nil && test.expectedError != nil {
 			t.Errorf("Expected error %v, but got %v", test.expectedError, err)

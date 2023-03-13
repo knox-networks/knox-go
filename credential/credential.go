@@ -29,7 +29,7 @@ func (c *credentialClient) Request(params params.RequestCredentialParams) (crede
 	did := c.s.GetDid()
 	cred_type := params.CredentialType
 
-	nonce, err := c.parseChallenge(params.Challenge, cred_type, did)
+	nonce, err := c.parseChallenge(params.Challenge, cred_type, did, params.AccessToken)
 	if err != nil {
 		return credential_adapter.VerifiableCredential{}, err
 	}
@@ -42,7 +42,7 @@ func (c *credentialClient) Request(params params.RequestCredentialParams) (crede
 	fmt.Printf("Created Signature For Nonce %s\n", nonce)
 
 	fmt.Printf("About to request issuance of credential of type %s\n", cred_type)
-	cred, err := c.ca.IssueVerifiableCredential(cred_type, did, nonce, signature.ProofValue)
+	cred, err := c.ca.IssueVerifiableCredential(cred_type, did, nonce, signature.ProofValue, params.AccessToken)
 	if err != nil {
 		return credential_adapter.VerifiableCredential{}, err
 	}
@@ -50,11 +50,11 @@ func (c *credentialClient) Request(params params.RequestCredentialParams) (crede
 	return cred, nil
 }
 
-func (c *credentialClient) parseChallenge(challenge params.RequestCredentialChallenge, credType string, did string) (string, error) {
+func (c *credentialClient) parseChallenge(challenge params.RequestCredentialChallenge, credType string, did string, token string) (string, error) {
 	if (challenge != params.RequestCredentialChallenge{}) {
 		return challenge.Nonce, nil
 	} else {
-		challenge, err := c.ca.CreateIssuanceChallenge(credType, did)
+		challenge, err := c.ca.CreateIssuanceChallenge(credType, did, token)
 		if err != nil {
 			return "", err
 		}

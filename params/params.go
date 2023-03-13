@@ -9,6 +9,7 @@ type RequestCredentialChallenge struct {
 type RequestCredentialParams struct {
 	CredentialType string
 	Challenge      RequestCredentialChallenge
+	AccessToken    string
 }
 
 type SharePresentationChallenge struct {
