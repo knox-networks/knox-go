@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/knox-networks/knox-go/model"
 	UserApi "go.buf.build/grpc/go/knox-networks/user-mgmt/user_api/v1"
@@ -94,7 +95,8 @@ func (r *userClient) AuthenticateWithPassword(email string, password string) (*m
 }
 
 func (r *userClient) CreateDidRegistrationChallenge(auth_token string) (*DidRegistrationChallenge, StreamClient, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
+	md := metadata.New(map[string]string{"Authorization": "Bearer " + auth_token})
+	ctx, cancel := context.WithTimeout(metadata.NewOutgoingContext(context.Background(), md), DefaultTimeout)
 	defer cancel()
 
 	req := &UserApi.CreateRegisterWalletChallengeRequest{}
