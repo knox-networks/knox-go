@@ -46,9 +46,9 @@ type VerifiableCredential struct {
 
 type CredentialAdapterClient interface {
 	Close() error
-	CreateIssuanceChallenge(cred_type string, did string) (IssuanceChallenge, error)
+	CreateIssuanceChallenge(cred_type string, did string, auth_token string) (IssuanceChallenge, error)
 	CreatePresentationChallenge(credTypes []string) (*PresentationChallenge, error)
-	IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte) (VerifiableCredential, error)
+	IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte, auth_token string) (VerifiableCredential, error)
 	PresentVerifiableCredential(vp map[string]interface{}, did string, nonce string, signature []byte) error
 }
 
@@ -75,7 +75,7 @@ func (c *credentialAdapterClient) Close() error {
 	return c.conn.Close()
 }
 
-func (c *credentialAdapterClient) CreateIssuanceChallenge(cred_type string, did string) (IssuanceChallenge, error) {
+func (c *credentialAdapterClient) CreateIssuanceChallenge(cred_type string, did string, auth_token string) (IssuanceChallenge, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	resp, err := c.client.CreateIssuanceChallenge(ctx, &AdapterApi.CreateIssuanceChallengeRequest{
@@ -107,7 +107,7 @@ func (c *credentialAdapterClient) CreatePresentationChallenge(credTypes []string
 	return &PresentationChallenge{Url: resp.Endpoint, Nonce: resp.Nonce, CredentialTypes: credTypes}, nil
 }
 
-func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte) (VerifiableCredential, error) {
+func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte, auth_token string) (VerifiableCredential, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	resp, err := c.client.IssueVerifiableCredential(ctx, &AdapterApi.IssueVerifiableCredentialRequest{

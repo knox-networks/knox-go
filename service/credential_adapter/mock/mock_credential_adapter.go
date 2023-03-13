@@ -49,18 +49,18 @@ func (mr *MockCredentialAdapterClientMockRecorder) Close() *gomock.Call {
 }
 
 // CreateIssuanceChallenge mocks base method.
-func (m *MockCredentialAdapterClient) CreateIssuanceChallenge(cred_type, did string) (credential_adapter.IssuanceChallenge, error) {
+func (m *MockCredentialAdapterClient) CreateIssuanceChallenge(cred_type, did, auth_token string) (credential_adapter.IssuanceChallenge, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateIssuanceChallenge", cred_type, did)
+	ret := m.ctrl.Call(m, "CreateIssuanceChallenge", cred_type, did, auth_token)
 	ret0, _ := ret[0].(credential_adapter.IssuanceChallenge)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateIssuanceChallenge indicates an expected call of CreateIssuanceChallenge.
-func (mr *MockCredentialAdapterClientMockRecorder) CreateIssuanceChallenge(cred_type, did interface{}) *gomock.Call {
+func (mr *MockCredentialAdapterClientMockRecorder) CreateIssuanceChallenge(cred_type, did, auth_token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateIssuanceChallenge", reflect.TypeOf((*MockCredentialAdapterClient)(nil).CreateIssuanceChallenge), cred_type, did)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateIssuanceChallenge", reflect.TypeOf((*MockCredentialAdapterClient)(nil).CreateIssuanceChallenge), cred_type, did, auth_token)
 }
 
 // CreatePresentationChallenge mocks base method.
@@ -79,18 +79,18 @@ func (mr *MockCredentialAdapterClientMockRecorder) CreatePresentationChallenge(c
 }
 
 // IssueVerifiableCredential mocks base method.
-func (m *MockCredentialAdapterClient) IssueVerifiableCredential(cred_type, did, nonce string, signature []byte) (credential_adapter.VerifiableCredential, error) {
+func (m *MockCredentialAdapterClient) IssueVerifiableCredential(cred_type, did, nonce string, signature []byte, auth_token string) (credential_adapter.VerifiableCredential, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IssueVerifiableCredential", cred_type, did, nonce, signature)
+	ret := m.ctrl.Call(m, "IssueVerifiableCredential", cred_type, did, nonce, signature, auth_token)
 	ret0, _ := ret[0].(credential_adapter.VerifiableCredential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // IssueVerifiableCredential indicates an expected call of IssueVerifiableCredential.
-func (mr *MockCredentialAdapterClientMockRecorder) IssueVerifiableCredential(cred_type, did, nonce, signature interface{}) *gomock.Call {
+func (mr *MockCredentialAdapterClientMockRecorder) IssueVerifiableCredential(cred_type, did, nonce, signature, auth_token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IssueVerifiableCredential", reflect.TypeOf((*MockCredentialAdapterClient)(nil).IssueVerifiableCredential), cred_type, did, nonce, signature)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IssueVerifiableCredential", reflect.TypeOf((*MockCredentialAdapterClient)(nil).IssueVerifiableCredential), cred_type, did, nonce, signature, auth_token)
 }
 
 // PresentVerifiableCredential mocks base method.
