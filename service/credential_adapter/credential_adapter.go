@@ -22,6 +22,8 @@ var (
 	DEFAULT_ALIAS_LENGTH = 5
 )
 
+const DefaultTimeout = 5 * time.Second
+
 type credentialAdapterClient struct {
 	client AdapterApi.CredentialAdapterServiceClient
 	conn   *grpc.ClientConn
@@ -78,7 +80,7 @@ func (c *credentialAdapterClient) Close() error {
 
 func (c *credentialAdapterClient) CreateIssuanceChallenge(cred_type string, did string, auth_token string) (IssuanceChallenge, error) {
 	md := metadata.New(map[string]string{"Authorization": "Bearer " + auth_token})
-	ctx, cancel := context.WithTimeout(metadata.NewOutgoingContext(context.Background(), md), 5*time.Second)
+	ctx, cancel := context.WithTimeout(metadata.NewOutgoingContext(context.Background(), md), DefaultTimeout)
 
 	defer cancel()
 	resp, err := c.client.CreateIssuanceChallenge(ctx, &AdapterApi.CreateIssuanceChallengeRequest{
@@ -94,7 +96,7 @@ func (c *credentialAdapterClient) CreateIssuanceChallenge(cred_type string, did 
 }
 
 func (c *credentialAdapterClient) CreatePresentationChallenge(credTypes []string) (*PresentationChallenge, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 
 	defer cancel()
 	resp, err := c.client.CreatePresentationChallenge(ctx, &AdapterApi.CreatePresentationChallengeRequest{
@@ -111,7 +113,8 @@ func (c *credentialAdapterClient) CreatePresentationChallenge(credTypes []string
 }
 
 func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, did string, nonce string, signature []byte, auth_token string) (VerifiableCredential, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	md := metadata.New(map[string]string{"Authorization": "Bearer " + auth_token})
+	ctx, cancel := context.WithTimeout(metadata.NewOutgoingContext(context.Background(), md), DefaultTimeout)
 	defer cancel()
 	resp, err := c.client.IssueVerifiableCredential(ctx, &AdapterApi.IssueVerifiableCredentialRequest{
 		CredentialType: getCredentialEnumFromName(cred_type),
