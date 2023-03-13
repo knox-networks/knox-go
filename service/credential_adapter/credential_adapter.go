@@ -15,6 +15,7 @@ import (
 	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/vc_api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/metadata"
 )
 
 var (
@@ -76,7 +77,9 @@ func (c *credentialAdapterClient) Close() error {
 }
 
 func (c *credentialAdapterClient) CreateIssuanceChallenge(cred_type string, did string, auth_token string) (IssuanceChallenge, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	md := metadata.New(map[string]string{"Authorization": "Bearer " + auth_token})
+	ctx, cancel := context.WithTimeout(metadata.NewOutgoingContext(context.Background(), md), 5*time.Second)
+
 	defer cancel()
 	resp, err := c.client.CreateIssuanceChallenge(ctx, &AdapterApi.CreateIssuanceChallengeRequest{
 		CredentialType: getCredentialEnumFromName(cred_type),
