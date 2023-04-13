@@ -26,7 +26,6 @@ lint:  ## run linter
 	golangci-lint run ./...
 
 mockgen: ## generate mock go files
-	@make update-knox-org-deps
 	mockgen -destination=./service/credential_adapter/mock/mock_credential_adapter.go -package=mock -source=./service/credential_adapter/credential_adapter.go
 	mockgen -destination=./service/user_client/mock/mock_user_client.go -package=mock -source=./service/user_client/user_client.go
 	mockgen -destination=./service/registry_client/mock/mock_registry_client.go -package=mock -source=./service/registry_client/registry_client.go
@@ -39,6 +38,6 @@ mockgen: ## generate mock go files
 	mockgen -build_flags=--mod=mod -destination=./service/user_client/grpc_mock/mock_grpc_user_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/user-mgmt/user_api/v1" UserApiService_CreateRegisterWalletChallengeClient,UserApiServiceClient,UserApiService_CreateAuthnBrowserWithWalletChallengeClient
 
 deps-tidy:   ## tidy up dependencies and update vendor folder
-	@make update-knox-org-deps
+	@make update-knox-org-deps && make mockgen
 	go mod tidy
 	go mod vendor

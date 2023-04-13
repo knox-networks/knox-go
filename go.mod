@@ -9,7 +9,7 @@ require (
 	github.com/tyler-smith/go-bip39 v1.1.0
 	go.buf.build/grpc/go/knox-networks/credential-adapter v1.4.47
 	go.buf.build/grpc/go/knox-networks/registry-mgmt v1.4.10
-	go.buf.build/grpc/go/knox-networks/user-mgmt v1.4.3
+	go.buf.build/grpc/go/knox-networks/user-mgmt v1.4.4
 	google.golang.org/grpc v1.44.0
 )
 
