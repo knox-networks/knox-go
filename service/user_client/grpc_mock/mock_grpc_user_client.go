@@ -340,6 +340,26 @@ func (mr *MockUserApiServiceClientMockRecorder) CreateRegisterWalletChallenge(ar
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateRegisterWalletChallenge", reflect.TypeOf((*MockUserApiServiceClient)(nil).CreateRegisterWalletChallenge), varargs...)
 }
 
+// DissociateWallet mocks base method.
+func (m *MockUserApiServiceClient) DissociateWallet(arg0 context.Context, arg1 *user_apiv1.DissociateWalletRequest, arg2 ...grpc.CallOption) (*user_apiv1.DissociateWalletResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DissociateWallet", varargs...)
+	ret0, _ := ret[0].(*user_apiv1.DissociateWalletResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DissociateWallet indicates an expected call of DissociateWallet.
+func (mr *MockUserApiServiceClientMockRecorder) DissociateWallet(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DissociateWallet", reflect.TypeOf((*MockUserApiServiceClient)(nil).DissociateWallet), varargs...)
+}
+
 // FindByEmail mocks base method.
 func (m *MockUserApiServiceClient) FindByEmail(arg0 context.Context, arg1 *user_apiv1.FindByEmailRequest, arg2 ...grpc.CallOption) (*user_apiv1.FindByEmailResponse, error) {
 	m.ctrl.T.Helper()
