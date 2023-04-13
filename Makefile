@@ -11,15 +11,8 @@ build:   ## build the project
 	@make deps-tidy
 	go build
 
-docker-build:
-	docker build -t knox-go:latest -f ./etc/docker/Dockerfile .
-
 test:   ## run tests
 	go test -cover ./...
-
-docker-test:
-	chmod +x ./etc/docker/run_test.sh
-	./etc/docker/run_test.sh
 
 update-knox-org-deps:
 	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/user-mgmt
