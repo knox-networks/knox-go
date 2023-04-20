@@ -247,7 +247,7 @@ func TestNewTokenClient(t *testing.T) {
 
 	signer := s_mock.NewMockDynamicSigner(mockController)
 
-	_, err := NewTokenClient("", signer)
+	_, err := NewTokenClient("localhost:5051", signer)
 
 	if err != nil {
 		t.Errorf("Expected no error, got: %v", err)
