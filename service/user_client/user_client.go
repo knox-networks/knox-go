@@ -9,7 +9,10 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	"github.com/knox-networks/knox-go/model"
-	UserApi "go.buf.build/grpc/go/knox-networks/user-mgmt/user_api/v1"
+
+	UserApi "buf.build/gen/go/knox-networks/user-mgmt/protocolbuffers/go/user_api/v1"
+
+	UserGrpc "buf.build/gen/go/knox-networks/user-mgmt/grpc/go/user_api/v1/user_apiv1grpc"
 
 	"google.golang.org/grpc"
 )
@@ -17,7 +20,7 @@ import (
 const DefaultTimeout = 5 * time.Second
 
 type userClient struct {
-	client UserApi.UserApiServiceClient
+	client UserGrpc.UserApiServiceClient
 	conn   *grpc.ClientConn
 }
 
@@ -57,7 +60,7 @@ func NewAuthClient(address string) (UserClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := UserApi.NewUserApiServiceClient(conn)
+	client := UserGrpc.NewUserApiServiceClient(conn)
 	return &userClient{
 		conn:   conn,
 		client: client,

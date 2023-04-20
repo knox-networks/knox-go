@@ -291,7 +291,7 @@ func TestNewPresentationClient(t *testing.T) {
 	mock_controller := gomock.NewController(t)
 	mock_signer := s_mock.NewMockDynamicSigner(mock_controller)
 
-	_, err := NewPresentationClient("", mock_signer)
+	_, err := NewPresentationClient("localhost:5051", mock_signer)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil, got %v", err)
