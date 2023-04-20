@@ -4,13 +4,15 @@ import (
 	"errors"
 	"testing"
 
+	UserApi "buf.build/gen/go/knox-networks/user-mgmt/protocolbuffers/go/user_api/v1"
 	"github.com/golang/mock/gomock"
 	grpc_mock "github.com/knox-networks/knox-go/service/user_client/grpc_mock"
-	UserApi "go.buf.build/grpc/go/knox-networks/user-mgmt/user_api/v1"
+
+	UserGrpc "buf.build/gen/go/knox-networks/user-mgmt/grpc/go/user_api/v1/user_apiv1grpc"
 )
 
 type createDidAuthenticationChallengeFields struct {
-	client UserApi.UserApiServiceClient
+	client UserGrpc.UserApiServiceClient
 }
 type createDidAuthenticationChallengeArgs struct {
 	nonce string
@@ -91,8 +93,8 @@ func TestCreateDidAuthenticationChallenge(t *testing.T) {
 }
 
 type createDidRegistrationChallengeFields struct {
-	client        UserApi.UserApiServiceClient
-	stream_client UserApi.UserApiService_CreateRegisterWalletChallengeClient
+	client        UserGrpc.UserApiServiceClient
+	stream_client UserGrpc.UserApiService_CreateRegisterWalletChallengeClient
 }
 type createDidRegistrationChallengeArgs struct {
 	nonce string

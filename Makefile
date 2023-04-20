@@ -34,8 +34,8 @@ mockgen: ## generate mock go files
 	mockgen -destination=./presentation/mock/mock_presentation.go -package=mock -source=./presentation/presentation.go
 	mockgen -destination=./signer/mock/mock_signer.go -package=mock -source=signer/signer.go
 	mockgen -destination=./helpers/crypto/mock/mock_crypto.go -package=mock -source=helpers/crypto/crypto.go
-	mockgen -build_flags=--mod=mod -destination=./service/credential_adapter/grpc_mock/mock_grpc_credential_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/credential-adapter/vc_api/v1" CredentialAdapterServiceClient
-	mockgen -build_flags=--mod=mod -destination=./service/user_client/grpc_mock/mock_grpc_user_client.go -package=grpc_mock "go.buf.build/grpc/go/knox-networks/user-mgmt/user_api/v1" UserApiService_CreateRegisterWalletChallengeClient,UserApiServiceClient,UserApiService_CreateAuthnBrowserWithWalletChallengeClient
+	mockgen -build_flags=--mod=mod -destination=./service/credential_adapter/grpc_mock/mock_grpc_credential_client.go -package=grpc_mock "buf.build/gen/go/knox-networks/credential-adapter/grpc/go/vc_api/v1/vc_apiv1grpc" CredentialAdapterServiceClient
+	mockgen -build_flags=--mod=mod -destination=./service/user_client/grpc_mock/mock_grpc_user_client.go -package=grpc_mock "buf.build/gen/go/knox-networks/user-mgmt/grpc/go/user_api/v1/user_apiv1grpc" UserApiService_CreateRegisterWalletChallengeClient,UserApiServiceClient,UserApiService_CreateAuthnBrowserWithWalletChallengeClient
 
 deps-tidy:   ## tidy up dependencies and update vendor folder
 	@make update-knox-org-deps && make mockgen

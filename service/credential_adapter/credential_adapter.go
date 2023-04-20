@@ -10,22 +10,23 @@ import (
 	"strings"
 	"time"
 
+	CredentialGrpc "buf.build/gen/go/knox-networks/credential-adapter/grpc/go/vc_api/v1/vc_apiv1grpc"
+	CredentialApi "buf.build/gen/go/knox-networks/credential-adapter/protocolbuffers/go/vc_api/v1"
 	"github.com/knox-networks/knox-go/helpers/slices"
 	"github.com/knox-networks/knox-go/model"
-	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/vc_api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 )
 
+const DefaultTimeout = 5 * time.Second
+
 var (
 	DEFAULT_ALIAS_LENGTH = 5
 )
 
-const DefaultTimeout = 5 * time.Second
-
 type credentialAdapterClient struct {
-	client AdapterApi.CredentialAdapterServiceClient
+	client CredentialGrpc.CredentialAdapterServiceClient
 	conn   *grpc.ClientConn
 }
 
@@ -57,7 +58,6 @@ type CredentialAdapterClient interface {
 
 func NewCredentialAdapterClient(address string) (CredentialAdapterClient, error) {
 	config := &tls.Config{}
-
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(credentials.NewTLS(config))}
 
@@ -66,7 +66,7 @@ func NewCredentialAdapterClient(address string) (CredentialAdapterClient, error)
 	if err != nil {
 		return nil, err
 	}
-	client := AdapterApi.NewCredentialAdapterServiceClient(conn)
+	client := CredentialGrpc.NewCredentialAdapterServiceClient(conn)
 
 	return &credentialAdapterClient{
 		client: client,
@@ -83,7 +83,7 @@ func (c *credentialAdapterClient) CreateIssuanceChallenge(cred_type string, did 
 	ctx, cancel := context.WithTimeout(metadata.NewOutgoingContext(context.Background(), md), DefaultTimeout)
 
 	defer cancel()
-	resp, err := c.client.CreateIssuanceChallenge(ctx, &AdapterApi.CreateIssuanceChallengeRequest{
+	resp, err := c.client.CreateIssuanceChallenge(ctx, &CredentialApi.CreateIssuanceChallengeRequest{
 		CredentialType: getCredentialEnumFromName(cred_type),
 		Did:            did,
 	})
@@ -99,8 +99,8 @@ func (c *credentialAdapterClient) CreatePresentationChallenge(credTypes []string
 	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeout)
 
 	defer cancel()
-	resp, err := c.client.CreatePresentationChallenge(ctx, &AdapterApi.CreatePresentationChallengeRequest{
-		CredentialTypes: slices.Map(credTypes, func(credType string) AdapterApi.CredentialType {
+	resp, err := c.client.CreatePresentationChallenge(ctx, &CredentialApi.CreatePresentationChallengeRequest{
+		CredentialTypes: slices.Map(credTypes, func(credType string) CredentialApi.CredentialType {
 			return getCredentialEnumFromName(credType)
 		}),
 	})
@@ -116,7 +116,7 @@ func (c *credentialAdapterClient) IssueVerifiableCredential(cred_type string, di
 	md := metadata.New(map[string]string{"Authorization": "Bearer " + auth_token})
 	ctx, cancel := context.WithTimeout(metadata.NewOutgoingContext(context.Background(), md), DefaultTimeout)
 	defer cancel()
-	resp, err := c.client.IssueVerifiableCredential(ctx, &AdapterApi.IssueVerifiableCredentialRequest{
+	resp, err := c.client.IssueVerifiableCredential(ctx, &CredentialApi.IssueVerifiableCredentialRequest{
 		CredentialType: getCredentialEnumFromName(cred_type),
 		Did:            did,
 		Signature:      signature,
@@ -142,12 +142,12 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(vp map[string]inte
 		return err
 	}
 
-	_, err = c.client.PresentVerifiableCredential(ctx, &AdapterApi.PresentVerifiableCredentialRequest{
+	_, err = c.client.PresentVerifiableCredential(ctx, &CredentialApi.PresentVerifiableCredentialRequest{
 		Presentation:   string(encodedVp),
 		Nonce:          "",
 		Signature:      []byte(""),
 		Did:            "",
-		CredentialType: []AdapterApi.CredentialType{},
+		CredentialType: []CredentialApi.CredentialType{},
 	})
 
 	if err != nil {
@@ -157,14 +157,14 @@ func (c *credentialAdapterClient) PresentVerifiableCredential(vp map[string]inte
 	return nil
 }
 
-func getCredentialEnumFromName(credType string) AdapterApi.CredentialType {
+func getCredentialEnumFromName(credType string) CredentialApi.CredentialType {
 	switch credType {
 	case model.PermanentResidentCard:
-		return AdapterApi.CredentialType_CREDENTIAL_TYPE_PERMANENT_RESIDENT_CARD
+		return CredentialApi.CredentialType_CREDENTIAL_TYPE_PERMANENT_RESIDENT_CARD
 	case model.BankCard:
-		return AdapterApi.CredentialType_CREDENTIAL_TYPE_BANK_CARD
+		return CredentialApi.CredentialType_CREDENTIAL_TYPE_BANK_CARD
 	default:
-		return AdapterApi.CredentialType_CREDENTIAL_TYPE_UNSPECIFIED
+		return CredentialApi.CredentialType_CREDENTIAL_TYPE_UNSPECIFIED
 	}
 }
 

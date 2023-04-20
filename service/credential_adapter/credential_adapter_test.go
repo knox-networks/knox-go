@@ -5,10 +5,12 @@ import (
 	"reflect"
 	"testing"
 
+	CredentialGrpc "buf.build/gen/go/knox-networks/credential-adapter/grpc/go/vc_api/v1/vc_apiv1grpc"
+
+	CredentialApi "buf.build/gen/go/knox-networks/credential-adapter/protocolbuffers/go/vc_api/v1"
 	"github.com/golang/mock/gomock"
 	"github.com/knox-networks/knox-go/helpers/slices"
 	mock_client "github.com/knox-networks/knox-go/service/credential_adapter/grpc_mock"
-	AdapterApi "go.buf.build/grpc/go/knox-networks/credential-adapter/vc_api/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -54,11 +56,11 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 		}
 
 		client.EXPECT().
-			CreateIssuanceChallenge(gomock.Any(), &AdapterApi.CreateIssuanceChallengeRequest{
+			CreateIssuanceChallenge(gomock.Any(), &CredentialApi.CreateIssuanceChallengeRequest{
 				CredentialType: getCredentialEnumFromName(cred_type),
 				Did:            did,
 			}).
-			Return(&AdapterApi.CreateIssuanceChallengeResponse{
+			Return(&CredentialApi.CreateIssuanceChallengeResponse{
 				Nonce:          test.mockNonce,
 				CredentialType: getCredentialEnumFromName(cred_type),
 				Endpoint:       "localhost:5051",
@@ -91,7 +93,7 @@ func TestCreateIssuanceChallenge(t *testing.T) {
 }
 
 type createPresentationChallengeFields struct {
-	client AdapterApi.CredentialAdapterServiceClient
+	client CredentialGrpc.CredentialAdapterServiceClient
 }
 type createPresentationChallengeArgs struct {
 	credTypes []string
@@ -117,13 +119,13 @@ func TestCreatePresentationChallenge(t *testing.T) {
 			name: "CreatePresentationChallenge Succeeds",
 			prepare: func(f *createPresentationChallengeFields, args *createPresentationChallengeArgs) {
 				f.client.(*mock_client.MockCredentialAdapterServiceClient).EXPECT().
-					CreatePresentationChallenge(gomock.Any(), &AdapterApi.CreatePresentationChallengeRequest{
-						CredentialTypes: slices.Map(args.credTypes, func(credType string) AdapterApi.CredentialType {
+					CreatePresentationChallenge(gomock.Any(), &CredentialApi.CreatePresentationChallengeRequest{
+						CredentialTypes: slices.Map(args.credTypes, func(credType string) CredentialApi.CredentialType {
 							return getCredentialEnumFromName(credType)
 						}),
 					},
 					).
-					Return(&AdapterApi.CreatePresentationChallengeResponse{
+					Return(&CredentialApi.CreatePresentationChallengeResponse{
 						Nonce: args.nonce,
 					}, nil)
 			},
@@ -137,13 +139,13 @@ func TestCreatePresentationChallenge(t *testing.T) {
 			name: "CreatePresentationChallenge Fails Due To Server Error",
 			prepare: func(f *createPresentationChallengeFields, args *createPresentationChallengeArgs) {
 				f.client.(*mock_client.MockCredentialAdapterServiceClient).EXPECT().
-					CreatePresentationChallenge(gomock.Any(), &AdapterApi.CreatePresentationChallengeRequest{
-						CredentialTypes: slices.Map(args.credTypes, func(credType string) AdapterApi.CredentialType {
+					CreatePresentationChallenge(gomock.Any(), &CredentialApi.CreatePresentationChallengeRequest{
+						CredentialTypes: slices.Map(args.credTypes, func(credType string) CredentialApi.CredentialType {
 							return getCredentialEnumFromName(credType)
 						}),
 					},
 					).
-					Return(&AdapterApi.CreatePresentationChallengeResponse{}, status.Error(codes.Internal, "Internal Server Error"))
+					Return(&CredentialApi.CreatePresentationChallengeResponse{}, status.Error(codes.Internal, "Internal Server Error"))
 			},
 			args: &createPresentationChallengeArgs{
 				credTypes: []string{"PermanentResidentCard"},
@@ -216,12 +218,12 @@ func TestIssueVerifiableCredential(t *testing.T) {
 		adapter_client := &credentialAdapterClient{
 			client: client,
 		}
-		client.EXPECT().IssueVerifiableCredential(gomock.Any(), &AdapterApi.IssueVerifiableCredentialRequest{
+		client.EXPECT().IssueVerifiableCredential(gomock.Any(), &CredentialApi.IssueVerifiableCredentialRequest{
 			CredentialType: getCredentialEnumFromName(cred_type),
 			Did:            did,
 			Nonce:          nonce,
 			Signature:      signature,
-		}).Return(&AdapterApi.IssueVerifiableCredentialResponse{Credential: "{}"}, test.mockClientRequestError)
+		}).Return(&CredentialApi.IssueVerifiableCredentialResponse{Credential: "{}"}, test.mockClientRequestError)
 
 		cred, err := adapter_client.IssueVerifiableCredential(cred_type, did, nonce, signature, access_token)
 

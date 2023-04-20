@@ -4,15 +4,17 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"google.golang.org/grpc/credentials"
 	"time"
 
-	RegistryApi "go.buf.build/grpc/go/knox-networks/registry-mgmt/registry_api/v1"
+	"google.golang.org/grpc/credentials"
+
+	RegistryGrpc "buf.build/gen/go/knox-networks/registry-mgmt/grpc/go/registry_api/v1/registry_apiv1grpc"
+	RegistryApi "buf.build/gen/go/knox-networks/registry-mgmt/protocolbuffers/go/registry_api/v1"
 	"google.golang.org/grpc"
 )
 
 type registryClient struct {
-	client RegistryApi.RegistryServiceClient
+	client RegistryGrpc.RegistryServiceClient
 	conn   *grpc.ClientConn
 }
 
@@ -32,7 +34,7 @@ func NewRegistryClient(address string) (RegistryClient, error) {
 		return nil, err
 	}
 
-	client := RegistryApi.NewRegistryServiceClient(conn)
+	client := RegistryGrpc.NewRegistryServiceClient(conn)
 	return &registryClient{
 		conn:   conn,
 		client: client,
