@@ -13,7 +13,7 @@ type Proof struct {
 const NormalizationAlgo = "URDNA2015"
 const NormalizationFormat = "application/n-quads"
 
-//follow the algorithm here. (https://w3c-ccg.github.io/data-integrity-spec/#proof-algorithm)
+// follow the algorithm here. (https://w3c-ccg.github.io/data-integrity-spec/#proof-algorithm)
 const ProofType = "Ed25519Signature2020"
 
 const (
@@ -27,11 +27,17 @@ type KeyMaterial struct {
 	Controller         string `json:"controller"`
 	PublicKeyMultibase string `json:"publicKeyMultibase"`
 }
+type Service struct {
+	Id              string `json:"id"`
+	Type            string `json:"type"`
+	ServiceEndpoint string `json:"serviceEndpoint"`
+}
 
 type DidDocument struct {
 	Context              []string      `json:"@context"`
 	Id                   string        `json:"id"`
 	Authentication       []KeyMaterial `json:"authentication"`
+	Service              []Service     `json:"service"`
 	CapabilityInvocation []KeyMaterial `json:"capabilityInvocation"`
 	CapabilityDelegation []KeyMaterial `json:"capabilityDelegation"`
 	AssertionMethod      []KeyMaterial `json:"assertionMethod"`
