@@ -37,7 +37,7 @@ type DidDocument struct {
 	Context              []string      `json:"@context"`
 	Id                   string        `json:"id"`
 	Authentication       []KeyMaterial `json:"authentication"`
-	Service              []Service     `json:"service"`
+	Service              []Service     `json:"service,omitempty"`
 	CapabilityInvocation []KeyMaterial `json:"capabilityInvocation"`
 	CapabilityDelegation []KeyMaterial `json:"capabilityDelegation"`
 	AssertionMethod      []KeyMaterial `json:"assertionMethod"`
