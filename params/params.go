@@ -36,6 +36,7 @@ type RegisterIdentityParams struct {
 }
 
 type GenerateIdentityParams struct {
+	IssuerService *model.Service
 }
 
 type RecoverIdentityParams struct {

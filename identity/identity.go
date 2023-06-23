@@ -2,6 +2,8 @@ package identity
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/knox-networks/knox-go/helpers/crypto"
 	"github.com/knox-networks/knox-go/helpers/did"
@@ -89,12 +91,20 @@ func (c *identityClient) Generate(params *params.GenerateIdentityParams) (*model
 
 	doc := did.CreateDidDocument(kps)
 
-	encoded_doc, err := json.Marshal(doc)
+	if params.IssuerService != nil {
+		issuerService := *params.IssuerService
+		if !strings.HasPrefix(issuerService.Id, kps.GetDid()) {
+			issuerService.Id = fmt.Sprintf("%s%s", kps.GetDid(), issuerService.Id)
+		}
+		doc.Service = append(doc.Service, issuerService)
+	}
+
+	encodedDoc, err := json.Marshal(doc)
 	if err != nil {
 		return &model.DidDocument{}, &crypto.KeyPairs{}, err
 	}
 
-	err = c.registry.Create(kps.GetDid(), encoded_doc)
+	err = c.registry.Create(kps.GetDid(), encodedDoc)
 	if err != nil {
 		return &model.DidDocument{}, &crypto.KeyPairs{}, err
 	}
