@@ -15,9 +15,9 @@ test:   ## run tests
 	go test -cover ./...
 
 update-knox-org-deps:
-	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/user-mgmt
-	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/credential-adapter
-	GOPRIVATE=go.buf.build/* GOPROXY=https://go.buf.build,https://proxy.golang.org,direct go get go.buf.build/grpc/go/knox-networks/registry-mgmt
+	GOPRIVATE=buf.build/* GOPROXY=https://buf.build,https://proxy.golang.org,direct go get buf.build/grpc/go/knox-networks/user-mgmt
+	GOPRIVATE=buf.build/* GOPROXY=https://buf.build,https://proxy.golang.org,direct go get buf.build/grpc/go/knox-networks/credential-adapter
+	GOPRIVATE=buf.build/* GOPROXY=https://buf.build,https://proxy.golang.org,direct go get buf.build/grpc/go/knox-networks/registry-mgmt
 # ==============================================================================
 # Tools commands
 
