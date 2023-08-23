@@ -501,6 +501,26 @@ func (mr *MockUserApiServiceClientMockRecorder) HandleSAMLCallback(arg0, arg1 in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleSAMLCallback", reflect.TypeOf((*MockUserApiServiceClient)(nil).HandleSAMLCallback), varargs...)
 }
 
+// ListUsers mocks base method.
+func (m *MockUserApiServiceClient) ListUsers(arg0 context.Context, arg1 *user_apiv1.ListUsersRequest, arg2 ...grpc.CallOption) (*user_apiv1.ListUsersResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListUsers", varargs...)
+	ret0, _ := ret[0].(*user_apiv1.ListUsersResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListUsers indicates an expected call of ListUsers.
+func (mr *MockUserApiServiceClientMockRecorder) ListUsers(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUsers", reflect.TypeOf((*MockUserApiServiceClient)(nil).ListUsers), varargs...)
+}
+
 // RefreshAccessToken mocks base method.
 func (m *MockUserApiServiceClient) RefreshAccessToken(arg0 context.Context, arg1 *user_apiv1.RefreshAccessTokenRequest, arg2 ...grpc.CallOption) (*user_apiv1.RefreshAccessTokenResponse, error) {
 	m.ctrl.T.Helper()

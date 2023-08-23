@@ -15,9 +15,20 @@ test:   ## run tests
 	go test -cover ./...
 
 update-knox-org-deps:
-	GOPRIVATE=buf.build/* GOPROXY=https://buf.build,https://proxy.golang.org,direct go get buf.build/grpc/go/knox-networks/user-mgmt
-	GOPRIVATE=buf.build/* GOPROXY=https://buf.build,https://proxy.golang.org,direct go get buf.build/grpc/go/knox-networks/credential-adapter
-	GOPRIVATE=buf.build/* GOPROXY=https://buf.build,https://proxy.golang.org,direct go get buf.build/grpc/go/knox-networks/registry-mgmt
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/user-mgmt/connectrpc/go@latest
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/user-mgmt/grpc-ecosystem/gateway/v2@latest
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/user-mgmt/grpc/go@latest
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/user-mgmt/protocolbuffers/go@latest
+
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/credential-adapter/connectrpc/go@latest
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/credential-adapter/grpc-ecosystem/gateway/v2@latest
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/credential-adapter/grpc/go@latest
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/credential-adapter/protocolbuffers/go@latest
+
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/registry-mgmt/connectrpc/go@latest
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/registry-mgmt/grpc-ecosystem/gateway/v2@latest
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/registry-mgmt/grpc/go@latest
+	GOPRIVATE=buf.build/*  go get buf.build/gen/go/knox-networks/registry-mgmt/protocolbuffers/go@latest
 # ==============================================================================
 # Tools commands
 

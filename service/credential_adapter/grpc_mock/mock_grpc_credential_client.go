@@ -117,6 +117,26 @@ func (mr *MockCredentialAdapterServiceClientMockRecorder) PresentVerifiableCrede
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PresentVerifiableCredential", reflect.TypeOf((*MockCredentialAdapterServiceClient)(nil).PresentVerifiableCredential), varargs...)
 }
 
+// UpdateVerifiableCredentialStatus mocks base method.
+func (m *MockCredentialAdapterServiceClient) UpdateVerifiableCredentialStatus(arg0 context.Context, arg1 *vc_apiv1.UpdateVerifiableCredentialStatusRequest, arg2 ...grpc.CallOption) (*vc_apiv1.UpdateVerifiableCredentialStatusResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateVerifiableCredentialStatus", varargs...)
+	ret0, _ := ret[0].(*vc_apiv1.UpdateVerifiableCredentialStatusResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateVerifiableCredentialStatus indicates an expected call of UpdateVerifiableCredentialStatus.
+func (mr *MockCredentialAdapterServiceClientMockRecorder) UpdateVerifiableCredentialStatus(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateVerifiableCredentialStatus", reflect.TypeOf((*MockCredentialAdapterServiceClient)(nil).UpdateVerifiableCredentialStatus), varargs...)
+}
+
 // WaitForCompletion mocks base method.
 func (m *MockCredentialAdapterServiceClient) WaitForCompletion(arg0 context.Context, arg1 *vc_apiv1.WaitForCompletionRequest, arg2 ...grpc.CallOption) (vc_apiv1grpc.CredentialAdapterService_WaitForCompletionClient, error) {
 	m.ctrl.T.Helper()
