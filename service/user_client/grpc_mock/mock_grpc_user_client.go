@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	user_apiv1grpc "buf.build/gen/go/knox-networks/user-mgmt/grpc/go/user_api/v1/user_apiv1grpc"
-	user_apiv1 "buf.build/gen/go/knox-networks/user-mgmt/protocolbuffers/go/user_api/v1"
+	v1 "buf.build/gen/go/knox-networks/user-mgmt/protocolbuffers/go/user_api/v1"
 	gomock "github.com/golang/mock/gomock"
 	grpc "google.golang.org/grpc"
 	metadata "google.golang.org/grpc/metadata"
@@ -82,10 +82,10 @@ func (mr *MockUserApiService_CreateRegisterWalletChallengeClientMockRecorder) He
 }
 
 // Recv mocks base method.
-func (m *MockUserApiService_CreateRegisterWalletChallengeClient) Recv() (*user_apiv1.CreateRegisterWalletChallengeResponse, error) {
+func (m *MockUserApiService_CreateRegisterWalletChallengeClient) Recv() (*v1.CreateRegisterWalletChallengeResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Recv")
-	ret0, _ := ret[0].(*user_apiv1.CreateRegisterWalletChallengeResponse)
+	ret0, _ := ret[0].(*v1.CreateRegisterWalletChallengeResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -162,14 +162,14 @@ func (m *MockUserApiServiceClient) EXPECT() *MockUserApiServiceClientMockRecorde
 }
 
 // AssociateWallet mocks base method.
-func (m *MockUserApiServiceClient) AssociateWallet(arg0 context.Context, arg1 *user_apiv1.AssociateWalletRequest, arg2 ...grpc.CallOption) (*user_apiv1.AssociateWalletResponse, error) {
+func (m *MockUserApiServiceClient) AssociateWallet(arg0 context.Context, arg1 *v1.AssociateWalletRequest, arg2 ...grpc.CallOption) (*v1.AssociateWalletResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AssociateWallet", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.AssociateWalletResponse)
+	ret0, _ := ret[0].(*v1.AssociateWalletResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -182,14 +182,14 @@ func (mr *MockUserApiServiceClientMockRecorder) AssociateWallet(arg0, arg1 inter
 }
 
 // AuthnBrowserWithWallet mocks base method.
-func (m *MockUserApiServiceClient) AuthnBrowserWithWallet(arg0 context.Context, arg1 *user_apiv1.AuthnBrowserWithWalletRequest, arg2 ...grpc.CallOption) (*user_apiv1.AuthnBrowserWithWalletResponse, error) {
+func (m *MockUserApiServiceClient) AuthnBrowserWithWallet(arg0 context.Context, arg1 *v1.AuthnBrowserWithWalletRequest, arg2 ...grpc.CallOption) (*v1.AuthnBrowserWithWalletResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AuthnBrowserWithWallet", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.AuthnBrowserWithWalletResponse)
+	ret0, _ := ret[0].(*v1.AuthnBrowserWithWalletResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -202,14 +202,14 @@ func (mr *MockUserApiServiceClientMockRecorder) AuthnBrowserWithWallet(arg0, arg
 }
 
 // AuthnWallet mocks base method.
-func (m *MockUserApiServiceClient) AuthnWallet(arg0 context.Context, arg1 *user_apiv1.AuthnWalletRequest, arg2 ...grpc.CallOption) (*user_apiv1.AuthnWalletResponse, error) {
+func (m *MockUserApiServiceClient) AuthnWallet(arg0 context.Context, arg1 *v1.AuthnWalletRequest, arg2 ...grpc.CallOption) (*v1.AuthnWalletResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AuthnWallet", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.AuthnWalletResponse)
+	ret0, _ := ret[0].(*v1.AuthnWalletResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -222,14 +222,14 @@ func (mr *MockUserApiServiceClientMockRecorder) AuthnWallet(arg0, arg1 interface
 }
 
 // AuthnWithPassword mocks base method.
-func (m *MockUserApiServiceClient) AuthnWithPassword(arg0 context.Context, arg1 *user_apiv1.AuthnWithPasswordRequest, arg2 ...grpc.CallOption) (*user_apiv1.AuthnWithPasswordResponse, error) {
+func (m *MockUserApiServiceClient) AuthnWithPassword(arg0 context.Context, arg1 *v1.AuthnWithPasswordRequest, arg2 ...grpc.CallOption) (*v1.AuthnWithPasswordResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AuthnWithPassword", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.AuthnWithPasswordResponse)
+	ret0, _ := ret[0].(*v1.AuthnWithPasswordResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -242,14 +242,14 @@ func (mr *MockUserApiServiceClientMockRecorder) AuthnWithPassword(arg0, arg1 int
 }
 
 // AuthnWithProvider mocks base method.
-func (m *MockUserApiServiceClient) AuthnWithProvider(arg0 context.Context, arg1 *user_apiv1.AuthnWithProviderRequest, arg2 ...grpc.CallOption) (*user_apiv1.AuthnWithProviderResponse, error) {
+func (m *MockUserApiServiceClient) AuthnWithProvider(arg0 context.Context, arg1 *v1.AuthnWithProviderRequest, arg2 ...grpc.CallOption) (*v1.AuthnWithProviderResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AuthnWithProvider", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.AuthnWithProviderResponse)
+	ret0, _ := ret[0].(*v1.AuthnWithProviderResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -262,14 +262,14 @@ func (mr *MockUserApiServiceClientMockRecorder) AuthnWithProvider(arg0, arg1 int
 }
 
 // ConfirmUser mocks base method.
-func (m *MockUserApiServiceClient) ConfirmUser(arg0 context.Context, arg1 *user_apiv1.ConfirmUserRequest, arg2 ...grpc.CallOption) (*user_apiv1.ConfirmUserResponse, error) {
+func (m *MockUserApiServiceClient) ConfirmUser(arg0 context.Context, arg1 *v1.ConfirmUserRequest, arg2 ...grpc.CallOption) (*v1.ConfirmUserResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "ConfirmUser", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.ConfirmUserResponse)
+	ret0, _ := ret[0].(*v1.ConfirmUserResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -282,7 +282,7 @@ func (mr *MockUserApiServiceClientMockRecorder) ConfirmUser(arg0, arg1 interface
 }
 
 // CreateAuthnBrowserWithWalletChallenge mocks base method.
-func (m *MockUserApiServiceClient) CreateAuthnBrowserWithWalletChallenge(arg0 context.Context, arg1 *user_apiv1.CreateAuthnBrowserWithWalletChallengeRequest, arg2 ...grpc.CallOption) (user_apiv1grpc.UserApiService_CreateAuthnBrowserWithWalletChallengeClient, error) {
+func (m *MockUserApiServiceClient) CreateAuthnBrowserWithWalletChallenge(arg0 context.Context, arg1 *v1.CreateAuthnBrowserWithWalletChallengeRequest, arg2 ...grpc.CallOption) (user_apiv1grpc.UserApiService_CreateAuthnBrowserWithWalletChallengeClient, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
@@ -302,14 +302,14 @@ func (mr *MockUserApiServiceClientMockRecorder) CreateAuthnBrowserWithWalletChal
 }
 
 // CreateAuthnWalletChallenge mocks base method.
-func (m *MockUserApiServiceClient) CreateAuthnWalletChallenge(arg0 context.Context, arg1 *user_apiv1.CreateAuthnWalletChallengeRequest, arg2 ...grpc.CallOption) (*user_apiv1.CreateAuthnWalletChallengeResponse, error) {
+func (m *MockUserApiServiceClient) CreateAuthnWalletChallenge(arg0 context.Context, arg1 *v1.CreateAuthnWalletChallengeRequest, arg2 ...grpc.CallOption) (*v1.CreateAuthnWalletChallengeResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CreateAuthnWalletChallenge", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.CreateAuthnWalletChallengeResponse)
+	ret0, _ := ret[0].(*v1.CreateAuthnWalletChallengeResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -322,7 +322,7 @@ func (mr *MockUserApiServiceClientMockRecorder) CreateAuthnWalletChallenge(arg0,
 }
 
 // CreateRegisterWalletChallenge mocks base method.
-func (m *MockUserApiServiceClient) CreateRegisterWalletChallenge(arg0 context.Context, arg1 *user_apiv1.CreateRegisterWalletChallengeRequest, arg2 ...grpc.CallOption) (user_apiv1grpc.UserApiService_CreateRegisterWalletChallengeClient, error) {
+func (m *MockUserApiServiceClient) CreateRegisterWalletChallenge(arg0 context.Context, arg1 *v1.CreateRegisterWalletChallengeRequest, arg2 ...grpc.CallOption) (user_apiv1grpc.UserApiService_CreateRegisterWalletChallengeClient, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
@@ -342,14 +342,14 @@ func (mr *MockUserApiServiceClientMockRecorder) CreateRegisterWalletChallenge(ar
 }
 
 // DissociateWallet mocks base method.
-func (m *MockUserApiServiceClient) DissociateWallet(arg0 context.Context, arg1 *user_apiv1.DissociateWalletRequest, arg2 ...grpc.CallOption) (*user_apiv1.DissociateWalletResponse, error) {
+func (m *MockUserApiServiceClient) DissociateWallet(arg0 context.Context, arg1 *v1.DissociateWalletRequest, arg2 ...grpc.CallOption) (*v1.DissociateWalletResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "DissociateWallet", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.DissociateWalletResponse)
+	ret0, _ := ret[0].(*v1.DissociateWalletResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -362,14 +362,14 @@ func (mr *MockUserApiServiceClientMockRecorder) DissociateWallet(arg0, arg1 inte
 }
 
 // FindByEmail mocks base method.
-func (m *MockUserApiServiceClient) FindByEmail(arg0 context.Context, arg1 *user_apiv1.FindByEmailRequest, arg2 ...grpc.CallOption) (*user_apiv1.FindByEmailResponse, error) {
+func (m *MockUserApiServiceClient) FindByEmail(arg0 context.Context, arg1 *v1.FindByEmailRequest, arg2 ...grpc.CallOption) (*v1.FindByEmailResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "FindByEmail", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.FindByEmailResponse)
+	ret0, _ := ret[0].(*v1.FindByEmailResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -382,14 +382,14 @@ func (mr *MockUserApiServiceClientMockRecorder) FindByEmail(arg0, arg1 interface
 }
 
 // FindByID mocks base method.
-func (m *MockUserApiServiceClient) FindByID(arg0 context.Context, arg1 *user_apiv1.FindByIDRequest, arg2 ...grpc.CallOption) (*user_apiv1.FindByIDResponse, error) {
+func (m *MockUserApiServiceClient) FindByID(arg0 context.Context, arg1 *v1.FindByIDRequest, arg2 ...grpc.CallOption) (*v1.FindByIDResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "FindByID", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.FindByIDResponse)
+	ret0, _ := ret[0].(*v1.FindByIDResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -402,14 +402,14 @@ func (mr *MockUserApiServiceClientMockRecorder) FindByID(arg0, arg1 interface{},
 }
 
 // GetAppSettings mocks base method.
-func (m *MockUserApiServiceClient) GetAppSettings(arg0 context.Context, arg1 *user_apiv1.GetAppSettingsRequest, arg2 ...grpc.CallOption) (*user_apiv1.GetAppSettingsResponse, error) {
+func (m *MockUserApiServiceClient) GetAppSettings(arg0 context.Context, arg1 *v1.GetAppSettingsRequest, arg2 ...grpc.CallOption) (*v1.GetAppSettingsResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetAppSettings", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.GetAppSettingsResponse)
+	ret0, _ := ret[0].(*v1.GetAppSettingsResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -422,14 +422,14 @@ func (mr *MockUserApiServiceClientMockRecorder) GetAppSettings(arg0, arg1 interf
 }
 
 // GetMe mocks base method.
-func (m *MockUserApiServiceClient) GetMe(arg0 context.Context, arg1 *user_apiv1.GetMeRequest, arg2 ...grpc.CallOption) (*user_apiv1.GetMeResponse, error) {
+func (m *MockUserApiServiceClient) GetMe(arg0 context.Context, arg1 *v1.GetMeRequest, arg2 ...grpc.CallOption) (*v1.GetMeResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetMe", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.GetMeResponse)
+	ret0, _ := ret[0].(*v1.GetMeResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -442,14 +442,14 @@ func (mr *MockUserApiServiceClientMockRecorder) GetMe(arg0, arg1 interface{}, ar
 }
 
 // GetUserByDID mocks base method.
-func (m *MockUserApiServiceClient) GetUserByDID(arg0 context.Context, arg1 *user_apiv1.GetUserByDIDRequest, arg2 ...grpc.CallOption) (*user_apiv1.GetUserByDIDResponse, error) {
+func (m *MockUserApiServiceClient) GetUserByDID(arg0 context.Context, arg1 *v1.GetUserByDIDRequest, arg2 ...grpc.CallOption) (*v1.GetUserByDIDResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "GetUserByDID", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.GetUserByDIDResponse)
+	ret0, _ := ret[0].(*v1.GetUserByDIDResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -462,14 +462,14 @@ func (mr *MockUserApiServiceClientMockRecorder) GetUserByDID(arg0, arg1 interfac
 }
 
 // HandleOIDCCallback mocks base method.
-func (m *MockUserApiServiceClient) HandleOIDCCallback(arg0 context.Context, arg1 *user_apiv1.HandleOIDCCallbackRequest, arg2 ...grpc.CallOption) (*user_apiv1.HandleOIDCCallbackResponse, error) {
+func (m *MockUserApiServiceClient) HandleOIDCCallback(arg0 context.Context, arg1 *v1.HandleOIDCCallbackRequest, arg2 ...grpc.CallOption) (*v1.HandleOIDCCallbackResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "HandleOIDCCallback", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.HandleOIDCCallbackResponse)
+	ret0, _ := ret[0].(*v1.HandleOIDCCallbackResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -482,14 +482,14 @@ func (mr *MockUserApiServiceClientMockRecorder) HandleOIDCCallback(arg0, arg1 in
 }
 
 // HandleSAMLCallback mocks base method.
-func (m *MockUserApiServiceClient) HandleSAMLCallback(arg0 context.Context, arg1 *user_apiv1.HandleSAMLCallbackRequest, arg2 ...grpc.CallOption) (*user_apiv1.HandleSAMLCallbackResponse, error) {
+func (m *MockUserApiServiceClient) HandleSAMLCallback(arg0 context.Context, arg1 *v1.HandleSAMLCallbackRequest, arg2 ...grpc.CallOption) (*v1.HandleSAMLCallbackResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "HandleSAMLCallback", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.HandleSAMLCallbackResponse)
+	ret0, _ := ret[0].(*v1.HandleSAMLCallbackResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -502,14 +502,14 @@ func (mr *MockUserApiServiceClientMockRecorder) HandleSAMLCallback(arg0, arg1 in
 }
 
 // ListUsers mocks base method.
-func (m *MockUserApiServiceClient) ListUsers(arg0 context.Context, arg1 *user_apiv1.ListUsersRequest, arg2 ...grpc.CallOption) (*user_apiv1.ListUsersResponse, error) {
+func (m *MockUserApiServiceClient) ListUsers(arg0 context.Context, arg1 *v1.ListUsersRequest, arg2 ...grpc.CallOption) (*v1.ListUsersResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "ListUsers", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.ListUsersResponse)
+	ret0, _ := ret[0].(*v1.ListUsersResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -522,14 +522,14 @@ func (mr *MockUserApiServiceClientMockRecorder) ListUsers(arg0, arg1 interface{}
 }
 
 // RefreshAccessToken mocks base method.
-func (m *MockUserApiServiceClient) RefreshAccessToken(arg0 context.Context, arg1 *user_apiv1.RefreshAccessTokenRequest, arg2 ...grpc.CallOption) (*user_apiv1.RefreshAccessTokenResponse, error) {
+func (m *MockUserApiServiceClient) RefreshAccessToken(arg0 context.Context, arg1 *v1.RefreshAccessTokenRequest, arg2 ...grpc.CallOption) (*v1.RefreshAccessTokenResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "RefreshAccessToken", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.RefreshAccessTokenResponse)
+	ret0, _ := ret[0].(*v1.RefreshAccessTokenResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -542,14 +542,14 @@ func (mr *MockUserApiServiceClientMockRecorder) RefreshAccessToken(arg0, arg1 in
 }
 
 // RegisterUser mocks base method.
-func (m *MockUserApiServiceClient) RegisterUser(arg0 context.Context, arg1 *user_apiv1.RegisterUserRequest, arg2 ...grpc.CallOption) (*user_apiv1.RegisterUserResponse, error) {
+func (m *MockUserApiServiceClient) RegisterUser(arg0 context.Context, arg1 *v1.RegisterUserRequest, arg2 ...grpc.CallOption) (*v1.RegisterUserResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "RegisterUser", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.RegisterUserResponse)
+	ret0, _ := ret[0].(*v1.RegisterUserResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -562,14 +562,14 @@ func (mr *MockUserApiServiceClientMockRecorder) RegisterUser(arg0, arg1 interfac
 }
 
 // RegisterWallet mocks base method.
-func (m *MockUserApiServiceClient) RegisterWallet(arg0 context.Context, arg1 *user_apiv1.RegisterWalletRequest, arg2 ...grpc.CallOption) (*user_apiv1.RegisterWalletResponse, error) {
+func (m *MockUserApiServiceClient) RegisterWallet(arg0 context.Context, arg1 *v1.RegisterWalletRequest, arg2 ...grpc.CallOption) (*v1.RegisterWalletResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "RegisterWallet", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.RegisterWalletResponse)
+	ret0, _ := ret[0].(*v1.RegisterWalletResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -582,14 +582,14 @@ func (mr *MockUserApiServiceClientMockRecorder) RegisterWallet(arg0, arg1 interf
 }
 
 // SAMLSPMetadata mocks base method.
-func (m *MockUserApiServiceClient) SAMLSPMetadata(arg0 context.Context, arg1 *user_apiv1.SAMLSPMetadataRequest, arg2 ...grpc.CallOption) (*user_apiv1.SAMLSPMetadataResponse, error) {
+func (m *MockUserApiServiceClient) SAMLSPMetadata(arg0 context.Context, arg1 *v1.SAMLSPMetadataRequest, arg2 ...grpc.CallOption) (*v1.SAMLSPMetadataResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "SAMLSPMetadata", varargs...)
-	ret0, _ := ret[0].(*user_apiv1.SAMLSPMetadataResponse)
+	ret0, _ := ret[0].(*v1.SAMLSPMetadataResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -668,10 +668,10 @@ func (mr *MockUserApiService_CreateAuthnBrowserWithWalletChallengeClientMockReco
 }
 
 // Recv mocks base method.
-func (m *MockUserApiService_CreateAuthnBrowserWithWalletChallengeClient) Recv() (*user_apiv1.CreateAuthnBrowserWithWalletChallengeResponse, error) {
+func (m *MockUserApiService_CreateAuthnBrowserWithWalletChallengeClient) Recv() (*v1.CreateAuthnBrowserWithWalletChallengeResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Recv")
-	ret0, _ := ret[0].(*user_apiv1.CreateAuthnBrowserWithWalletChallengeResponse)
+	ret0, _ := ret[0].(*v1.CreateAuthnBrowserWithWalletChallengeResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
