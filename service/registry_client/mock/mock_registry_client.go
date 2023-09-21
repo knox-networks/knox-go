@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	model "github.com/knox-networks/knox-go/model"
 )
 
 // MockRegistryClient is a mock of RegistryClient interface.
@@ -57,4 +58,19 @@ func (m *MockRegistryClient) Create(did string, doc []byte) error {
 func (mr *MockRegistryClientMockRecorder) Create(did, doc interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockRegistryClient)(nil).Create), did, doc)
+}
+
+// Resolve mocks base method.
+func (m *MockRegistryClient) Resolve(did string) (*model.DidDocument, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Resolve", did)
+	ret0, _ := ret[0].(*model.DidDocument)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Resolve indicates an expected call of Resolve.
+func (mr *MockRegistryClientMockRecorder) Resolve(did interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Resolve", reflect.TypeOf((*MockRegistryClient)(nil).Resolve), did)
 }

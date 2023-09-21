@@ -122,3 +122,17 @@ func (c *identityClient) Recover(p *params.RecoverIdentityParams) (*model.DidDoc
 
 	return doc, kps, nil
 }
+
+func (c *identityClient) Revoke(p *params.RevocationIdentityParams) error {
+	kps, err := c.cm.GenerateKeyPair(p.Mnemonic)
+	if err != nil {
+		return err
+	}
+
+	doc, err := c.registry.Resolve(p.Did)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
