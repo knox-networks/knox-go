@@ -43,6 +43,11 @@ type RecoverIdentityParams struct {
 	Mnemonic string
 }
 
+type RevocationIdentityParams struct {
+	Mnemonic string
+	Did      string
+}
+
 type PasswordAuthentication struct {
 	Password string
 	Email    string

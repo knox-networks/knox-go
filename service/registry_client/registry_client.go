@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"github.com/knox-networks/knox-go/model"
 	"time"
 
 	"google.golang.org/grpc/credentials"
@@ -20,6 +21,8 @@ type registryClient struct {
 
 type RegistryClient interface {
 	Create(did string, doc []byte) error
+	Resolve(did string) (*model.DidDocument, error)
+	Revoke(did, didDoc string) error
 	Close()
 }
 
@@ -63,5 +66,51 @@ func (r *registryClient) Create(did string, doc []byte) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (r *registryClient) Resolve(did string) (*model.DidDocument, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &RegistryApi.ResolveRequest{
+		Did: did,
+	}
+	resp, err := r.client.Resolve(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	protoDoc := resp.GetDidDocument()
+	//convert to json
+	jsonDidDoc, err := protoDoc.MarshalJSON()
+
+	if err != nil {
+		return nil, err
+	}
+	//We need to convert the json_did_doc to a compacted JSON-LD form (currently expanded)
+	//Implement here
+
+	didDoc := model.DidDocument{}
+	err = json.Unmarshal(jsonDidDoc, &didDoc)
+	if err != nil {
+		return nil, err
+	}
+
+	return &didDoc, nil
+}
+
+func (r *registryClient) Revoke(did, didDoc string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &RegistryApi.RevokeRequest{
+		Did:      did,
+		Document: didDoc,
+	}
+	_, err := r.client.Revoke(ctx, req)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
