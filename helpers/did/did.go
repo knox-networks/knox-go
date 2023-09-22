@@ -54,6 +54,14 @@ func CreateDidDocument(kps *crypto.KeyPairs) *model.DidDocument {
 				PublicKeyMultibase: kps.AssertionMethodPublicKey,
 			},
 		},
+		KeyAgreement: []model.KeyMaterial{
+			{
+				Id:                 kps.GetVerificationMethod(signer.KeyAgreement),
+				Type:               crypto.KeyAgreementType,
+				Controller:         crypto.DidPrefix + kps.MasterPublicKey,
+				PublicKeyMultibase: kps.KeyAgreementPublicKey,
+			},
+		},
 	}
 }
 

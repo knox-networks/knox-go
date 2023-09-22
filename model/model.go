@@ -41,6 +41,7 @@ type DidDocument struct {
 	CapabilityInvocation []KeyMaterial `json:"capabilityInvocation"`
 	CapabilityDelegation []KeyMaterial `json:"capabilityDelegation"`
 	AssertionMethod      []KeyMaterial `json:"assertionMethod"`
+	KeyAgreement         []KeyMaterial `json:"keyAgreement,omitempty"`
 }
 
 type AuthToken struct {
