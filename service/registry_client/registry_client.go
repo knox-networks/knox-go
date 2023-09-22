@@ -22,6 +22,7 @@ type registryClient struct {
 type RegistryClient interface {
 	Create(did string, doc []byte) error
 	Resolve(did string) (*model.DidDocument, error)
+	Revoke(did, didDoc string) error
 	Close()
 }
 
@@ -96,4 +97,20 @@ func (r *registryClient) Resolve(did string) (*model.DidDocument, error) {
 	}
 
 	return &didDoc, nil
+}
+
+func (r *registryClient) Revoke(did, didDoc string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &RegistryApi.RevokeRequest{
+		Did:      did,
+		Document: didDoc,
+	}
+	_, err := r.client.Revoke(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

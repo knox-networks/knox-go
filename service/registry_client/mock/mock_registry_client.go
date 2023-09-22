@@ -74,3 +74,17 @@ func (mr *MockRegistryClientMockRecorder) Resolve(did interface{}) *gomock.Call 
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Resolve", reflect.TypeOf((*MockRegistryClient)(nil).Resolve), did)
 }
+
+// Revoke mocks base method.
+func (m *MockRegistryClient) Revoke(did, didDoc string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Revoke", did, didDoc)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Revoke indicates an expected call of Revoke.
+func (mr *MockRegistryClientMockRecorder) Revoke(did, didDoc interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Revoke", reflect.TypeOf((*MockRegistryClient)(nil).Revoke), did, didDoc)
+}

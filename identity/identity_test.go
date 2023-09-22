@@ -3,6 +3,7 @@ package identity
 import (
 	"bytes"
 	"errors"
+	"github.com/knox-networks/knox-go/model"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -524,4 +525,37 @@ func TestDeterministicKeyGeneration(t *testing.T) {
 		t.Errorf("Expected %s, got %s", kps.MasterPublicKey, recoveredKeys.MasterPublicKey)
 	}
 
+}
+
+func TestRevoke_MarshalDIDDocumentError(t *testing.T) {
+	mockController := gomock.NewController(t)
+	mockReg := registry_mock.NewMockRegistryClient(mockController)
+	c := &identityClient{
+		cm:       crypto.NewCryptoManager(),
+		registry: mockReg,
+	}
+	mne, err := c.cm.GenerateMnemonic()
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+		return
+	}
+
+	kps, err := c.cm.GenerateKeyPair(mne)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+		return
+	}
+
+	mockReg.EXPECT().Resolve(kps.GetDid()).Return(&model.DidDocument{}, nil)
+	mockReg.EXPECT().Revoke(kps.GetDid(), gomock.Any()).Return(nil)
+
+	p := &params.RevocationIdentityParams{
+		Mnemonic: kps.Mnemonic,
+		Did:      kps.GetDid(),
+	}
+
+	err = c.Revoke(p)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
 }

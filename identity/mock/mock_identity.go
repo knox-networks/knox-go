@@ -81,3 +81,17 @@ func (mr *MockIdentityClientMockRecorder) Register(p interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockIdentityClient)(nil).Register), p)
 }
+
+// Revoke mocks base method.
+func (m *MockIdentityClient) Revoke(p *params.RevocationIdentityParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Revoke", p)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Revoke indicates an expected call of Revoke.
+func (mr *MockIdentityClientMockRecorder) Revoke(p interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Revoke", reflect.TypeOf((*MockIdentityClient)(nil).Revoke), p)
+}
