@@ -9,6 +9,7 @@ const (
 	CapabilityInvocation
 	CapabilityDelegation
 	AssertionMethod
+	KeyAgreement
 )
 
 func (vr VerificationRelation) String() string {
@@ -23,6 +24,8 @@ func (vr VerificationRelation) String() string {
 		return "capabilityDelegation"
 	case AssertionMethod:
 		return "associationMethod"
+	case KeyAgreement:
+		return "keyAgreement"
 	default:
 		return ""
 	}

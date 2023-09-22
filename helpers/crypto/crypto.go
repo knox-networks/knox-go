@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	DidPrefix = "did:knox:"
-	ProofType = "Ed25519VerificationKey2020"
+	DidPrefix        = "did:knox:"
+	ProofType        = "Ed25519VerificationKey2020"
+	KeyAgreementType = "X25519KeyAgreementKey2019"
 )
 
 var MultiCodecPrefix = []byte{0xed, 0x01}
@@ -34,6 +35,9 @@ type KeyPairs struct {
 
 	AssertionMethodPublicKey  string
 	AssertionMethodPrivateKey []byte
+
+	KeyAgreementPublicKey  string
+	KeyAgreementPrivateKey []byte
 }
 
 type cryptoManager struct {
@@ -72,6 +76,8 @@ func (c *cryptoManager) GenerateKeyPair(mnemonic string) (*KeyPairs, error) {
 		CapabilityDelegationPrivateKey: private,
 		AssertionMethodPublicKey:       encodedPublic,
 		AssertionMethodPrivateKey:      private,
+		KeyAgreementPublicKey:          encodedPublic,
+		KeyAgreementPrivateKey:         private,
 	}, nil
 
 }
