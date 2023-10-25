@@ -14,7 +14,7 @@ require (
 	github.com/multiformats/go-multibase v0.2.0
 	github.com/piprate/json-gold v0.5.0
 	github.com/tyler-smith/go-bip39 v1.1.0
-	google.golang.org/grpc v1.58.0
+	google.golang.org/grpc v1.58.3
 
 )
 
